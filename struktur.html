@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Kabinet</title>
+
+    <!-- Tailwind + Config -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'purple-deep': '#2D1B4E',
+                        'purple-med': '#5B3A8C',
+                        'purple-light': '#9B72CF',
+                        'purple-soft': '#D4BEF0',
+                        'purple-pale': '#F3ECFA',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        display: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+    <style>
+        html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        /* Navbar Styles from Index */
+        .nav-scrolled { box-shadow: 0 4px 30px rgba(45, 27, 78, 0.08); background: rgba(255, 255, 255, 0.98) !important; }
+        .nav-active { color: #9B72CF; position: relative; }
+        .nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
+
+        /* Custom Scrollbar - Hidden as requested */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: transparent; }
+        
+        /* Animasi */
+        .section-fade { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-up { transform: translateY(40px); }
+        .fade-left { transform: translateX(-40px); }
+        .fade-right { transform: translateX(40px); }
+        .fade-scale { transform: scale(0.9); }
+        
+        .visible { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
+        
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* 3D Member Card Style */
+        .card-container {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .card-inner img { transform: translateZ(20px); }
+        .card-badge { transform: translateZ(40px); }
+        .card-overlay { transform: translateZ(60px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .card-overlay.active { opacity: 1; pointer-events: auto; }
+
+        /* Shiny Effect */
+        .card-inner::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(30deg);
+            transition: all 0.7s ease;
+            filter: blur(20px);
+            pointer-events: none;
+            z-index: 50;
+        }
+        .card-container:hover .card-inner::after {
+            left: 120%;
+        }
+
+        .card-inner {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+        }
+
+        .badge-3d {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .badge-3d:hover {
+            transform: translateY(-5px) rotateX(10deg);
+            box-shadow: 0 15px 30px rgba(155, 114, 207, 0.3);
+        }
+
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        /* Dropdown Desktop */
+        .dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; }
+
+        [v-cloak] { display: none; }
+
+        /* Hilangkan seluruh scrollbar browser */
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Back to Top Button */
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: #5B3A8C;
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #back-to-top:hover {
+            transform: translateY(-5px);
+            background: #5B3A8C;
+        }
+
+        /* Capsule 3D Button */
+        .capsule-btn {
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            box-shadow: 6px 6px 12px #cbcbcb, -6px -6px 12px #ffffff, inset 0 0 0 rgba(0,0,0,0);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .capsule-btn:active {
+            box-shadow: 2px 2px 5px #cbcbcb, -2px -2px 5px #ffffff, inset 4px 4px 8px rgba(0,0,0,0.1);
+            transform: scale(0.98);
+        }
+        .capsule-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(155, 114, 207, 0.1), transparent);
+            transition: 0.5s;
+        }
+        .capsule-btn:hover::before {
+            left: 100%;
+        }
+        
+    </style>
+</head>
+<body class="bg-purple-pale text-gray-800">
+
+    <div id="app-wrapper" class="w-full h-full overflow-auto">
+        
+        <!-- NAVBAR -->
+        <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+             style="background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(212,190,240,0.3);">
+
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 lg:h-20">
+
+              <!-- LOGO -->
+              <a href="index.html#Beranda" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl overflow-hidden shadow-sm">
+                  <img src="assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
+                </div>
+                <div class="block sm:block text-xs sm:text-sm">
+                  <div class="font-bold text-purple-deep text-sm leading-tight">
+                    BEM FAI UNSIKA
+                  </div>
+                  <div class="text-[10px] text-purple-med font-medium tracking-wider">
+                    Kabinet Poros Katalist
+                  </div>
+                </div>
+              </a>
+
+              <!-- MENU DESKTOP -->
+              <div class="hidden lg:flex items-center gap-1">
+
+                <a href="index.html#Beranda" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
+                  Beranda
+                </a>
+
+                <a href="index.html#tentang" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
+                  Tentang
+                </a>
+
+                <!-- PROFIL -->
+                <div class="dropdown relative">
+                  <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 flex items-center gap-1 transition-colors">
+                    Profil <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                  </button>
+                  <div class="dropdown-menu pt-2">
+                    <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
+                      <a href="profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Profil Kabinet</a>
+                      <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Sejarah BEM FAI UNSIKA</a>
+                    </div>
+                  </div>
+                </div>
+
+                <a href="struktur.html" class="nav-link px-3 py-2 text-sm font-medium text-purple-med nav-active rounded-lg hover:bg-purple-pale/50 transition-colors">
+                  Struktur Kabinet
+                </a>
+
+                <a href="index.html#proker" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
+                  Program Kerja
+                </a>
+
+                <!-- INFORMASI -->
+                <div class="dropdown relative">
+                  <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 flex items-center gap-1 transition-colors">
+                    Informasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                  </button>
+                  <div class="dropdown-menu pt-2">
+                    <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
+                      <a href="index.html#berita" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Berita</a>
+                      <a href="index.html#media" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Media</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- HUBUNGI KAMI DROPDOWN -->
+                <div class="dropdown relative">
+        <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all"
+        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
+        Hubungi Kami
+        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+        </button>
+        <div class="dropdown-menu pt-2">
+         <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
+          <a href="index.html#aspirasi-pengaduan" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Aspirasi & Pengaduan</a>          
+          <a href="index.html#kontak" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Kontak</a>
+         </div>
+        </div>
+       </div>
+
+              </div>
+
+              <!-- MOBILE BUTTON -->
+              <button id="mobile-toggle" class="lg:hidden p-2 rounded-lg hover:bg-purple-pale/50 transition-colors">
+                <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- MOBILE MENU -->
+          <div id="mobile-menu" class="lg:hidden hidden border-t border-purple-pale/30 bg-white shadow-2xl">
+            <div class="px-4 py-4 space-y-2">
+              <a href="index.html#Beranda" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Beranda</a>
+              <a href="index.html#tentang" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Tentang</a>
+              
+              <div>
+                <button id="mob-profil-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg transition-colors">
+                  Profil <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                </button>
+                <div id="mob-profil-sub" class="hidden pl-4 mt-1 space-y-1">
+                  <a href="profil.html" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Profil Kabinet</a>
+                  <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Sejarah BEM FAI UNSIKA</a>
+                </div>
+              </div>
+
+              <a href="struktur.html" class="block px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-lg">Struktur Kabinet</a>
+              <a href="index.html#proker" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Program Kerja</a>
+              
+              <div>
+                <button id="mob-informasi-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg transition-colors">
+                  Informasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                </button>
+                <div id="mob-informasi-sub" class="hidden pl-4 mt-1 space-y-1">
+                  <a href="index.html#berita" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Berita</a>
+                  <a href="index.html#media" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Media</a>
+                </div>
+              </div>
+
+              <div>
+                <button id="mob-hubungi-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-center text-white rounded-lg mt-4 transition-all" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
+                  Hubungi Kami <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                </button>
+                <div id="mob-hubungi-sub" class="hidden pl-4 mt-1 space-y-1">
+                  <a href="index.html#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Aspirasi & Pengaduan</a>
+                  <a href="index.html#kontak" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Kontak</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- HERO / Beranda -->
+        <section id="Beranda"
+          class="relative overflow-hidden flex items-center justify-center 
+                 min-h-[40vh] sm:min-h-[80vh] lg:min-h-screen
+                 bg-cover bg-center"
+          style="background-image: url('assets/Foto%20Card/kabinet.jpg');">
+
+          <!-- OVERLAY -->
+          <div class="absolute inset-0 bg-gray-700/60"></div>
+
+          <!-- ORBS -->
+          <div class="hero-orb w-96 h-96 absolute -top-20 -right-10 bg-[#9B72CF]"></div>
+          <div class="hero-orb w-72 h-72 absolute bottom-10 -left-10 bg-[#D4BEF0]"></div>
+          <div class="hero-orb w-48 h-48 absolute top-1/3 right-1/3 bg-[#5B3A8C]/20"></div>
+
+          <!-- SHAPES -->
+          <div class="absolute top-20 left-10 w-3 h-3 bg-purple-300/30 rounded-full float-anim"></div>
+          <div class="absolute top-40 right-20 w-2 h-2 bg-white/20 rounded-full float-anim delay-2000"></div>
+          <div class="absolute bottom-32 left-1/4 w-4 h-4 border border-white/10 rounded rotate-45 float-anim delay-1000"></div>
+
+          <!-- CONTENT -->
+          <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
+                    text-center py-16 sm:py-24 lg:py-32 section-fade fade-up">
+            <h1 id="hero-title" class="font-display font-black text-white leading-tight">
+              <span class="block text-4xl sm:text-5xl md:text-6xl">
+                Struktur Kabinet
+              </span>
+              <span class="block text-5xl sm:text-6xl md:text-7xl">
+                Poros Katalist
+              </span>
+            </h1>
+          </div>
+
+          <!-- WAVE -->
+          <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" class="w-full h-auto">
+              <path
+                d="M0 120L48 108C96 96 192 72 288 66C384 60 480 72 576 78C672 84 768 84 864 78C960 72 1056 60 1152 60C1248 60 1344 72 1392 78L1440 84V120H0Z"
+                fill="#F3ECFA" />
+            </svg>
+          </div>
+
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <main class="max-w-7xl mx-auto px-4 mt-24 pb-32">
+            
+            <!-- SECTION BPH -->
+            <section id="BPH" class="mb-48 text-center section-fade fade-up">
+                <h2 class="font-display text-5xl md:text-7xl font-black text-purple-deep text-center mb-8 tracking-tighter">
+                    BPH <br/> <span class="text-purple-med/30 font-light italic">Badan Pengurus Harian.</span>
+                </h2>
+                <p class="text-purple-med/70 max-w-xl mx-auto italic mb-20 font-sans">"Bergerak dari Nilai, Bertumbuh untuk Perubahan. Menjadi pusat energi yang mengkatalisasi setiap potensi mahasiswa FAI."</p>
+                
+                <!-- KETUA & WAKIL -->
+                <div id="core-upper" class="flex flex-wrap justify-center gap-6 mb-24">
+                    <!-- Rendered JS -->
+                </div>
+
+                <!-- SEKRE & BENDAHARA -->
+                <div id="core-lower" class="flex flex-wrap justify-center gap-6">
+                    <!-- Rendered JS -->
+                </div>
+            </section>
+
+            <!-- SECTION BIDANG -->
+            <section id="bidang" class="section-fade">
+                <h2 class="font-display text-5xl md:text-7xl font-black text-purple-deep text-center mb-32 tracking-tighter">
+                    Cabang <br/> <span class="text-purple-med/30 font-light italic lowercase">pergerakan.</span>
+                </h2>
+                <div id="divisions-container" class="space-y-24">
+                    <!-- Rendered JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- KONTAK -->
+        <section id="kontak" class="section-fade py-20 sm:py-28 relative overflow-hidden" 
+                 style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
+            <div class="hero-orb w-72 h-72" style="top:-15%;left:-5%;background:#9B72CF;"></div>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold rounded-full tracking-wider mb-6 border border-white/10">
+                        Hubungi Kami
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-black text-white mb-4 tracking-tighter">Kontak</h2>
+                    <p class="text-white/60 max-w-xl mx-auto">Jangan ragu untuk menghubungi kami</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                    <a href="https://maps.app.goo.gl/iTryWGUr5wM18Lkz5" target="_blank" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center transition-transform hover:-translate-y-2 block">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+                            <i data-lucide="map-pin" style="width: 24px; height: 24px; color: #D4BEF0;"></i>
+                        </div>
+                        <h3 class="text-white font-bold mb-2 tracking-wide">Alamat</h3>
+                        <p class="text-white/50 text-sm">Sekretariat: Jl. H.S. Ronggowaluyo,<br />Teluk Jambe Timur, Karawang, 41361</p>
+                    </a>
+                    <a href="mailto:departemenkearsipan@gmail.com" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center transition-transform hover:-translate-y-2 block">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+                            <i data-lucide="mail" style="width: 24px; height: 24px; color: #D4BEF0;"></i>
+                        </div>
+                        <h3 class="text-white font-bold mb-2 tracking-wide">Email</h3>
+                        <p class="text-white/50 text-sm break-words">departemenkearsipan@gmail.com</p>
+                    </a>
+                    <a href="https://instagram.com/bemfaiunsika" target="_blank" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center transition-transform hover:-translate-y-2 block">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+                            <i data-lucide="instagram" style="width: 24px; height: 24px; color: #D4BEF0;"></i>
+                        </div>
+                        <h3 class="text-white font-bold mb-2 tracking-wide">Instagram</h3>
+                        <p class="text-white/50 text-sm">@bemfaiunsika</p>
+                    </a>
+                    <a href="https://wa.me/6281383956208" target="_blank" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center transition-transform hover:-translate-y-2 block">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+                            <i data-lucide="phone" style="width: 24px; height: 24px; color: #D4BEF0;"></i>
+                        </div>
+                        <h3 class="text-white font-bold mb-2 tracking-wide">WhatsApp</h3>
+                        <p class="text-white/50 text-sm">0813-8395-6208</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="py-14 border-t border-white/10 text-white" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md">
+                            <img src="assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-white leading-tight">BEM FAI UNSIKA</div>
+                            <div class="text-sm text-white/70">Kabinet Poros Katalist</div>
+                        </div>
+                    </div>
+                    <p class="text-white/60 text-sm text-center">© 2026 BEM FAI UNSIKA</p>
+                    <div class="flex items-center gap-4">
+                        <a href="https://www.instagram.com/bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition">
+                            <i data-lucide="instagram" style="width:18px;height:18px;"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@officialbemfaiunsika2570" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition">
+                            <i data-lucide="youtube" style="width:18px;height:18px;"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top -->
+        <button id="back-to-top">
+            <i data-lucide="chevron-up" style="width:24px;height:24px;"></i>
+        </button>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // DATA
+        const DATA = {
+            core: [
+                { name: "Muhammad Rafly Mukhlisin", position: "Ketua Umum", quote: "Poros Katalis: Menjadi Pusat Perubahan.", gender: "L" },
+                { name: "Ariella Nurrizky Eka Putra", position: "Wakil Ketua", quote: "Berbagi Energi, Membangun Sinergi.", gender: "L" },
+                { name: "Ovi Safrika", position: "Sekretaris Umum", quote: "Kerapian adalah Kunci Efisiensi.", gender: "P" },
+                { name: "Irma Yuliyanti", position: "Sekretaris II", quote: "Detail yang Kecil Menentukan Hasil yang Besar.", gender: "P" },
+                { name: "Ratu Talitha Wadhcah Chamid", position: "Bendahara Umum", quote: "Integritas dalam Setiap Rupiah.", gender: "P" },
+                { name: "Zahwa Nadya Bella", position: "Bendahara II", quote: "Keuangan Sehat, Organisasi Kuat.", gender: "P" },
+            ],
+            divisions: [
+                {
+                    name: "Struktur Internal",
+                    description: "Bidang Internal merupakan bidang yang berfokus pada penguatan organisasi dari dalam. Bidang ini bertanggung jawab dalam membangun kualitas sumber daya anggota BEM, menjaga koordinasi yang efektif, serta menciptakan lingkungan organisasi yang solid dan profesional. Melalui Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) dan Kearsipan, Bidang Internal berperan dalam pembinaan, pengembangan potensi, serta pengelolaan administrasi organisasi secara sistematis and berkelanjutan.",
+                    kabid: { name: "Widya Siti Nazwa Aulia Rahmah", position: "Kabid Internal", quote: "Harmoni dari Dalam.", gender: "P", photo: "assets/Foto Card/Internal/widya.jpg" },
+                    wakabid: { name: "Tia Imelda Febriani", position: "Wakabid Internal", quote: "Solidaritas Tanpa Batas.", gender: "P", photo: "assets/Foto Card/Internal/timel.jpg" },
+                    departments: [
+                        {
+                            name: "Departemen Pengembangan Sumber Daya Mahasiswa",
+                            description: "Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) berperan dalam meningkatkan kualitas dan kapasitas anggota BEM melalui berbagai program pembinaan, pelatihan, dan pengembangan potensi. Departemen ini bertanggung jawab dalam menciptakan sumber daya manusia yang unggul, berintegritas, serta mampu bekerja secara profesional dalam menjalankan roda organisasi.",
+                            kadep: { name: "Iftikhar Royan Maulana", position: "Kadep PSDM", quote: "Manusia adalah Aset Terbesar.", gender: "L" },
+                            staff: [
+                                { name: "Muhammad Zacky Mubarok", position: "Staff PSDM", quote: "Bertumbuh Bersama.", gender: "L" },
+                                { name: "Haikal Abdul Aziz", position: "Staff PSDM", quote: "Semangat Tanpa Tapi.", gender: "L" },
+                                { name: "Hanifah Nur Inayah", position: "Staff PSDM", quote: "Belajar adalah Proses Abadi.", gender: "P" },
+                                { name: "Nabila Zahra Alqonita", position: "Staff PSDM", quote: "Potensi Harus Digali.", gender: "P" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Kearsipan",
+                            description: "Departemen Kearsipan bertugas dalam pengelolaan administrasi and dokumentasi organisasi secara tertib, sistematis, dan berkelanjutan. Departemen ini berperan penting dalam menjaga arsip, data, serta dokumen kegiatan BEM agar mudah diakses, terorganisir dengan baik, dan menjadi sumber informasi yang akurat bagi keberlangsungan organisasi.",
+                            kadep: { name: "Harits Almuhasibi", position: "Kadep Kearsipan", quote: "Data Terjaga, Sejarah Terukir.", gender: "L", photo: "assets/Foto Card/Internal/harits.jpg" },
+                            staff: [
+                                { name: "Tiara Nuraisyah", position: "Staff Kearsipan", quote: "Rapi itu Nyaman.", gender: "P", photo: "assets/Foto Card/Internal/tiara.jpg" },
+                                { name: "Siti Nuraidah", position: "Staff Kearsipan", quote: "Dokumentasi adalah Bukti Nyata.", gender: "P", photo: "assets/Foto Card/Internal/aida.png" },
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Struktur Kemahasiswaan",
+                    description: "Bidang Kemahasiswaan berfokus pada pengembangan potensi mahasiswa baik dalam aspek akademik maupun non-akademik. Bidang ini berperan dalam memfasilitasi minat dan bakat, meningkatkan kesejahteraan mahasiswa, serta mendorong kegiatan yang produktif dan kreatif. Selain itu, Bidang Kemahasiswaan juga aktif dalam membangun komunikasi, menyediakan informasi, serta mendorong keterlibatan mahasiswa dalam kegiatan sosial dan pengabdian kepada masyarakat.",
+                    kabid: { name: "Fuad Shofwan", position: "Kabid Kemahasiswaan", quote: "Mahasiswa adalah Agen Perubahan.", gender: "L" },
+                    wakabid: { name: "Irfan Maulana", position: "Wakabid Kemahasiswaan", quote: "Tumbuh Bersama Mahasiswa.", gender: "L" },
+                    departments: [
+                        {
+                            name: "Departemen Minat & Bakat",
+                            description: "Departemen Minat dan Bakat bertugas dalam memfasilitasi serta mengembangkan potensi mahasiswa di bidang non-akademik. Departemen ini berperan dalam menyelenggarakan kegiatan yang mendukung kreativitas, olahraga, seni, dan keterampilan mahasiswa agar dapat berkembang secara optimal dan berprestasi.",
+                            kadep: { name: "Satria Najmul Muluk", position: "Kadep Minba", quote: "Bakat yang Terasah, Prestasi pun Tiba.", gender: "L" },
+                            staff: [
+                                { name: "Muhammad Wildan Ihsan Nurefki", position: "Staff Minba", quote: "Kreativitas Tanpa Henti.", gender: "L" },
+                                { name: "Amelia Khoirunisa", position: "Staff Minba", quote: "Ekspresikan Dirimu.", gender: "P" },
+                                { name: "Sarah Nur Azizah", position: "Staff Minba", quote: "Seni adalah Bahasa Kalbu.", gender: "P" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Pendidikan & Keagamaan",
+                            description: "Departemen Pendidikan dan Keagamaan berfokus pada pengembangan intelektual dan spiritual mahasiswa melalui kegiatan edukatif dan keagamaan. Departemen ini bertugas menyelenggarakan program yang mendukung peningkatan wawasan akademik, nilai-nilai moral, serta pembinaan karakter mahasiswa yang berlandaskan keimanan dan ketakwaan.",
+                            kadep: { name: "Ikhsan Abdul Azis", position: "Kadep Pendag", quote: "Upgrade Diri, Upgrade Organisasi.", gender: "L" },
+                            staff: [
+                                { name: "Muhamad Syarifudin", position: "Staff Pendag", quote: "Terus Melangkah.", gender: "L" },
+                                { name: "Salma Siti Adawiyah", position: "Staff Pendag", quote: "Peluang Ada Bagi yang Mencari.", gender: "P" },
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Struktur Sosial & Politik",
+                    description: "Bidang Sosial & Politik adalah bidang yang berperan sebagai garda terdepan dalam merespons isu-isu sosial, politik, dan kebijakan yang berkaitan dengan mahasiswa maupun masyarakat luas. Bidang ini menjalankan fungsi kajian, advokasi, serta aksi strategis dalam menyikapi berbagai permasalahan. Selain itu, bidang ini juga bertanggung jawab dalam meningkatkan kesadaran politik mahasiswa, mengawal kebijakan, serta mengoordinasikan gerakan mahasiswa secara terarah and berdampak.",
+                    kabid: { name: "Melandri", position: "Kabid Sospol", quote: "Suara Rakyat, Suara Tuhan.", gender: "L" },
+                    wakabid: { name: "Reza Maulana", position: "Wakabid Sospol", quote: "Keadilan untuk Semua.", gender: "L" },
+                    departments: [
+                        {
+                            name: "Departemen Kajian & Aksi Strategis",
+                            description: "Departemen Kajian dan Aksi Strategis bertugas dalam melakukan analisis terhadap isu-isu strategis yang berkembang di lingkungan kampus maupun masyarakat. Departemen ini berperan dalam merancang langkah aksi, melakukan edukasi dan publikasi, serta mengawal kebijakan melalui pendekatan yang kritis, solutif, dan berbasis data.",
+                            kadep: { name: "Aditiya Sulistiawan", position: "Kadep Kastrat", quote: "Analisis Tajam, Aksi Nyata.", gender: "L" },
+                            staff: [
+                                { name: "Avatar Juno", position: "Staff Kastrat", quote: "Berfikir Kritis.", gender: "L" },
+                                { name: "Dhafa Wildani Purwanto", position: "Staff Kastrat", quote: "Kawal Kebijakan.", gender: "L" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Advokasi Kesejahteraan Mahasiswa",
+                            description: "Departemen Advokasi Kesejahteraan Mahasiswa (Adkesma) berfokus pada upaya pendampingan, perlindungan, dan peningkatan kesejahteraan mahasiswa. Departemen ini bertugas menerima pengaduan, melakukan mediasi, serta memberikan advokasi terkait permasalahan mahasiswa, sekaligus menyelenggarakan program yang mendukung kesehatan, kesejahteraan, dan keberlanjutan kehidupan mahasiswa.",
+                            kadep: { name: "Kevin Mawla Akbar", position: "Kadep Adkesma", quote: "Sejahtera Mahasiswa, Bahagia Kita.", gender: "L" },
+                            staff: [
+                                { name: "M. Al-Fikri Faturohman", position: "Staff Adkesma", quote: "Siap Melayani.", gender: "L" },
+                                { name: "Tiara Nur Wijayanti", position: "Staff Adkesma", quote: "Advokasi dengan Hati.", gender: "P" },
+                                { name: "Salwa Syahira Maulida", position: "Staff Adkesma", quote: "Solusi di Setiap Keluhan.", gender: "P" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Pengabdian Masyarakat",
+                            description: "Departemen Pengabdian Masyarakat berperan dalam merancang dan melaksanakan program yang berorientasi pada kontribusi nyata kepada masyarakat. Departemen ini bertanggung jawab dalam mengembangkan kegiatan sosial, membangun hubungan dengan masyarakat, serta menciptakan dampak positif melalui program pemberdayaan dan kerja sama yang berkelanjutan.",
+                            kadep: { name: "Siti Auliya Zahra", position: "Kadep Pengmas", quote: "Bermanfaat bagi Sesama.", gender: "P" },
+                            staff: [
+                                { name: "Muchsin Al-Athas", position: "Staff Pengmas", quote: "Senyum Mereka, Kebahagiaan Kami.", gender: "L" },
+                                { name: "Dwi Anik Rahmani", position: "Staff Pengmas", quote: "Mengabdi dengan Ikhlas.", gender: "P" },
+                                { name: "Rifani Nurul Azkia", position: "Staff Pengmas", quote: "Aksi Nyata di Masyarakat.", gender: "P" },
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Struktur Hubungan Antar Lembaga",
+                    description: "Bidang Hubungan Antar Lembaga merupakan bidang yang berperan dalam menjalin dan mengelola hubungan antara BEM dengan berbagai lembaga, baik internal maupun eksternal kampus, melalui komunikasi yang efektif dan kerja sama yang strategis. Bidang ini bertugas membangun sinergi dengan organisasi mahasiswa, instansi, serta mitra lainnya guna memperluas jaringan dan mendukung pelaksanaan program kerja BEM, sekaligus menjaga citra organisasi serta menjadi representasi BEM dalam kegiatan kemitraan dan diplomasi kelembagaan.",
+                    kabid: { name: "Rika Mulyani", position: "Kabid Humbag", quote: "Membangun Jembatan, Bukan Tembok.", gender: "P" },
+                    wakabid: { name: "Rafiff Fendiansyah", position: "Wakabid Humbag", quote: "Relasi yang Kuat adalah Pondasi.", gender: "L" },
+                    departments: [
+                        {
+                            name: "Departemen Kemitraan",
+                            description: "Departemen Kemitraan bertugas dalam menjalin dan mengembangkan kerja sama dengan berbagai pihak, baik internal maupun eksternal kampus. Departemen ini berperan dalam membangun relasi strategis yang saling menguntungkan guna mendukung keberlangsungan program kerja BEM.",
+                            kadep: { name: "Ahmad Zacky Nasution", position: "Kadep Kemitraan", quote: "Sinergi Strategis.", gender: "L" },
+                            staff: [
+                                { name: "Noviani Amalia Putri", position: "Staff Kemitraan", quote: "Partner dalam Kebaikan.", gender: "P" },
+                                { name: "Neng Kholisoh Aini", position: "Staff Kemitraan", quote: "Kolaborasi adalah Kunci.", gender: "P" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Media IT",
+                            description: "Departemen Media IT berperan dalam pengelolaan informasi, publikasi, dan teknologi digital BEM. Departemen ini bertanggung jawab dalam mengelola media sosial, dokumentasi, serta pengembangan platform digital guna menyampaikan informasi secara cepat, kreatif, and informatif kepada mahasiswa dan masyarakat luas.",
+                            kadep: { name: "Adhilia Puspita Rhama Dhani", position: "Kadep Media IT", quote: "Visual yang Bermakna.", gender: "P" },
+                            staff: [
+                                { name: "Maritza Ramadhani", position: "Staff Media IT", quote: "Kreativitas Digital.", gender: "P" },
+                                { name: "Amelia Nur Azizah", position: "Staff Media IT", quote: "Update dan Inovatif.", gender: "P" },
+                                { name: "Siti Agisna Alfiana", position: "Staff Media IT", quote: "Teknologi Memudahkan.", gender: "P" },
+                            ]
+                        },
+                        {
+                            name: "Departemen Ekonomi Kreatif",
+                            description: "Departemen Ekonomi Kreatif berfokus pada pengembangan kewirausahaan dan inovasi ekonomi di lingkungan BEM. Departemen ini bertugas menciptakan peluang usaha, mengelola kegiatan ekonomi kreatif, serta mendorong kemandirian finansial organisasi melalui ide-ide yang inovatif and berkelanjutan.",
+                            kadep: { name: "Khaniya Safitri", position: "Kadep EKRAF", quote: "Mandiri Secara Ekonomi.", gender: "P" },
+                            staff: [
+                                { name: "Abdul Goni", position: "Staff EKRAF", quote: "Jiwa Wirausaha Muda.", gender: "L" },
+                                { name: "Laila Maftuhah Hasyim", position: "Staff EKRAF", quote: "Inovasi Produk.", gender: "P" },
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+
+        // UI HELPERS
+        function createMemberCardHTML(member, extraLabel = "", animClass = "fade-up") {
+            let photoUrl = member.photo;
+            if (!photoUrl) {
+                if (member.gender === 'P') {
+                    photoUrl = "assets/Foto Card/megawati.jpg";
+                } else {
+                    photoUrl = "assets/Foto Card/jokowi.jpeg";
+                }
+            }
+            
+            const cardSize = "w-[270px] h-[370px]";
+            const nameSize = 'text-lg';
+
+            return `
+                <div class="flex flex-col items-center gap-6 section-fade ${animClass}">
+                    <div class="card-container ${cardSize}" data-quote="${member.quote}">
+                        <div class="card-inner absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-400 to-gray-700 backdrop-blur-md bg-white/10 rounded-3xl overflow-hidden shadow-2xl">
+                            <div class="absolute inset-1.5 overflow-hidden rounded-2xl bg-purple-deep/100">
+                                <img src="${photoUrl}" class="w-full h-full object-cover grayscale-[20%] transition-all duration-700">
+                                <div class="card-badge absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
+                                    <h4 class="text-white font-black ${nameSize} truncate text-center">${member.name}</h4>
+                                    <p class="text-purple-light font-black text-[7px] text-center tracking-[0.2em] opacity-80">${member.position}</p>
+                                </div>
+                            </div>
+                            <!-- Overlay Quote -->
+                            <div class="card-overlay absolute inset-0 bg-black/95 z-40 flex flex-col items-center justify-center p-4 text-center">
+                                <p class="text-white italic text-[10px] leading-relaxed font-medium">"${member.quote}"</p>
+                                <div class="mt-3 w-8 h-[1px] bg-purple-light/30"></div>
+                                <p class="mt-3 text-[7px] text-purple-light/40 font-black tracking-widest">Klik untuk tutup</p>
+                            </div>
+                        </div>
+                    </div>
+                    ${extraLabel ? `<span class="text-purple-deep font-black text-[10px] tracking-widest">${extraLabel}</span>` : ''}
+                </div>
+            `;
+        }
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderContent();
+            initInteractiveEffects();
+            initNavbar();
+            initScrollAnimations();
+            initBackToTop();
+        });
+
+        function renderContent() {
+            // Render BPH Upper
+            const bphUpper = document.getElementById('core-upper');
+            if (bphUpper) {
+                bphUpper.innerHTML = DATA.core.slice(0, 2).map((m, i) => 
+                    createMemberCardHTML(m, i === 0 ? "" : "", i === 0 ? "fade-left" : "fade-right")
+                ).join('');
+            }
+
+            // Render BPH Lower
+            const bphLower = document.getElementById('core-lower');
+            if (bphLower) {
+                bphLower.innerHTML = DATA.core.slice(2).map((m, i) => 
+                    `<div class="flex justify-center">${createMemberCardHTML(m, "", "fade-up")}</div>`
+                ).join('');
+            }
+
+            // Render Bidang
+            const divisionsContainer = document.getElementById('divisions-container');
+            if (divisionsContainer) {
+                divisionsContainer.innerHTML = DATA.divisions.map((div, index) => {
+                    const deptsHTML = div.departments.map(dept => `
+                        <div class="mb-20 text-center">
+                            <h4 class="font-display text-3xl md:text-4xl font-black text-purple-med mb-4">${dept.name}</h4>
+                            <p class="font-sans text-gray-500 max-w-5xl mx-auto text-sm md:text-base leading-relaxed mb-10 px-4">${dept.description}</p>
+                            <div class="flex flex-wrap justify-center gap-6 mb-10">
+                                ${createMemberCardHTML(dept.kadep, "", "fade-scale")}
+                            </div>
+                            <div class="flex flex-wrap justify-center gap-6 pb-4">
+                                ${dept.staff.map((s, i) => createMemberCardHTML(s, "", i % 2 === 0 ? "fade-left" : "fade-right")).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const sectorLabel = div.name; 
+                    const bidangTitle = div.name.replace("Struktur", "Bidang");
+
+                    return `
+                        <div class="division-block bg-white/70 backdrop-blur-xl rounded-[4rem] p-10 border border-white shadow-xl overflow-hidden relative section-fade fade-up">
+                            <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-16 mb-16 text-center lg:text-left">
+                                <div class="max-w-md">
+                                    <div class="text-purple-med font-black text-xs tracking-widest mb-4">${sectorLabel}</div>
+                                    <h3 class="font-display text-4xl md:text-5xl font-black text-purple-deep mb-6 tracking-tighter">${bidangTitle}</h3>
+                                    <p class="font-sans text-gray-500 text-sm md:text-base">${div.description}</p>
+                                </div>
+                                <div class="flex flex-row justify-center lg:justify-end gap-6 flex-wrap sm:flex-nowrap">
+                                    ${createMemberCardHTML(div.kabid, "", "fade-left")}
+                                    ${createMemberCardHTML(div.wakabid, "", "fade-right")}
+                                </div>
+                            </div>
+                            <div class="flex justify-center mt-8">
+                                <button class="expand-btn capsule-btn px-12 py-4 rounded-full text-purple-deep font-black text-sm md:text-base tracking-[0.2em] hover:text-purple-med flex items-center justify-center gap-4 group">
+                                    <span>LIHAT DEPARTEMEN</span>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
+                                </button>
+                            </div>
+                            <div class="dept-content mt-12 hidden transition-all duration-500">
+                                ${deptsHTML}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            initScrollAnimations();
+            lucide.createIcons();
+        }
+
+        function initInteractiveEffects() {
+            const cards = document.querySelectorAll('.card-container');
+            cards.forEach(card => {
+                const inner = card.querySelector('.card-inner');
+                const overlay = card.querySelector('.card-overlay');
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (centerY - y) / 10;
+                    const rotateY = (x - centerX) / 10;
+                    
+                    inner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    inner.style.transition = 'none';
+
+                    const shadowX = (centerX - x) / 5;
+                    const shadowY = (centerY - y) / 5;
+                    inner.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0,0,0,0.15)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    inner.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                    inner.style.transition = 'all 0.5s ease';
+                    inner.style.boxShadow = `0 10px 30px rgba(0,0,0,0.3)`;
+                });
+
+                card.addEventListener('click', () => {
+                    overlay.classList.toggle('active');
+                });
+            });
+
+            const expandBtns = document.querySelectorAll('.expand-btn');
+            expandBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const content = btn.parentElement.nextElementSibling;
+                    const textSpan = btn.querySelector('span');
+                    const icon = btn.querySelector('i');
+                    const isHidden = content.classList.contains('hidden');
+                    
+                    content.classList.toggle('hidden');
+                    if (isHidden) {
+                        textSpan.textContent = "SEMBUNYIKAN DEPARTEMEN";
+                        icon.style.transform = "rotate(180deg)";
+                    } else {
+                        textSpan.textContent = "LIHAT DEPARTEMEN";
+                        icon.style.transform = "rotate(0deg)";
+                    }
+                });
+            });
+        }
+
+        function initBackToTop() {
+            const btn = document.getElementById('back-to-top');
+            const wrapper = document.getElementById('app-wrapper');
+            wrapper.addEventListener('scroll', () => {
+                if (wrapper.scrollTop > 500) {
+                    btn.classList.add('visible');
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                } else {
+                    btn.classList.remove('visible');
+                    btn.style.opacity = "0";
+                    btn.style.pointerEvents = "none";
+                }
+            });
+            btn.addEventListener('click', () => {
+                wrapper.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        function initNavbar() {
+            const navbar = document.getElementById('navbar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const wrapper = document.getElementById('app-wrapper');
+
+            wrapper.addEventListener('scroll', () => {
+                if (wrapper.scrollTop > 50) {
+                    navbar.classList.add('nav-scrolled');
+                } else {
+                    navbar.classList.remove('nav-scrolled');
+                }
+            });
+
+            mobileToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            function setupMobileDropdown(btnId, subId) {
+                const btn = document.getElementById(btnId);
+                const sub = document.getElementById(subId);
+                if (btn && sub) {
+                    btn.addEventListener('click', () => {
+                        sub.classList.toggle('hidden');
+                    });
+                }
+            }
+
+            setupMobileDropdown('mob-profil-btn', 'mob-profil-sub');
+            setupMobileDropdown('mob-informasi-btn', 'mob-informasi-sub');
+            setupMobileDropdown('mob-hubungi-btn', 'mob-hubungi-sub');
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { 
+                threshold: 0.1 
+            });
+
+            document.querySelectorAll('.section-fade').forEach(el => observer.observe(el));
+        }
+    </script>
+
+
+</body>
+</html>
