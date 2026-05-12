@@ -897,6 +897,57 @@
                 }
             });
         }
+        
     </script>
+
+<!-- Script Ambil SEMUA Berita dengan Fitur Cari & Filter -->
+<script type="module">
+  import { db, collection, getDocs, query, orderBy } from '../js/firebase-init.js';
+
+  let allNews = [];
+
+  async function fetchAllNews() {
+      const grid = document.getElementById('berita-grid');
+      try {
+          const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+          const querySnapshot = await getDocs(q);
+          allNews = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          renderNews(allNews); // Tampilkan semua saat pertama buka
+      } catch (e) {
+          console.error("Gagal ambil berita:", e);
+      }
+  }
+
+  function renderNews(data) {
+      const grid = document.getElementById('berita-grid');
+      let html = '';
+      data.forEach(item => {
+          html += `
+              <article class="article-card bg-white rounded-3xl overflow-hidden shadow-lg border border-purple-pale/30">
+                  <a href="detail-berita/view.html?id=${item.id}" class="block h-48 overflow-hidden">
+                      <img src="${item.featuredImage}" class="w-full h-full object-cover">
+                  </a>
+                  <div class="p-6">
+                      <div class="text-[10px] text-purple-med font-bold mb-2 uppercase">${item.category}</div>
+                      <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">${item.title}</h3>
+                      <a href="detail-berita/view.html?id=${item.id}" class="text-purple-med font-bold text-xs mt-4 inline-block">BACA SELENGKAPNYA</a>
+                  </div>
+              </article>
+          `;
+      });
+      grid.innerHTML = html || '<p class="text-center col-span-3">Berita tidak ditemukan.</p>';
+      lucide.createIcons();
+  }
+
+  // Fungsi Cari & Filter (Tempelkan tombol filter Anda di sini)
+  document.getElementById('blog-search').addEventListener('input', (e) => {
+      const val = e.target.value.toLowerCase();
+      const filtered = allNews.filter(n => n.title.toLowerCase().includes(val));
+      renderNews(filtered);
+  });
+
+  document.addEventListener('DOMContentLoaded', fetchAllNews);
+</script>
+    
 </body>
 </html>
