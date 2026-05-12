@@ -94,16 +94,6 @@
         /* Animation */
         .section-fade { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateY(20px); }
         .visible { opacity: 1; transform: translateY(0); }
-
-        /* Image Clarity */
-        .gallery-item img {
-            filter: contrast(1.05) saturate(1.1);
-            transition: all 0.5s ease;
-        }
-        .gallery-item:hover img {
-            filter: contrast(1.1) saturate(1.2);
-        }
-
         /* Lightbox Styles */
         #lightbox {
             display: none;
@@ -116,8 +106,8 @@
             backdrop-filter: blur(10px);
         }
         .lightbox-content {
-            max-width: 90%;
-            max-height: 85%;
+            max-width: 65%;
+            max-height: 75%;
             position: relative;
             transform: scale(0.9);
             transition: transform 0.3s ease;
@@ -138,33 +128,30 @@
 <body class="bg-[#FDFBFF] text-gray-800">
 
     <!-- Lightbox Modal -->
-    <div id="lightbox" class="p-4 overflow-y-auto">
-        <div class="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center min-h-full">
-            
-            <!-- Close button - Top Right Relative -->
-            <button id="close-lightbox" class="absolute top-0 right-0 sm:-top-8 sm:-right-8 text-white hover:text-purple-soft transition-colors z-[2001] p-2 sm:p-0">
-                <i data-lucide="x" class="w-8 h-8 md:w-10 md:h-10"></i>
-            </button>
+    <div id="lightbox" class="p-4">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white hover:text-purple-soft transition-colors z-[2001]">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        
+        <button id="prev-btn" class="absolute left-6 top-1/2 -translate-y-1/2 text-white hover:text-purple-soft transition-colors z-[2001] bg-white/10 hover:bg-white/20 p-3 rounded-full hidden sm:flex">
+            <i data-lucide="chevron-left" class="w-8 h-8"></i>
+        </button>
 
-            <!-- Navigation Buttons - Floating Desktop -->
-            <button id="prev-btn" class="fixed left-8 top-1/2 -translate-y-1/2 text-white hover:text-purple-soft transition-colors z-[2001] bg-white/10 hover:bg-white/20 p-4 rounded-full hidden sm:flex">
-                <i data-lucide="chevron-left" class="w-8 h-8"></i>
-            </button>
+        <div class="lightbox-content flex items-center justify-center">
+            <img id="lightbox-img" 
+                src="" 
+                alt="Gallery Preview" 
+                class="max-w-[90vw] max-h-[90vh] rounded-2xl shadow-2xl object-contain">
+        </div>
 
-            <button id="next-btn" class="fixed right-8 top-1/2 -translate-y-1/2 text-white hover:text-purple-soft transition-colors z-[2001] bg-white/10 hover:bg-white/20 p-4 rounded-full hidden sm:flex">
-                <i data-lucide="chevron-right" class="w-8 h-8"></i>
-            </button>
+        <button id="next-btn" class="absolute right-6 top-1/2 -translate-y-1/2 text-white hover:text-purple-soft transition-colors z-[2001] bg-white/10 hover:bg-white/20 p-3 rounded-full hidden sm:flex">
+            <i data-lucide="chevron-right" class="w-8 h-8"></i>
+        </button>
 
-            <!-- Image Content Wrapper -->
-            <div class="lightbox-content w-full flex items-center justify-center mt-12 sm:mt-0">
-                <img id="lightbox-img" src="" alt="Gallery Preview" class="max-w-full max-h-[70vh] sm:max-h-[85vh] rounded-2xl shadow-2xl object-contain">
-            </div>
-
-            <!-- Mobile Controls - Below Image -->
-            <div class="flex items-center justify-center gap-12 mt-8 text-white sm:hidden pb-10">
-                <button id="prev-btn-mob" class="p-4 bg-white/10 rounded-full active:scale-90 transition-transform"><i data-lucide="chevron-left" class="w-8 h-8"></i></button>
-                <button id="next-btn-mob" class="p-4 bg-white/10 rounded-full active:scale-90 transition-transform"><i data-lucide="chevron-right" class="w-8 h-8"></i></button>
-            </div>
+        <!-- Mobile Controls -->
+        <div class="absolute bottom-10 left-0 right-0 flex items-center justify-center gap-10 text-white sm:hidden">
+            <button id="prev-btn-mob" class="p-3 bg-white/10 rounded-full"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+            <button id="next-btn-mob" class="p-3 bg-white/10 rounded-full"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
         </div>
     </div>
 
@@ -230,7 +217,7 @@
                         </h1>
 
                         <!-- Author / Share -->
-                        <div class="flex flex-col sm:flex-row items-center justify-between py-8 border-y border-purple-pale/50 section-fade gap-6">
+                        <div class="flex items-center justify-between py-8 border-y border-purple-pale/50 section-fade">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-purple-soft/30 flex items-center justify-center text-purple-med">
                                     <i data-lucide="user" class="w-5 h-5"></i>
@@ -240,30 +227,11 @@
                                     <div class="text-[10px] text-gray-400 font-medium">Departemen Kearsipan</div>
                                 </div>
                             </div>
-                            
-                            <div class="flex flex-wrap items-center justify-center gap-3">
-                                <!-- Social Icons -->
-                                <a href="https://wa.me/?text=Cek berita terbaru dari BEM FAI UNSIKA" target="_blank" class="w-9 h-9 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm" title="WhatsApp">
-                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
-                                </a>
-                                <a href="https://instagram.com/bemfaiunsika" target="_blank" class="w-9 h-9 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all shadow-sm" title="Instagram">
-                                    <i data-lucide="instagram" class="w-4 h-4"></i>
-                                </a>
-                                <a href="https://tiktok.com/@bemfaiunsika" target="_blank" class="w-9 h-9 rounded-full bg-gray-50 text-gray-900 flex items-center justify-center hover:bg-gray-900 hover:text-white transition-all shadow-sm" title="TikTok">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.53.68V17c0 .02 0 .03-.01.05a3.45 3.45 0 0 1-3.57 3.32c-1.13 0-2.14-.54-2.8-1.35a3.41 3.41 0 0 1-.7-2.12c0-1.9 1.54-3.45 3.44-3.45c.45 0 .88.09 1.28.25v-2.1a5.54 5.54 0 0 0-1.28-.15c-3.04 0-5.5 2.46-5.5 5.5s2.46 5.5 5.5 5.5c2.14 0 4-.14 4.14-.14a5.54 5.54 0 0 0 5.42-5.42V7.12C20.65 8.24 22.18 9 23.86 9V6.86a4.4 4.4 0 0 1-3.32-1.31c-.9-.94-1.37-2.14-1.37-3.43V.68h-6.64Z"/></svg>
-                                </a>
-                                <a href="https://youtube.com/@officialbemfaiunsika2570" target="_blank" class="w-9 h-9 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm" title="YouTube">
-                                    <i data-lucide="youtube" class="w-4 h-4"></i>
-                                </a>
-                                
-                                <div class="h-6 w-px bg-purple-pale mx-1"></div>
-
-                                <!-- Utility Icons -->
-                                <button id="copy-link" class="w-9 h-9 rounded-full bg-purple-pale text-purple-med flex items-center justify-center hover:bg-purple-med hover:text-white transition-all shadow-sm relative group" title="Salin Link">
+                            <div class="flex items-center gap-2">
+                                <button class="w-8 h-8 rounded-full border border-purple-pale flex items-center justify-center text-gray-400 hover:text-purple-med hover:border-purple-med transition-all">
                                     <i data-lucide="link-2" class="w-4 h-4"></i>
-                                    <span id="copy-toast" class="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-deep text-white text-[10px] rounded-lg opacity-0 pointer-events-none transition-opacity">Tersalin!</span>
                                 </button>
-                                <button class="w-9 h-9 rounded-full bg-purple-pale text-purple-med flex items-center justify-center hover:bg-purple-med hover:text-white transition-all shadow-sm" title="Bagikan">
+                                <button class="w-8 h-8 rounded-full border border-purple-pale flex items-center justify-center text-gray-400 hover:text-purple-med hover:border-purple-med transition-all">
                                     <i data-lucide="share-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -374,58 +342,30 @@
                 </aside>
             </div>
 
-            <!-- Gallery Section -->
-            <section class="max-w-7xl mx-auto px-6 pb-32 section-fade">
-                <h2 class="font-alice text-3xl sm:text-4xl font-bold text-center mb-12 text-purple-deep">
+            <!-- Gallery Section (Full Width inside Container) -->
+            <div class="mt-24 pt-16 border-t border-purple-pale/50 section-fade">
+                <h3 class="font-display font-black text-3xl text-purple-deep mb-12 text-center flex items-center justify-center gap-3">
                     Galeri Kegiatan
-                </h2>
-
-                <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-
-                    <!-- 1 - 4 (TAMPIL AWAL) -->
-                    <div class="gallery-item group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="0">
-                        <img src="../../assets/Informasi/Media/akrab.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56" data-index="0">
+                        <img src="../../assets/Informasi/Media/akrab.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
-
-                    <div class="gallery-item group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="1">
-                        <img src="../../assets/Informasi/Media/akrab1.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56" data-index="1">
+                        <img src="../../assets/Informasi/Media/akrab1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
-
-                    <div class="gallery-item group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="2">
-                        <img src="../../assets/Informasi/Media/sigap.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56" data-index="2">
+                        <img src="../../assets/Informasi/Media/sigap.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
-
-                    <div class="gallery-item group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="3">
-                        <img src="../../assets/Informasi/Media/sigap1.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56" data-index="3">
+                        <img src="../../assets/Informasi/Media/sigap1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
-
-                    <!-- 5 - 8 (HIDDEN) -->
-                    <div class="gallery-item hidden extra-photo group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="4">
-                        <img src="../../assets/Informasi/Media/akrab.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    </div>
-
-                    <div class="gallery-item hidden extra-photo group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="5">
-                        <img src="../../assets/Informasi/Media/akrab1.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    </div>
-
-                    <div class="gallery-item hidden extra-photo group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="6">
-                        <img src="../../assets/Informasi/Media/sigap.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    </div>
-
-                    <div class="gallery-item hidden extra-photo group relative aspect-video rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-purple-pale/50" data-index="7">
-                        <img src="../../assets/Informasi/Media/sigap1.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    </div>
-
                 </div>
-
-            <!-- BUTTON -->
-            <div class="text-center mt-12">
-                <button id="galleryBtn" onclick="toggleGallery()" 
-                    class="px-8 py-3 bg-purple-med text-white text-sm font-bold rounded-xl hover:bg-purple-deep hover:shadow-lg transition-all">
-                    Lihat Dokumentasi Lainnya
-                </button>
             </div>
-        </section>
         </main>
 
         <!-- FOOTER -->
@@ -444,25 +384,7 @@
             initScrollProgress();
             initScrollAnimations();
             initLightbox();
-            initCopyLink();
         });
-
-        function initCopyLink() {
-            const btn = document.getElementById('copy-link');
-            const toast = document.getElementById('copy-toast');
-            
-            btn.addEventListener('click', () => {
-                const url = window.location.href;
-                navigator.clipboard.writeText(url).then(() => {
-                    toast.classList.remove('opacity-0');
-                    toast.classList.add('opacity-100');
-                    setTimeout(() => {
-                        toast.classList.remove('opacity-100');
-                        toast.classList.add('opacity-0');
-                    }, 2000);
-                });
-            });
-        }
 
         function initLightbox() {
             const lightbox = document.getElementById('lightbox');
@@ -520,24 +442,6 @@
                 if (e.key === 'ArrowRight') nextAction();
                 if (e.key === 'ArrowLeft') prevAction();
             });
-        }
-
-        function toggleGallery() {
-            const extraPhotos = document.querySelectorAll('.extra-photo');
-            const btn = document.getElementById('galleryBtn');
-            const isHidden = extraPhotos[0].classList.contains('hidden');
-
-            extraPhotos.forEach(photo => {
-                if (isHidden) {
-                    photo.classList.remove('hidden');
-                    photo.classList.add('section-fade', 'visible');
-                } else {
-                    photo.classList.add('hidden');
-                    photo.classList.remove('visible');
-                }
-            });
-
-            btn.innerText = isHidden ? 'Sembunyikan' : 'Lihat Dokumentasi Lainnya';
         }
 
         function initNavbar() {
