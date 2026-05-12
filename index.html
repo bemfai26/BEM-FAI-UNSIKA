@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BEM FAI UNSIKA</title>
+  <link rel="icon" type="image/x-icon" href="assets/favicon/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32.png.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/favicon-192.png.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="assets/favicon/favicon-512.png.png">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&amp;family=Playfair+Display:wght@700;800;900&amp;display=swap" rel="stylesheet">
@@ -25,8 +29,46 @@ tailwind.config = {
   <style>
 html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
 .font-display { font-family: 'Playfair Display', serif; }
-.nav-active { color: #9B72CF; position: relative; }
-.nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
+
+/* Navbar Styles - Floating Capsule Concept */
+        #nav-container { 
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 95%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nav-capsule {
+            margin-top: 1.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(155, 114, 207, 0.2);
+            box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05);
+        }
+        .nav-scrolled .nav-capsule {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12);
+            border: 1px solid rgba(155, 114, 207, 0.1);
+        }
+        
+        .nav-active { color: #9B72CF; position: relative; }
+        .nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
+
+/* Dropdown Styles */
+.dropdown-menu { 
+    display: none; 
+    position: absolute; 
+    top: 100%; 
+    left: 50%; 
+    transform: translateX(-50%);
+    min-width: 220px; 
+    padding-top: 15px;
+    z-index: 60;
+}
+.dropdown:hover .dropdown-menu { display: block; }
+.right-dropdown .dropdown-menu { left: auto; right: 0; transform: none; }
+
 .section-fade { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .section-fade.visible { opacity: 1; transform: translateY(0); }
 .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
@@ -37,13 +79,18 @@ html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-ser
 @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.4); opacity: 0; } }
 .float-anim { animation: float 6s ease-in-out infinite; }
 .hero-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.3; }
-.dropdown-menu { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; }
-.dropdown:hover .dropdown-menu { display: block; }
 .mobile-sub { display: none; }
 .mobile-sub.open { display: block; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #F3ECFA; }
 ::-webkit-scrollbar-thumb { background: #9B72CF; border-radius: 3px; }
+
+#app-wrapper {
+    overflow-x: hidden !important;
+}
+html, body {
+    overflow-x: hidden !important;
+}
 </style>
   <style>body { box-sizing: border-box; }</style>
 
@@ -51,286 +98,361 @@ html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-ser
  <body class="h-full bg-white text-gray-800">
   <div id="app-wrapper" class="w-full h-full overflow-auto">
     
-  <!-- NAVBAR -->
-   <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(212,190,240,0.3);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-     <div class="flex items-center justify-between h-16 lg:h-20">
-      <a href="#Beranda" class="flex items-center gap-3 group">
-       <div class="
-       w-10 h-10        /* mobile */
-       sm:w-12 sm:h-12  /* tablet */
-       lg:w-14 lg:h-14  /* laptop & desktop */
-       rounded-xl overflow-hidden">
-        <img src="assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
+  <!-- NAVBAR - Floating Capsule Concept -->
+  <div id="nav-container" class="fixed top-0 z-50 transition-all duration-500">
+            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
+                <div class="px-6 lg:px-10">
+                    <div class="flex items-center justify-between h-16 lg:h-20">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
+                                <img src="assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
+                            </div>
+                            <div class="block text-xs sm:text-sm">
+                                <div class="font-bold text-purple-deep text-sm leading-tight">BEM FAI UNSIKA</div>
+                                <div class="text-[10px] text-purple-med font-medium tracking-wider">Kabinet Poros Katalist</div>
+                            </div>
+                        </a>
+
+                        <!-- Desktop Menu -->
+                        <div class="hidden lg:flex items-center gap-2">
+                            <a href="index.html#Beranda" class="px-4 py-2 text-sm font-bold text-purple-med nav-active rounded-full hover:bg-purple-pale/50 flex items-center gap-1">Beranda</a>
+                            
+                            <!-- Organisasi Dropdown -->
+                            <div class="relative group">
+                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Organisasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="#tentang" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Tentang Kami</a>
+                                        <a href="profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Profil Kabinet</a>
+                                        <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah BEM FAI UNSIKA</a>
+                                        <a href="struktur.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Struktur Kabinet</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informasi Dropdown -->
+                            <div class="relative group">
+                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Informasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="#proker" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Program Kerja</a>
+                                        <a href="#berita" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Berita</a>
+                                        <a href="#media" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Media</a>                                        
+                                    </div>
+                                </div>
+                            </div>                
+
+                            <!-- Kontak Dropdown -->
+                            <div class="relative group">
+                                <button class="ml-4 px-6 py-2.5 text-sm font-bold text-white rounded-full flex items-center gap-2 shadow-lg shadow-purple-med/20 group-hover:shadow-purple-med/40 transition-all hover:-translate-y-0.5"
+                                        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
+                                    Kontak <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block right-0 pt-2 w-56">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Aspirasi & Pengaduan</a>
+                                        <a href="#kontak" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Hubungi Kami</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
+                            <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden lg:hidden px-6 py-8 space-y-2 bg-white rounded-[40px] mt-4 border border-purple-pale/30 shadow-2xl overflow-hidden transition-all duration-300">
+                    <a href="#Beranda" class="block px-6 py-4 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-2xl">Beranda</a>                    
+                    
+                    <div class="space-y-1">
+                        <button onclick="toggleMobileDropdown('mob-organisasi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-gray-600 hover:bg-purple-pale/50 rounded-2xl transition-colors">
+                            Organisasi <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-organisasi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="#tentang" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Tentang Kami</a>
+                            <a href="profil.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Profil Kabinet</a>
+                            <a href="sejarah.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Sejarah BEM FAI UNSIKA</a>
+                            <a href="struktur.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Struktur Kabinet</a>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <button onclick="toggleMobileDropdown('mob-informasi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-gray-600 hover:bg-purple-pale/50 rounded-2xl transition-colors">
+                            Informasi <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-informasi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="#proker" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Program Kerja</a>
+                            <a href="#berita" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Berita</a>
+                            <a href="#media" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Media</a>                            
+                        </div>
+                    </div>                                  
+
+                    <div class="space-y-1 pt-4">
+                        <button onclick="toggleMobileDropdown('mob-hubungi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-black text-white rounded-2xl shadow-lg" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
+                            Kontak <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-hubungi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="#aspirasi-pengaduan" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Aspirasi & Pengaduan</a>
+                            <a href="#kontak" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Hubungi Kami</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
-       <div class="block sm:block text-xs sm:text-sm">
-        <div class="font-bold text-purple-deep text-sm leading-tight">
-         BEM FAI UNSIKA
-        </div>
-        <div class="text-[10px] text-purple-med font-medium tracking-wider">
-         Kabinet Poros Katalist
-        </div>
-       </div></a>
-
-      <div class="hidden lg:flex items-center gap-1">
-        <!-- BERANDA -->
-        <a href="#Beranda" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50">Beranda</a> 
-        
-        <!-- TENTANG -->
-       <a href="#tentang" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50">Tentang</a>
-
-        <!-- PROFIL DROPDOWN -->
-        <div class="dropdown relative">
-        <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50 flex items-center gap-1">Profil 
-          <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-        </button>
-        <div class="dropdown-menu pt-2">
-         <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-          <a href="profil.html" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Profil Kabinet</a> 
-          <a href="sejarah.html" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Sejarah BEM FAI UNSIKA</a>
-         </div>
-        </div>
-       </div>
-
-        <!-- STRUKTUR -->
-        <a href="struktur.html" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50">Struktur Kabinet</a>          
-
-       <!-- PROGRAM KERJA -->
-       <a href="#proker" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50">Program Kerja</a>
-
-       <!-- INFORMASI -->
-       <div class="dropdown relative">
-        <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-lg hover:bg-purple-pale/50 flex items-center gap-1">Informasi 
-          <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-        </button>
-        <div class="dropdown-menu pt-2">
-         <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-          <a href="blog/home-berita.html" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Berita</a>
-          <a href="#media" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Media</a> 
-         </div>
-        </div>
-       </div>
-
-       <!-- HUBUNGI KAMI -->
-       <div class="dropdown relative">
-        <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all"
-        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
-        Hubungi Kami
-        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-        </button>
-        <div class="dropdown-menu pt-2">
-         <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-          <a href="#aspirasi-pengaduan" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Aspirasi & Pengaduan</a>          
-          <a href="#kontak" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Kontak</a>
-         </div>
-        </div>
-       </div>
-
-       
-      </div><button id="mobile-toggle" class="lg:hidden p-2 rounded-lg hover:bg-purple-pale/50 transition-colors"> <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i> </button>
-     </div>
-    </div>
-    
-<!-- Mobile Menu -->
-<div id="mobile-menu" class="lg:hidden hidden border-t border-purple-pale/30 bg-white">
-  <div class="px-4 py-4 space-y-1">
-
-    <!-- BERANDA -->
-    <a href="#Beranda" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg mob-link">Beranda</a>
-
-    <!-- TENTANG -->
-    <a href="#tentang" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg mob-link">
-      Tentang
-    </a>
-    
-    <!-- PROFIL -->
-    <div>
-      <button id="mob-profil-btn" 
-              class="mob-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">
-        Profil 
-        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-      </button>
-      <div id="mob-profil-sub" class="mobile-sub pl-4 space-y-1 hidden">
-        <a href="profil.html" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Profil Kabinet</a>        
-        <a href="sejarah.html" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Sejarah BEM FAI UNSIKA</a>
-      </div>
-    </div>
-
-    <!-- STRUKTUR -->
-    <a href="struktur.html" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg mob-link">
-      Struktur Kabinet
-    </a>
-
-    <!-- PROGRAM KERJA -->
-    <a href="#proker" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg mob-link">
-      Program Kerja
-    </a>
-
-    <!-- INFORMASI -->
-    <div>
-      <button id="mob-informasi-btn" 
-              class="mob-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">
-        Informasi 
-        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-      </button>
-      <div id="mob-informasi-sub" class="mobile-sub pl-4 space-y-1 hidden">
-        <a href="/blog/home-berita.html" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Berita</a>
-        <a href="#media" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Media</a>
-      </div>
-    </div>
-
-    <!-- HUBUNGI KAMI -->
-    <div>
-      <button id="mob-hubungi-btn" 
-        class="mob-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-white rounded-lg"
-        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
-          Hubungi Kami 
-        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-      </button>
-      <div id="mob-hubungi-sub" class="mobile-sub pl-4 space-y-1 hidden">
-        <a href="#aspirasi-pengaduan" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Aspirasi & Pengaduan</a>        
-        <a href="#kontak" class="block px-4 py-2.5 text-sm text-gray-500 hover:text-purple-med mob-link">Kontak</a>
-      </div>
-    </div>
-
-  </div>
-</div>
-   </nav>
    
    <!-- HERO / Beranda -->
    <section id="Beranda"
-  class="relative overflow-hidden min-h-[70svh] sm:min-h-[75svh] md:min-h-screen lg:min-h-screen"
-  style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 50%, #9B72CF 100%);">
-    <div class="hero-orb w-96 h-96" style="top:-10%;right:-5%;background:#9B72CF;"></div>
-    <div class="hero-orb w-72 h-72" style="bottom:10%;left:-5%;background:#D4BEF0;"></div>
-    <div class="hero-orb w-48 h-48" style="top:40%;right:30%;background:#5B3A8C;opacity:0.2;"></div><!-- Geometric shapes -->
+  class="relative overflow-hidden min-h-[70svh] sm:min-h-[75svh] md:min-h-screen lg:min-h-screen bg-cover bg-no-repeat"
+  style="
+    background:
+      linear-gradient(
+        160deg,
+        rgba(45, 27, 78, 0.45) 0%,
+        rgba(91, 58, 140, 0.40) 50%,
+        rgba(155, 114, 207, 0.35) 100%
+      ),
+      url('assets/informasi/media/ldko.JPG');
+
+    background-size: cover;
+
+    /* Mobile */
+    background-position: center center;
+  ">
+
+    <!-- Overlay lebih soft -->
+    <div class="absolute inset-0 bg-black/15"></div>
+
+    <!-- Hero Orbs -->
+    <div class="hero-orb w-96 h-96"
+      style="top:-10%;right:-5%;background:#9B72CF;"></div>
+
+    <div class="hero-orb w-72 h-72"
+      style="bottom:10%;left:-5%;background:#D4BEF0;"></div>
+
+    <div class="hero-orb w-48 h-48"
+      style="top:40%;right:30%;background:#5B3A8C;opacity:0.15;"></div>
+
+    <!-- Geometric Shapes -->
     <div class="absolute top-20 left-10 w-3 h-3 bg-purple-soft/30 rounded-full float-anim"></div>
-    <div class="absolute top-40 right-20 w-2 h-2 bg-white/20 rounded-full float-anim" style="animation-delay:2s;"></div>
-    <div class="absolute bottom-32 left-1/4 w-4 h-4 border border-white/10 rounded rotate-45 float-anim" style="animation-delay:1s;"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center" style="min-height:100%;padding-top:120px;padding-bottom:80px;">
-     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> <span class="text-white/80 text-sm font-medium">Periode 2026/2027</span>
-     </div>
-     <h1 id="hero-title" class="font-display text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 leading-tight">BEM FAI<br><span class="text-purple-soft">UNSIKA</span></h1>
-     <p id="hero-subtitle" class="text-lg sm:text-xl text-white/70 max-w-2xl mb-10 leading-relaxed">
-        Badan Eksekutif Mahasiswa<br>
-        Fakultas Agama Islam<br>
-        Universitas Singaperbangsa Karawang</p>
-     <div class="flex flex-wrap gap-4 justify-center">
-      <a href="#tentang" class="px-8 py-4 bg-white text-purple-deep font-bold rounded-2xl hover:shadow-2xl hover:shadow-white/20 transition-all hover:-translate-y-1">
-        Kenali Kami
-      </a>
-      
-      <a href="blog/home-berita.html"class="px-8 py-4 text-white font-bold rounded-2xl border-2 border-white/50 hover:border-white transition-all hover:-translate-y-1">
-        Berita
-      </a>
-     </div>
-     
-     <!-- Stats -->
-     <div class="grid grid-cols-3 gap-8 sm:gap-16 mt-16 pt-16 border-t border-white/10">
-      <div>
-       <div class="text-3xl sm:text-4xl font-black text-white">
-        4
-       </div>
-       <div class="text-white/50 text-sm mt-1">
-        Bidang
-       </div>
-      </div>
-      <div>
-       <div class="text-3xl sm:text-4xl font-black text-white">
-        10
-       </div>
-       <div class="text-white/50 text-sm mt-1">
-        Departemen
-       </div>
-      </div>
-      <div>
-       <div class="text-3xl sm:text-4xl font-black text-white">
-        50+
-       </div>
-       <div class="text-white/50 text-sm mt-1">
-        Anggota Aktif
-       </div>
-      </div>
-     </div>
+
+    <div class="absolute top-40 right-20 w-2 h-2 bg-white/20 rounded-full float-anim"
+      style="animation-delay:2s;"></div>
+
+    <div class="absolute bottom-32 left-1/4 w-4 h-4 border border-white/10 rounded rotate-45 float-anim"
+      style="animation-delay:1s;"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center"
+      style="min-height:100%;padding-top:120px;padding-bottom:80px;">
+
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+
+            <span class="text-white/90 text-sm font-medium">
+                Periode 2026/2027
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h1 id="hero-title"
+          class="font-display text-5xl sm:text-6xl md:text-7xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
+
+            BEM FAI<br>
+
+            <span class="text-purple-soft">
+                UNSIKA
+            </span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p id="hero-subtitle"
+          class="text-lg sm:text-xl text-white/85 max-w-2xl mb-10 leading-relaxed">
+
+            Badan Eksekutif Mahasiswa<br>
+            Fakultas Agama Islam<br>
+            Universitas Singaperbangsa Karawang
+
+        </p>
+
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+
+            <a href="profil.html"
+              class="px-10 py-4 bg-white text-purple-deep font-black text-xs rounded-full shadow-2xl hover:-translate-y-1 transition-all tracking-[0.2em] flex items-center gap-2 group">
+
+                PROFIL KABINET
+
+                <i data-lucide="arrow-right"
+                  class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+
+            </a>
+
+            <a href="berita/home-berita.html"
+              class="px-10 py-4 border border-white/30 text-white font-black text-xs rounded-full backdrop-blur-md hover:bg-white/10 hover:-translate-y-1 transition-all tracking-[0.2em] flex items-center gap-2 group">
+
+                LIHAT BERITA
+
+                <i data-lucide="rss"
+                  class="w-4 h-4 opacity-70"></i>
+
+            </a>
+
+        </div>
+
     </div>
+
+    <!-- Bottom Wave -->
     <div class="absolute bottom-0 left-0 right-0">
-     <svg viewbox="0 0 1440 120" fill="none">
-      <path d="M0 120L48 108C96 96 192 72 288 66C384 60 480 72 576 78C672 84 768 84 864 78C960 72 1056 60 1152 60C1248 60 1344 72 1392 78L1440 84V120H0Z" fill="white" />
-     </svg>
+        <svg viewBox="0 0 1440 120" fill="none">
+            <path
+              d="M0 120L48 108C96 96 192 72 288 66C384 60 480 72 576 78C672 84 768 84 864 78C960 72 1056 60 1152 60C1248 60 1344 72 1392 78L1440 84V120H0Z"
+              fill="white" />
+        </svg>
     </div>
-   </section>
+
+</section>
+
+<!-- Desktop Background Position -->
+<style>
+@media (min-width: 1024px) {
+    #Beranda {
+        background-position: center 20%;
+    }
+}
+</style>
    
    <!-- TENTANG -->
-   <section id="tentang" class="section-fade py-20 sm:py-28 bg-white bg-mesh">
+   <section id="tentang" class="pt-16 pb-20 bg-white relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-     <div class="grid lg:grid-cols-2 gap-16 items-center">
-      <div><span class="inline-block px-4 py-1.5 bg-purple-pale text-purple-med text-xs font-bold rounded-full tracking-wider uppercase mb-6">Tentang Kami</span>
-       <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-purple-deep mb-6 leading-tight">Bergerak dari Nilai<br><span class="gradient-text">Bertumbuh untuk Perubahan</span></h2>
-       <p id="about-text" class="text-gray-600 leading-relaxed mb-8 text-lg">BEM FAI UNSIKA merupakan organisasi mahasiswa di Fakultas Agama Islam yang bertugas menjalankan fungsi eksekutif, menampung aspirasi, serta mendukung pengembangan mahasiswa FAI. Kami hadir untuk memberikan pelayanan, informasi, dan kontribusi terbaik bagi seluruh mahasiswa Fakultas Agama Islam UNSIKA.</p>
-       <div class="space-y-4">
-        <div class="flex items-start gap-4">
-         <div class="w-10 h-10 rounded-xl bg-purple-pale flex items-center justify-center flex-shrink-0">
-          <i data-lucide="target" style="width:20px;height:20px;color:#5B3A8C;"></i>
-         </div>
-         <div>
-          <h4 class="font-bold text-purple-deep">Visi</h4>
-          <p class="text-gray-500 text-sm mt-1">Mewujudkan BEM FAI yang unggul, adaptif, dan kolaboratif dalam membangun iklim organisasi yang sehat, serta kebermanfaatan untuk mahasiswa FAI secara berkelanjutan</p>
-         </div>
+
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+            <!-- Kiri -->
+            <div class="section-fade">
+                <span class="inline-block px-4 py-1.5 bg-purple-pale text-purple-med text-xs font-black rounded-full uppercase mb-8">
+                    Tentang Kami
+                </span>
+
+                <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-purple-deep mb-6 leading-tight">
+                    Bergerak dari Nilai<br>
+                    <span class="gradient-text">
+                        Bertumbuh untuk Perubahan
+                    </span>
+                </h2>
+
+                <p class="text-gray-500 text-lg leading-relaxed font-alice italic mb-10">
+                    BEM FAI UNSIKA merupakan organisasi mahasiswa di Fakultas Agama Islam yang bertugas menjalankan fungsi eksekutif, menampung aspirasi, serta mendukung pengembangan mahasiswa FAI. Kami hadir untuk memberikan pelayanan, informasi, dan kontribusi terbaik bagi seluruh mahasiswa Fakultas Agama Islam UNSIKA.
+                </p>
+
+                <!-- Vision & Mission -->
+                <div class="space-y-8">
+                    <div class="flex items-start gap-4 p-6 bg-purple-pale/30 rounded-3xl border border-purple-med/10">
+                        <div class="w-12 h-12 bg-purple-med rounded-2xl flex items-center justify-center flex-shrink-0 text-white">
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-purple-deep mb-1">
+                                Visi Kami
+                            </h4>
+
+                            <p class="text-sm text-gray-500 leading-relaxed">
+                                Mewujudkan BEM FAI yang unggul, adaptif, dan kolaboratif dalam membangun iklim organisasi yang sehat, serta kebermanfaatan untuk mahasiswa FAI secara berkelanjutan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-6 bg-purple-pale/30 rounded-3xl border border-purple-med/10">
+                        <div class="w-12 h-12 bg-purple-med rounded-2xl flex items-center justify-center flex-shrink-0 text-white">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-purple-deep mb-1">
+                                Misi Kami
+                            </h4>
+
+                            <p class="text-sm text-gray-500 leading-relaxed">
+                                Merealisasikan iklim organisasi yang harmonis, adaptif, dan responsif melalui pendampingan, pemberdayaan, advokasi, serta sinergi kolaboratif untuk kesejahteraan mahasiswa FAI.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan -->
+            <div class="relative group section-fade">
+                <div class="absolute inset-0 bg-purple-light/20 blur-[80px] rounded-full scale-110 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+
+                <img
+                    src="assets/Logo/logo-kabinet.png"
+                    class="relative w-full h-auto drop-shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                    onerror="this.src='assets/Logo/logo-kebinet.png'"
+                >
+            </div>
+
+            <!-- Statistik Tengah -->
+            <div class="lg:col-span-2">
+                <div class="flex flex-wrap justify-center items-center gap-16 pt-6 pb-2 -mt-6 border-t border-purple-pale text-center">
+
+                    <div>
+                        <div class="text-3xl font-black text-purple-med mb-1">
+                            2026
+                        </div>
+
+                        <div class="text-xs text-gray-400 font-bold tracking-widest uppercase">
+                            Tahun Kepengurusan
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-3xl font-black text-purple-med mb-1">
+                            4
+                        </div>
+
+                        <div class="text-xs text-gray-400 font-bold tracking-widest uppercase">
+                            Bidang
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-3xl font-black text-purple-med mb-1">
+                            10
+                        </div>
+
+                        <div class="text-xs text-gray-400 font-bold tracking-widest uppercase">
+                            Departemen
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-3xl font-black text-purple-med mb-1">
+                            50+
+                        </div>
+
+                        <div class="text-xs text-gray-400 font-bold tracking-widest uppercase">
+                            Pengurus Aktif
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-        <div class="flex items-start gap-4">
-         <div class="w-10 h-10 rounded-xl bg-purple-pale flex items-center justify-center flex-shrink-0">
-          <i data-lucide="compass" style="width:20px;height:20px;color:#5B3A8C;"></i>
-         </div>
-         <div>
-          <h4 class="font-bold text-purple-deep">Misi</h4>
-          <p class="text-gray-500 text-sm mt-1">- Merealisasikan iklim organisasi yang harmonis, berkemajuan dan berkelanjutan.</p>
-          <p class="text-gray-500 text-sm mt-1">- Menciptakan organisasi yang adaptif, responsif dan komunikatif terhadap pola kinerja dinamika internal dan eksternal BEM.</p>
-          <p class="text-gray-500 text-sm mt-1">- Memberikan pendampingan, pemberdayaan, dan advokasi mahasiswa demi mewujudkan kesejahteraan mahasiswa FAI.</p>
-          <p class="text-gray-500 text-sm mt-1">- Menciptakan jaringan strategis dan sinergritas kolaboratif guna tercapainya BEM FAI yang unggul.</p>
-          <p class="text-gray-500 text-sm mt-1">- Mengoptimalkan program kerja BEM FAI agar lebih proporsional, tepat dan bermanfaat.</p>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div class="relative">
-       <div class="rounded-3xl overflow-hidden p-8 relative" style="background: linear-gradient(135deg, #2D1B4E, #5B3A8C);">
-        <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 30% 40%, #D4BEF0, transparent 60%);"></div>
-        <div class="relative z-10 text-center space-y-6">
-         <div class="w-32 h-32 mx-auto rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/10">
-            <img src="assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
-         </div>
-         <div>
-          <h3 class="font-display text-2xl font-bold text-white">BEM FAI UNSIKA</h3>
-          <p class="text-white/60 mt-2 text-sm">Kabinet Poros Katalist</p>
-         </div>
-         <div class="grid grid-cols-2 gap-3 pt-4">
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-           <div class="text-2xl font-black text-white">
-            4
-           </div>
-           <div class="text-white/50 text-xs mt-1">
-            Bidang
-           </div>
-          </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-           <div class="text-2xl font-black text-white">
-            2026
-           </div>
-           <div class="text-white/50 text-xs mt-1">
-            Periode kepengurusan
-           </div>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div>
-     </div>
     </div>
-   </section>
+</section>
 
    <!-- PROGRAM KERJA -->
 <section id="proker" 
- class="section-fade py-20 sm:py-28 relative overflow-hidden"
+ class="section-fade pt-20 pb-20 relative overflow-hidden"
  style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
 
   <!-- Background Orbs -->
@@ -342,7 +464,7 @@ html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-ser
 
     <!-- Heading -->
     <div class="text-center mb-16">
-      <span class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold rounded-full tracking-wider uppercase mb-6 border border-white/10">
+      <span class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold rounded-full tracking-wider uppercase mb-8 border border-white/10">
         Agenda
       </span>
       <h2 class="font-display text-3xl sm:text-4xl font-black text-white mb-4">
@@ -489,234 +611,228 @@ html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-ser
 </section>
    
    <!-- BERITA -->
-   <section id="berita" class="section-fade py-20 sm:py-28 bg-white bg-mesh">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   <section id="berita" class="pt-20 pb-20 bg-purple-pale/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-20 gap-8 section-fade">
+                    <div>
+                        <span class="inline-block px-5 py-2 bg-white text-purple-med text-xs font-black rounded-full uppercase mb-8 shadow-sm border border-purple-pale/50">
+                          Warta</span>
+                        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-purple-deep leading-tight">
+                            Kabar Terkini <br/> & <span class="text-purple-med/30 font-light italic">Agenda Utama</span>
+                        </h2>
+                    </div>
+                    <a href="berita/home-berita.html" class="px-8 py-3 bg-purple-med text-white font-bold rounded-full text-xs hover:bg-purple-deep transition-all flex items-center gap-2">
+                        LIHAT LEBIH BANYAK <i data-lucide="arrow-right-circle" class="w-4 h-4"></i>
+                    </a>
+                </div>
 
-    <div class="text-center mb-16">
-      <span class="inline-block px-4 py-1.5 bg-purple-pale text-purple-med text-xs font-bold rounded-full tracking-wider uppercase mb-6">
-        Terbaru
-      </span>
-      <h2 class="font-display text-3xl sm:text-4xl font-black text-purple-deep mb-4">
-        Berita &amp; Kegiatan
-      </h2>
-      <p class="text-gray-500 max-w-xl mx-auto">
-        Update terkini dari BEM FAI UNSIKA
-      </p>
+                <!-- GRID RESPONSIF -->
+                <div id="berita-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                  <!-- Tambah Dengan Salin kartu dibawah (terbaru) dan hapus kartu terakhir -->
+
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-05-10"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href=""
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Foto Card/megawati.jpg"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Kegiatan
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 10 Mei 2026
     </div>
-
-    <!-- GRID RESPONSIF -->
-    <div id="berita-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      <!-- Tambah Dengan Salin di Tamplate Mentahan -->      
-      
-      <!-- KARTU 7 -->
-      <article id="berita-syuu"
-      data-date="2026-05-4"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="informasi/berita/detail-berita/berita-syuu.html" class="hover:underline">
-          <img src="assets/Foto Card/megawati.jpg" alt="LDKO" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            PDI
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 16 April 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
+    <a href="">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
             Syukuran Ulang Tahun PDIP
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 6 -->
-      <article id="berita-ldko"
-      data-date="2026-04-16"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/berita.html" class="hover:underline">
-          <img src="assets/Informasi/Berita/ldko.JPG" alt="LDKO" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Pelatihan
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 16 April 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            Latihan Dasar Kepemimpinan Organisasi (LDKO 2026)
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 5 -->
-      <article id="berita-akrab"
-      data-date="2026-04-02"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/" class="hover:underline">
-          <img src="assets/Informasi/Berita/akrab.jpeg" alt="AKRAB" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Kegiatan
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 2 April 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            AKRAB (Ajang Kebersamaan, Rajut Silaturahmi, dan Bakar-bakar)
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 4 -->
-      <article id="berita-literasa"
-      data-date="2026-03-10"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/" class="hover:underline">
-          <img src="assets/Informasi/Berita/literasa.jpeg" alt="Literasa FAI" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Kegiatan
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 10 Maret 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            LITERASA (Literasi & Buka Puasa bersama)
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            LITERASA (Literasi & Buka Puasa Bersama) merupakan kegiatan yang menggabungkan penguatan budaya literasi dengan nilai kebersamaan dalam suasana Ramadhan. Kegiatan ini menghadirkan diskusi ringan, sharing keilmuan, serta buka puasa bersama sebagai sarana mempererat ukhuwah antar mahasiswa.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 3 -->
-      <article id="berita-kisah-kasih-fai"
-      data-date="2026-03-06"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/" class="hover:underline">
-          <img src="assets/Informasi/Berita/kisah-kasih-fai.jpeg" alt="Kisah-Kasih FAI" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Sosial
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 6 Maret 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            Kisah-Kasih FAI (Kebersamaan Adik panti dalam Suasana Ibadah dan Harapan)
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            Bulan Ramadhan merupakan momentum yang tepat untuk meningkatkan keimanan, kepedulian sosial, serta mempererat hubungan antar sesama. Dalam ajaran Islam, perhatian terhadap anak yatim dan piatu memiliki kedudukan yang sangat mulia dan menjadi bagian penting dari pengamalan nilai-nilai keislaman dalam kehidupan sosial. Kegiatan Kisah-Kasih FAI dirancang sebagai bentuk kepedulian dan dukungan kepada anak-anak panti asuhan yang membutuhkan perhatian tidak hanya dari sisi materi, tetapi juga dari aspek spiritual dan emosional. Melalui kajian keagamaan, diharapkan mereka memperoleh pemahaman yang lebih mendalam tentang nilai-nilai Islam, serta memperoleh motivasi dan harapan dalam menjalani kehidupan. Selain itu, kegiatan interaktif seperti kuis, permainan edukatif, dan buka puasa bersama diharapkan mampu menghadirkan suasana kebahagiaan dan kebersamaan yang bermakna. Momen ini menjadi sarana untuk menciptakan kedekatan emosional, menumbuhkan rasa percaya diri, serta memberikan pengalaman positif bagi adik-adik panti. Sebagai organisasi mahasiswa yang berlandaskan nilai keislaman, BEM FAI bersama civitas akademika Universitas Singaperbangsa Karawang memiliki tanggung jawab dalam menebarkan manfaat bagi masyarakat. Melalui kegiatan ini, mahasiswa diharapkan mampu menanamkan nilai empati, meningkatkan kepekaan sosial, serta menguatkan peran sebagai agen kebaikan di bulan suci Ramadhan. Kegiatan Kisah-Kasih FAI tidak hanya menjadi bentuk kepedulian, tetapi juga refleksi atas semangat kasih sayang, harapan, dan kebersamaan yang menjadi esensi dari Ramadhan itu sendiri.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 2 -->
-      <article id="berita-fai-sigap"
-      data-date="2026-03-01"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/testberita.html" class="hover:underline">
-          <img src="assets/Informasi/Berita/fai-sigap1.jpeg" alt="FAI SIGAP" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Sosial
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 1 Maret 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            FAI SIGAP (Siaga Peduli)
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            FAI SIGAP (Siaga Peduli) merupakan program penggalangan donasi yang diselenggarakan sebagai bentuk kepedulian sosial dan solidaritas civitas Fakultas Agama Islam terhadap masyarakat Kabupaten Karawang yang terdampak bencana banjir. Kegiatan ini bertujuan untuk menggerakkan semangat kemanusiaan, memperkuat rasa empati, serta menghadirkan kontribusi nyata dalam membantu pemulihan kondisi masyarakat yang membutuhkan. Melalui pengumpulan donasi berupa uang tunai, kebutuhan pokok, dan perlengkapan darurat, FAI SIGAP berkomitmen untuk menyalurkan bantuan secara tepat sasaran dan transparan. Dengan terselenggaranya kegiatan ini, diharapkan muncul kesadaran kolektif untuk terus menumbuhkan budaya saling membantu, serta memperkuat peran mahasiswa sebagai garda terdepan dalam aksi sosial dan kemanusiaan.
-          </p>
-          </a>
-        </div>
-      </article>
-
-      <!-- KARTU 1 -->
-      <article id="berita-upgrading"
-      data-date="2026-02-07"
-      class="card-hover bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30">
-        <div class="h-48 relative overflow-hidden">
-          <a href="blog/detail-berita/" class="hover:underline">
-          <img src="assets/Informasi/Berita/upgrading.jpeg" alt="Upgrading Pengurus BEM FAI 2026" 
-          class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/20"></div>
-          <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">
-            Kegiatan
-          </span>
-        </div>
-        <div class="p-6">
-          <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
-            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 7 Februari 2026
-          </div>
-          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">
-            Upgrading Pengurus BEM FAI 2026
-          </h3>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
-            Upgrading Pengurus BEM FAI 2026 merupakan kegiatan internal yang diselenggarakan oleh Badan Eksekutif Mahasiswa Fakultas Agama Islam Universitas Singaperbangsa Karawang. Kegiatan ini bertujuan untuk mempererat hubungan antar pengurus, membangun rasa kebersamaan, serta meningkatkan kekompakan dalam menjalankan roda organisasi sepanjang satu periode kepengurusan. Melalui rangkaian agenda berupa penguatan karakter, penanaman nilai-nilai organisasi, serta kegiatan team building yang dirancang secara interaktif, Upgrading Pengurus BEM FAI 2026 diharapkan mampu menciptakan lingkungan kerja yang solid, kolaboratif, dan berorientasi pada pelayanan mahasiswa. Kegiatan ini sekaligus menjadi momentum refleksi serta komitmen bersama untuk menghadirkan kinerja organisasi yang lebih efektif, komunikatif, dan progresif di tahun kepengurusan 2026.
-          </p>
-          </a>
-        </div>
-      </article>                    
-
-    </div>
-  </div>
-
-<!-- BUTTON (DI LUAR GRID) -->
-<div class="text-center mt-10">
-  <button id="loadMoreBtn"
-    class="px-6 py-3 bg-purple-med text-white rounded-full font-semibold hover:bg-purple-deep transition">
-    Lihat Lebih Banyak
-  </button>
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <a href=""
+       class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+      <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
 </div>
+</article>
 
-</section>
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-04-16"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href="berita/detail-berita/ldko.html"
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Informasi/Berita/ldko.JPG"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Pelatihan
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 16 April 2026
+    </div>
+    <a href="berita/detail-berita/ldko.html">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
+            Latihan Dasar Kepemimpinan Organisasi (LDKO 2026)
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+    </p>
+    <a href="berita/detail-berita/ldko.html"
+      class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+      <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
+</div>
+</article>
+
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-04-02"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href="berita/detail-berita/akrab.html"
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Informasi/Berita/akrab.jpeg"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Kegiatan
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 2 April 2026
+    </div>
+    <a href="berita/detail-berita/akrab.html">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
+            AKRAB (Ajang Kebersamaan, Rajut Silaturahmi, dan Bakar-bakar)
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    </p>
+    <a href="berita/detail-berita/akrab.html"
+       class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+      <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
+</div>
+</article>
+
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-03-10"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href="berita/detail-berita/literasa.html"
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Informasi/Berita/literasa.jpeg"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Kegiatan
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 10 Maret 2026
+    </div>
+    <a href="berita/detail-berita/literasa.html">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
+            LITERASA (Literasi & Buka Puasa bersama)
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-3 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    </p>
+    <a href="berita/detail-berita/literasa.html"
+       class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+       <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
+</div>
+</article>
+
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-03-06"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href="berita/detail-berita/kisah-kasih-fai.html"
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Informasi/Berita/kisah-kasih-fai.jpeg"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Sosial
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 6 Maret 2026
+    </div>
+    <a href="berita/detail-berita/kisah-kasih-fai.html">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
+            Kisah-Kasih FAI
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-3 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    </p>
+    <a href="berita/detail-berita/kisah-kasih-fai.html"
+       class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+      <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
+</div>
+</article>
+
+<!-- ===================== KARTU  ===================== -->
+<article data-date="2026-03-01"
+class="group transition-all duration-300 hover:-translate-y-4 hover:shadow-2xl bg-white rounded-3xl overflow-hidden border border-purple-pale/30 hover:border-purple-med/40">
+<a href="berita/detail-berita/fai-sigap1.html"
+   class="block relative h-48 overflow-hidden rounded-t-3xl">
+    <img src="assets/Informasi/Berita/fai-sigap1.jpeg"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 text-white text-xs rounded-full">
+        Sosial
+    </span>
+</a>
+<div class="p-6">
+    <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+        <i data-lucide="calendar" class="w-3 h-3"></i> 1 Maret 2026
+    </div>
+    <a href="berita/detail-berita/fai-sigap1.html">
+        <h3 class="font-bold text-purple-deep hover:text-purple-med transition line-clamp-2 mb-2">
+            FAI SIGAP (Siaga Peduli)
+        </h3>
+    </a>
+    <p class="text-gray-500 text-sm line-clamp-3 mb-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    </p>
+    <a href="berita/detail-berita/fai-sigap1.html"
+       class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
+        Baca selengkapnya
+      <i data-lucide="external-link" class="w-4 h-4"></i>
+    </a>
+</div>
+</article>
+
+                </div>
+            </div>
+        </section>
    
 <!-- MEDIA / GALERI -->
-<section id="media" class="section-fade py-20 sm:py-28 mb-24" 
+<section id="media" class="section-fade pt-20 pb-20" 
 style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
   
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-    <span class="inline-block px-4 py-1.5 bg-white text-purple-med text-xs font-bold rounded-full tracking-wider uppercase mb-6 shadow-sm">
+    <span class="inline-block px-4 py-1.5 bg-white text-purple-med text-xs font-bold rounded-full tracking-wider uppercase mb-8 shadow-sm">
       Galeri
     </span>
 
@@ -837,14 +953,14 @@ style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
 
 <!-- ASPIRASI & PENGADUAN -->
 <section id="aspirasi-pengaduan"
-class="section-fade py-20 sm:py-28"
+class="section-fade pt-20 pb-20"
 style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Heading -->
     <div class="text-center mb-16">
-      <span class="inline-block px-4 py-1.5 bg-purple-soft text-purple-deep text-xs font-bold rounded-full tracking-wider uppercase mb-6">
+      <span class="inline-block px-4 py-1.5 bg-purple-soft text-purple-deep text-xs font-bold rounded-full tracking-wider uppercase mb-8">
         Aspirasi &amp; Pengaduan
       </span>
 
@@ -867,7 +983,7 @@ style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
           Klik tombol di bawah ini untuk menuju halaman aspirasi dan sampaikan pendapat Anda.
         </p>
 
-        <a href="aspirasi.html"
+        <a href="https://forms.gle/ckwdWXNJyMffMs7g8"
           class="inline-flex items-center gap-2 bg-purple-med text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition shadow-md shadow-purple-med/30">
           Sampaikan Aspirasi
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -885,7 +1001,7 @@ style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
           Klik tombol di bawah ini untuk menuju halaman pengaduan dan sampaikan keluhan Anda.
         </p>
 
-        <a href="pengaduan.html"
+        <a href="https://forms.gle/Nkg99e9FSprduVpH9"
           class="inline-flex items-center gap-2 bg-purple-med text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition shadow-md shadow-purple-med/30">
           Sampaikan Pengaduan
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -901,67 +1017,88 @@ style="background: linear-gradient(180deg, #F3ECFA 0%, white 100%);">
 </section>
 
 <!-- KONTAK -->
-<section id="kontak" class="section-fade py-20 sm:py-28 relative overflow-hidden" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
+<section id="kontak" class="section-fade pt-20 pb-20 relative overflow-hidden" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
+
   <div class="hero-orb w-72 h-72" style="top:-15%;left:-5%;background:#9B72CF;"></div>
 
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- HEADER (dipertahankan) -->
     <div class="text-center mb-16">
-      <span class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold rounded-full tracking-wider uppercase mb-6 border border-white/10">
-        Hubungi Kami
+      <span class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold rounded-full tracking-wider uppercase mb-8 border border-white/10">
+        Kontak
       </span>
-      <h2 class="font-display text-3xl sm:text-4xl font-black text-white mb-4">Kontak</h2>
-      <p class="text-white/60 max-w-xl mx-auto">Jangan ragu untuk menghubungi kami</p>
+
+      <h2 class="font-display text-3xl sm:text-4xl font-black text-white mb-4">
+        Hubungi Kami
+      </h2>
+
+      <p class="text-white/60 max-w-xl mx-auto">
+        Jangan ragu untuk menghubungi kami
+      </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+    <!-- GRID -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
 
-      <!-- Alamat -->
+      <!-- ALAMAT -->
       <a href="https://maps.app.goo.gl/iTryWGUr5wM18Lkz5"
          target="_blank"
-         class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center card-hover block">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
-          <i data-lucide="map-pin" style="width:24px;height:24px;color:#D4BEF0;"></i>
-        </div>
-        <h3 class="text-white font-bold mb-2">Alamat</h3>
-        <p class="text-white/50 text-sm">
-          Sekretariat: Jl. H.S. Ronggowaluyo,<br>Teluk Jambe Timur, Karawang, 41361
+         class="p-6 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/15 transition">
+
+        <i data-lucide="map-pin" class="w-10 h-10 mx-auto mb-4 text-[#D4BEF0]"></i>
+
+        <h4 class="font-bold text-white">Alamat</h4>
+
+        <p class="text-white/60 text-sm mt-2">
+          Sekretariat: Jl. H.S. Ronggowaluyo,<br>
+          Teluk Jambe Timur, Karawang, 41361
         </p>
       </a>
 
-      <!-- Email -->
-       <a href="mailto:bemfaiunsika2023@gmail.com"
-       class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center card-hover block cursor-pointer">
-       <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
-        <i data-lucide="mail" style="width:24px;height:24px;color:#D4BEF0;"></i>
-        </div>
-        <h3 class="text-white font-bold mb-2">Email</h3>
-        <p class="text-white/50 text-sm text-center break-words">
-            bemfaiunsika2023@gmail.com
-        </p></a>
+      <!-- EMAIL -->
+      <a href="mailto:bemfaiunsika2023@gmail.com"
+         class="p-6 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/15 transition">
 
-      <!-- Instagram -->
-      <a href="https://instagram.com/bemfaiunsika"
-         target="_blank"
-         class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center card-hover block">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
-          <i data-lucide="instagram" style="width:24px;height:24px;color:#D4BEF0;"></i>
-        </div>
-        <h3 class="text-white font-bold mb-2">Instagram</h3>
-        <p class="text-white/50 text-sm">@bemfaiunsika</p>
+        <i data-lucide="mail" class="w-10 h-10 mx-auto mb-4 text-[#D4BEF0]"></i>
+
+        <h4 class="font-bold text-white">Email</h4>
+
+        <p class="text-white/60 text-sm mt-2 break-words">
+          bemfaiunsika2023@gmail.com
+        </p>
       </a>
 
-      <!-- WhatsApp -->
+      <!-- INSTAGRAM -->
+      <a href="https://instagram.com/bemfaiunsika"
+         target="_blank"
+         class="p-6 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/15 transition">
+
+        <i data-lucide="instagram" class="w-10 h-10 mx-auto mb-4 text-[#D4BEF0]"></i>
+
+        <h4 class="font-bold text-white">Instagram</h4>
+
+        <p class="text-white/60 text-sm mt-2">
+          @bemfaiunsika
+        </p>
+      </a>
+
+      <!-- WHATSAPP -->
       <a href="https://wa.me/6281319124266"
          target="_blank"
-         class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 text-center card-hover block">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/10 flex items-center justify-center mb-4">
-          <i data-lucide="phone" style="width:24px;height:24px;color:#D4BEF0;"></i>
-        </div>
-        <h3 class="text-white font-bold mb-2">WhatsApp</h3>
-        <p class="text-white/50 text-sm">0813-1912-4266</p>
+         class="p-6 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/15 transition">
+
+        <i data-lucide="phone" class="w-10 h-10 mx-auto mb-4 text-[#D4BEF0]"></i>
+
+        <h4 class="font-bold text-white">WhatsApp</h4>
+
+        <p class="text-white/60 text-sm mt-2">
+          0813-1912-4266
+        </p>
       </a>
 
     </div>
+
   </div>
 </section>
    
@@ -1029,70 +1166,15 @@ style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
   </div>
 </footer>
   
-  <!-- end app-wrapper -->
   <script>
-// Default config
-const defaultConfig = {
-  hero_title: 'BEM FAI UNSIKA',
-  hero_subtitle: 'Badan Eksekutif Mahasiswa Fakultas Agama Islam\nUniversitas Singaperbangsa Karawang',
-  about_text: 'BEM FAI UNSIKA merupakan organisasi mahasiswa di Fakultas Agama Islam yang bertugas menjalankan fungsi eksekutif, menampung aspirasi, serta mendukung pengembangan mahasiswa FAI. Kami hadir untuk memberikan pelayanan, informasi, dan kontribusi terbaik bagi seluruh mahasiswa Fakultas Agama Islam UNSIKA.',
-  background_color: '#FFFFFF',
-  surface_color: '#F3ECFA',
-  text_color: '#2D1B4E',
-  primary_action_color: '#5B3A8C',
-  secondary_action_color: '#9B72CF',
-  font_family: 'Plus Jakarta Sans',
-  font_size: 16,
-};
-
-function applyConfig(config) {
-  const c = { ...defaultConfig, ...config };
-  // Text content
-  const heroEl = document.getElementById('hero-title');
-  if (heroEl) heroEl.innerHTML = c.hero_title.includes('UNSIKA') ? c.hero_title.replace('UNSIKA', '<br><span class="text-purple-soft">UNSIKA</span>') : c.hero_title;
-  const subtitleEl = document.getElementById('hero-subtitle');
-  if (subtitleEl) subtitleEl.innerHTML = c.hero_subtitle.replace(/\n/g, '<br>');
-  const aboutEl = document.getElementById('about-text');
-  if (aboutEl) aboutEl.textContent = c.about_text;
-  const aspInput = document.getElementById('asp-msg');
-  
-
-  // Font
-  const fontStack = `${c.font_family}, 'Plus Jakarta Sans', sans-serif`;
-  document.body.style.fontFamily = fontStack;
-
-  // Font size scaling
-  const base = c.font_size || 16;
-  document.body.style.fontSize = base + 'px';
+// Mobile menu logic
+const mobileToggle = document.getElementById('mobile-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+if (mobileToggle && mobileMenu) {
+    mobileToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
 }
-
-
-// Mobile menu
-document.getElementById('mobile-toggle').addEventListener('click', () => {
-  const menu = document.getElementById('mobile-menu');
-  menu.classList.toggle('hidden');
-});
-document.getElementById('mob-profil-btn').addEventListener('click', () => {
-  document.getElementById('mob-profil-sub').classList.toggle('open');
-});
-document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-});
-document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-});
-document.getElementById('mob-informasi-btn').addEventListener('click', () => {
-  document.getElementById('mob-informasi-sub').classList.toggle('open');
-});
-document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-});
-document.getElementById('mob-hubungi-btn').addEventListener('click', () => {
-  document.getElementById('mob-hubungi-sub').classList.toggle('open');
-});
-document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
-});
 
 // Scroll animations
 const observer = new IntersectionObserver((entries) => {
@@ -1103,35 +1185,16 @@ document.querySelectorAll('.section-fade').forEach(el => observer.observe(el));
 // Navbar scroll effect
 const wrapper = document.getElementById('app-wrapper');
 wrapper.addEventListener('scroll', () => {
-  const nav = document.getElementById('navbar');
+  const navContainer = document.getElementById('nav-container');
   if (wrapper.scrollTop > 50) {
-    nav.style.boxShadow = '0 4px 30px rgba(45,27,78,0.08)';
+    navContainer.classList.add('nav-scrolled');
   } else {
-    nav.style.boxShadow = 'none';
+    navContainer.classList.remove('nav-scrolled');
   }
 });
 
 // Init icons
 lucide.createIcons();
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e15c87c32b74dae',t:'MTc3NDM1NjQzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.querySelector("#berita .grid");
-  const items = Array.from(container.children);
-
-  items.sort((a, b) => {
-    return new Date(b.dataset.date) - new Date(a.dataset.date);
-  });
-
-  items.forEach(item => container.appendChild(item));
-
-  // Highlight berita terbaru
-  if (items.length > 0) {
-    items[0].classList.add("ring-2", "ring-purple-500");
-  }
-});
 </script>
 
 <button id="backToTop"
@@ -1178,69 +1241,38 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script>
-document.querySelectorAll('.mob-toggle').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const menu = btn.nextElementSibling;
-    const icon = btn.querySelector('i');
+  // ================================
+  // AUTO HIGHLIGHT BERITA TERBARU
+  // Berdasarkan data-date paling baru
+  // ================================
 
-    menu.classList.toggle('hidden');
+  // Ambil semua kartu berita di grid
+  const cards = document.querySelectorAll("#berita-grid article");
 
-    icon.style.transform = menu.classList.contains('hidden') 
-      ? "rotate(0deg)" 
-      : "rotate(180deg)";
+  let latestCard = null;   // menyimpan kartu terbaru
+  let latestDate = null;   // menyimpan tanggal terbaru
 
-    icon.style.transition = "0.2s";
+  // Loop semua kartu berita
+  cards.forEach(card => {
+    // Ambil tanggal dari attribute data-date
+    const date = new Date(card.dataset.date);
+
+    // Cek apakah ini tanggal paling baru
+    if (!latestDate || date > latestDate) {
+      latestDate = date;
+      latestCard = card;
+    }
   });
-});
-</script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("berita-grid");
-    const cards = Array.from(container.querySelectorAll("article"));
-    const btn = document.getElementById("loadMoreBtn");
-
-    const step = 6;
-    let visibleCount = 6;
-
-    // sort terbaru → lama
-    cards.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date));
-    cards.forEach(card => container.appendChild(card));
-
-    function render() {
-        cards.forEach((card, index) => {
-            if (index < visibleCount) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-
-        // hide tombol kalau sudah semua tampil
-        if (visibleCount >= cards.length) {
-            btn.style.display = "none";
-        }
-    }
-
-    btn.addEventListener("click", () => {
-        visibleCount += step;
-
-        // clamp (jangan lebih dari jumlah total)
-        if (visibleCount > cards.length) {
-            visibleCount = cards.length;
-        }
-
-        render();
-    });
-
-    // init pertama
-    render();
-
-    // kalau total <= 6 langsung sembunyi tombol
-    if (cards.length <= 6) {
-        btn.style.display = "none";
-    }
-});
+  // Jika ditemukan berita terbaru
+  if (latestCard) {
+    // Tambahkan style highlight ungu
+    latestCard.classList.add(
+      "ring-2",              // garis pinggir
+      "ring-purple-med",    // warna ungu
+      "shadow-xl"           // efek bayangan lebih tebal
+    );
+  }
 </script>
 
 <script>
@@ -1278,6 +1310,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // init awal
   update();
 });
+</script>
+
+<script>
+  window.toggleMobileDropdown = (id) => {
+            document.getElementById(id).classList.toggle('hidden');
+        };
 </script>
 
 </body>
