@@ -1318,13 +1318,14 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 </script>
 
+<!-- Script Ambil 3 Berita Terbaru dari Firebase -->
 <script type="module">
   import { db, collection, getDocs, query, orderBy, limit } from './js/firebase-init.js';
 
   async function fetchHomeNews() {
       const grid = document.getElementById('berita-grid');
       try {
-          // Ambil 3 berita terbaru
+          // Ambil 3 berita terbaru berdasarkan tanggal
           const q = query(collection(db, 'news'), orderBy('date', 'desc'), limit(3));
           const querySnapshot = await getDocs(q);
           let html = '';
@@ -1336,15 +1337,15 @@ document.addEventListener("DOMContentLoaded", () => {
                           <img src="${item.featuredImage}" class="w-full h-full object-cover">
                       </a>
                       <div class="p-6">
-                          <h3 class="font-bold text-purple-deep mb-2">${item.title}</h3>
-                          <p class="text-gray-500 text-sm line-clamp-2">${item.contentBody.substring(0, 100).replace(/<[^>]*>?/gm, '')}...</p>
+                          <div class="text-[10px] text-purple-med font-bold mb-2 uppercase">${item.category} | ${item.date}</div>
+                          <h3 class="font-bold text-purple-deep mb-2 line-clamp-2">${item.title}</h3>
                           <a href="informasi/detail-berita/view.html?id=${docSnap.id}" class="text-purple-med font-bold text-xs mt-4 inline-block">BACA SELENGKAPNYA</a>
                       </div>
                   </article>
               `;
           });
           grid.innerHTML = html || '<p class="text-center col-span-3">Belum ada berita.</p>';
-          lucide.createIcons();
+          lucide.createIcons(); // Jika pakai Lucide Icons
       } catch (e) {
           console.error("Gagal ambil berita:", e);
       }
