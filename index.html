@@ -1318,5 +1318,39 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 </script>
 
+<script type="module">
+  import { db, collection, getDocs, query, orderBy, limit } from './js/firebase-init.js';
+
+  async function fetchHomeNews() {
+      const grid = document.getElementById('berita-grid');
+      try {
+          // Ambil 3 berita terbaru
+          const q = query(collection(db, 'news'), orderBy('date', 'desc'), limit(3));
+          const querySnapshot = await getDocs(q);
+          let html = '';
+          querySnapshot.forEach(docSnap => {
+              const item = docSnap.data();
+              html += `
+                  <article class="article-card bg-white rounded-3xl overflow-hidden shadow-lg border border-purple-pale/30">
+                      <a href="informasi/detail-berita/view.html?id=${docSnap.id}" class="block h-48 overflow-hidden">
+                          <img src="${item.featuredImage}" class="w-full h-full object-cover">
+                      </a>
+                      <div class="p-6">
+                          <h3 class="font-bold text-purple-deep mb-2">${item.title}</h3>
+                          <p class="text-gray-500 text-sm line-clamp-2">${item.contentBody.substring(0, 100).replace(/<[^>]*>?/gm, '')}...</p>
+                          <a href="informasi/detail-berita/view.html?id=${docSnap.id}" class="text-purple-med font-bold text-xs mt-4 inline-block">BACA SELENGKAPNYA</a>
+                      </div>
+                  </article>
+              `;
+          });
+          grid.innerHTML = html || '<p class="text-center col-span-3">Belum ada berita.</p>';
+          lucide.createIcons();
+      } catch (e) {
+          console.error("Gagal ambil berita:", e);
+      }
+  }
+  document.addEventListener('DOMContentLoaded', fetchHomeNews);
+</script>
+
 </body>
 </html>
