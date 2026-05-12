@@ -1,278 +1,335 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - BEM FAI UNSIKA</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
-</head>
-<body class="bg-gray-50 min-h-screen">
-    
-    <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-purple-deep text-white hidden lg:block">
-        <div class="p-6">
-            <div class="flex items-center gap-3 mb-10">
-                <img src="../assets/Logo/logo-bem.png" class="w-10 h-10 rounded-full">
-                <span class="font-bold text-sm tracking-wider uppercase">Admin BEM</span>
-            </div>
-            
-            <nav class="space-y-2">
-                <button onclick="showView('list')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-semibold text-sm">
-                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Kelola Berita
-                </button>
-                <button onclick="showView('form')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-all font-semibold text-sm">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Tulis Berita
-                </button>
-                <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition-all font-semibold text-sm mt-20">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
-                </button>
-            </nav>
-        </div>
-    </aside>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin - BEM FAI UNSIKA</title>
 
-    <!-- Main Content -->
-    <main class="lg:ml-64 p-6 lg:p-10">
-        
-        <!-- Header -->
-        <header class="flex items-center justify-between mb-10">
-            <div>
-                <h1 id="view-title" class="text-2xl font-bold text-gray-800">Kelola Berita</h1>
-                <p id="view-subtitle" class="text-sm text-gray-500">Daftar seluruh berita yang telah dipublikasikan</p>
-            </div>
-            <button onclick="showView('form')" class="px-6 py-3 bg-purple-med text-white font-bold rounded-xl hover:bg-purple-deep transition-all shadow-lg flex items-center gap-2 lg:hidden">
-                <i data-lucide="plus" class="w-4 h-4"></i> Tulis
-            </button>
-        </header>
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- List View -->
-        <div id="view-list" class="space-y-4">
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Berita</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Kategori</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Tanggal</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="news-table-body" class="divide-y divide-gray-50 text-sm">
-                            <!-- JS populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form View -->
-        <div id="view-form" class="hidden max-w-4xl">
-            <form id="news-form" class="bg-white rounded-3xl shadow-xl p-8 border border-gray-100 space-y-8">
-                <input type="hidden" id="edit-id">
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Judul Berita</label>
-                        <input type="text" id="news-title" required class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none">
-                    </div>
-                    <div class="space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Kategori</label>
-                        <select id="news-category" required class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none">
-                            <option value="Kegiatan">Kegiatan</option>
-                            <option value="Prestasi">Prestasi</option>
-                            <option value="Informasi">Informasi</option>
-                            <option value="Opini">Opini</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Penulis / Departemen</label>
-                        <input type="text" id="news-author" placeholder="Contoh: Departemen Kearsipan" required class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none">
-                    </div>
-                    <div class="space-y-4">
-                        <label class="block text-sm font-bold text-gray-700">Tanggal</label>
-                        <input type="date" id="news-date" required class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none">
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <label class="block text-sm font-bold text-gray-700">Isi Berita</label>
-                    <textarea id="news-content" rows="10" required class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none" placeholder="Tuliskan berita lengkap di sini... (Mendukung tag HTML dasar)"></textarea>
-                </div>
-
-                <div class="space-y-4">
-                    <label class="block text-sm font-bold text-gray-700">URL Foto Utama</label>
-                    <input type="url" id="news-image" required placeholder="https://contoh.com/foto-utama.jpg" class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-purple-med/20 focus:border-purple-med outline-none">
-                </div>
-
-                <div class="space-y-4">
-                    <label class="block text-sm font-bold text-gray-700">Galeri Dokumentasi (4 URL Foto)</label>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="url" class="gallery-input w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl" placeholder="URL Foto 1">
-                        <input type="url" class="gallery-input w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl" placeholder="URL Foto 2">
-                        <input type="url" class="gallery-input w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl" placeholder="URL Foto 3">
-                        <input type="url" class="gallery-input w-full px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl" placeholder="URL Foto 4">
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
-                    <button type="button" onclick="showView('list')" class="px-6 py-3 text-gray-400 font-bold hover:text-gray-600">Batal</button>
-                    <button type="submit" id="save-btn" class="px-10 py-3 bg-purple-med text-white font-bold rounded-xl hover:bg-purple-deep transition-all shadow-lg flex items-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> Simpan Berita
-                    </button>
-                </div>
-            </form>
-        </div>
-    </main>
-
-    <script type="module">
-        import { auth, db, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, serverTimestamp, onAuthStateChanged, signOut } from '../js/firebase-init.js';
-        
-        lucide.createIcons();
-
-        // Auth Check
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = 'login.html';
-            loadNews();
-        });
-
-        // Global Navigation
-        window.showView = (view) => {
-            document.getElementById('view-list').classList.add('hidden');
-            document.getElementById('view-form').classList.add('hidden');
-            document.getElementById('edit-id').value = '';
-            document.getElementById('news-form').reset();
-            
-            if (view === 'list') {
-                document.getElementById('view-list').classList.remove('hidden');
-                document.getElementById('view-title').innerText = 'Kelola Berita';
-                document.getElementById('view-subtitle').innerText = 'Daftar seluruh berita yang telah dipublikasikan';
-                loadNews();
-            } else {
-                document.getElementById('view-list').classList.add('hidden'); // Ensure forced
-                document.getElementById('view-form').classList.remove('hidden');
-                document.getElementById('view-title').innerText = 'Tulis Berita';
-                document.getElementById('view-subtitle').innerText = 'Buat berita baru untuk website';
-            }
-        };
-
-        // Form Submission
-        document.getElementById('news-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('save-btn');
-            saveBtn.disabled = true;
-            saveBtn.innerText = 'Menyimpan...';
-
-            const editId = document.getElementById('edit-id').value;
-            const galleryInputs = document.querySelectorAll('.gallery-input');
-            const gallery = Array.from(galleryInputs).map(input => input.value).filter(val => val !== '');
-
-            const data = {
-                title: document.getElementById('news-title').value,
-                slug: document.getElementById('news-title').value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
-                category: document.getElementById('news-category').value,
-                author: document.getElementById('news-author').value,
-                date: document.getElementById('news-date').value,
-                contentBody: document.getElementById('news-content').value,
-                featuredImage: document.getElementById('news-image').value,
-                gallery: gallery,
-                updatedAt: serverTimestamp()
-            };
-
-            try {
-                if (editId) {
-                    await updateDoc(doc(db, 'news', editId), data);
-                } else {
-                    data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'news'), data);
-                }
-                showView('list');
-            } catch (error) {
-                console.error(error);
-                alert('Gagal menyimpan berita.');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = 'Simpan Berita';
-            }
-        });
-
-        // Load News List
-        async function loadNews() {
-            const tableBody = document.getElementById('news-table-body');
-            tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Memuat data...</td></tr>';
-
-            const q = query(collection(db, 'news'), orderBy('date', 'desc'));
-            const querySnapshot = await getDocs(q);
-            
-            tableBody.innerHTML = '';
-            if (querySnapshot.empty) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada berita.</td></tr>';
-                return;
-            }
-
-            querySnapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50/50 transition-colors';
-                tr.innerHTML = `
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-4">
-                            <img src="${item.featuredImage}" class="w-12 h-10 rounded-xl object-cover">
-                            <span class="font-bold text-gray-700">${item.title}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="px-3 py-1 bg-purple-pale text-purple-med text-[10px] font-bold rounded-full uppercase">${item.category}</span>
-                    </td>
-                    <td class="px-6 py-4 text-gray-500">${item.date}</td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <button onclick="editNews('${docSnap.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                            <button onclick="deleteNews('${docSnap.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-            lucide.createIcons();
+<!-- Tailwind Config (AMAN - tidak ganggu Firebase) -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        purple: {
+          deep: '#2D1B4E',
+          med: '#5B3A8C',
+          light: '#9B72CF',
+          soft: '#D4BEF0',
+          pale: '#F3ECFA'
         }
+      }
+    }
+  }
+}
+</script>
 
-        // Action Handlers
-        window.editNews = async (id) => {
-            const querySnapshot = await getDocs(collection(db, 'news'));
-            const item = querySnapshot.docs.find(d => d.id === id).data();
-            
-            showView('form');
-            document.getElementById('view-title').innerText = 'Edit Berita';
-            document.getElementById('edit-id').value = id;
-            document.getElementById('news-title').value = item.title;
-            document.getElementById('news-category').value = item.category;
-            document.getElementById('news-author').value = item.author;
-            document.getElementById('news-date').value = item.date;
-            document.getElementById('news-content').value = item.contentBody;
-            document.getElementById('news-image').value = item.featuredImage;
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
-            const galleryInputs = document.querySelectorAll('.gallery-input');
-            item.gallery.forEach((url, i) => {
-                if (galleryInputs[i]) galleryInputs[i].value = url;
-            });
-        };
+<!-- Icons -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
 
-        window.deleteNews = async (id) => {
-            if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
-                await deleteDoc(doc(db, 'news', id));
-                loadNews();
-            }
-        };
+<style>
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-    </script>
+/* Glass Sidebar */
+.sidebar {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 280px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 40px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(45,27,78,0.1);
+  z-index: 50;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-weight: 600;
+  color: #2D1B4E;
+  transition: 0.3s;
+}
+
+.sidebar-link:hover {
+  background: rgba(255,255,255,0.6);
+  transform: translateX(6px);
+}
+
+.main {
+  margin-left: 320px;
+}
+</style>
+
+</head>
+
+<body class="bg-[#FDFBFF]">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="text-center mb-10">
+    <img src="../assets/Logo/logo-bem.png"
+         class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
+    <div class="font-black text-purple-900">BEM FAI UNSIKA</div>
+    <div class="text-xs tracking-widest text-purple-600">Lord Sumanto</div>
+  </div>
+
+  <!-- MENU -->
+  <nav class="flex flex-col gap-2 flex-1">
+
+    <button onclick="showView('list')" class="sidebar-link">
+      <i data-lucide="layout-grid"></i> Kelola Berita
+    </button>
+
+    <button onclick="showView('form')" class="sidebar-link">
+      <i data-lucide="plus-circle"></i> Tulis Berita
+    </button>
+
+    <button id="logout-btn"
+      class="sidebar-link text-red-500 mt-auto">
+      <i data-lucide="log-out"></i> Keluar
+    </button>
+
+  </nav>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main p-8">
+
+<!-- HEADER -->
+<div class="mb-8">
+  <h1 id="view-title" class="text-2xl font-bold text-purple-900">
+    Kelola Berita
+  </h1>
+  <p id="view-subtitle" class="text-gray-500 text-sm">
+    Dashboard administrasi berita
+  </p>
+</div>
+
+<!-- LIST VIEW -->
+<div id="view-list">
+
+  <div class="bg-white rounded-2xl shadow p-4">
+    <table class="w-full text-sm">
+      <thead class="text-gray-400 border-b">
+        <tr>
+          <th class="text-left p-3">Judul</th>
+          <th>Kategori</th>
+          <th>Tanggal</th>
+          <th class="text-right">Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="news-table-body"></tbody>
+
+    </table>
+  </div>
+
+</div>
+
+<!-- FORM VIEW -->
+<div id="view-form" class="hidden max-w-3xl">
+
+  <form id="news-form" class="bg-white p-6 rounded-2xl shadow space-y-4">
+
+    <input type="hidden" id="edit-id">
+
+    <input id="news-title" placeholder="Judul"
+      class="w-full p-3 border rounded-xl">
+
+    <select id="news-category"
+      class="w-full p-3 border rounded-xl">
+      <option>Kegiatan</option>
+      <option>Sosial</option>
+      <option>Pelatihan</option>
+      <option>Pendidikan</option>
+    </select>
+
+    <input id="news-author" placeholder="Penulis"
+      class="w-full p-3 border rounded-xl">
+
+    <input type="date" id="news-date"
+      class="w-full p-3 border rounded-xl">
+
+    <textarea id="news-content"
+      class="w-full p-3 border rounded-xl"
+      rows="6"></textarea>
+
+    <input id="news-image"
+      placeholder="URL gambar"
+      class="w-full p-3 border rounded-xl">
+
+    <div class="flex justify-end gap-3">
+      <button type="button"
+        onclick="showView('list')"
+        class="px-4 py-2 text-gray-500">
+        Batal
+      </button>
+
+      <button id="save-btn"
+        class="px-5 py-2 bg-purple-600 text-white rounded-xl">
+        Simpan
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+</main>
+
+<!-- FIREBASE SAFE SCRIPT -->
+<script type="module">
+
+import {
+  auth, db,
+  collection, addDoc, updateDoc, deleteDoc,
+  doc, getDocs, query, orderBy,
+  serverTimestamp,
+  onAuthStateChanged,
+  signOut
+} from '../js/firebase-init.js';
+
+lucide.createIcons();
+
+/* AUTH SAFE */
+onAuthStateChanged(auth, (user) => {
+  if (!user) location.href = "login.html";
+  loadNews();
+});
+
+/* VIEW SWITCH (SAFE) */
+window.showView = (v) => {
+  document.getElementById('view-list').classList.add('hidden');
+  document.getElementById('view-form').classList.add('hidden');
+
+  document.getElementById('news-form').reset();
+  document.getElementById('edit-id').value = "";
+
+  if (v === 'list') {
+    document.getElementById('view-list').classList.remove('hidden');
+  }
+
+  if (v === 'form') {
+    document.getElementById('view-form').classList.remove('hidden');
+  }
+};
+
+/* LOAD DATA */
+async function loadNews() {
+  const table = document.getElementById('news-table-body');
+  table.innerHTML = "";
+
+  const q = query(collection(db, 'news'), orderBy('date','desc'));
+  const snap = await getDocs(q);
+
+  snap.forEach(d => {
+    const item = d.data();
+
+    table.innerHTML += `
+      <tr class="border-b">
+        <td class="p-3">${item.title}</td>
+        <td>${item.category}</td>
+        <td>${item.date}</td>
+        <td class="text-right p-3">
+          <button onclick="editNews('${d.id}')">Edit</button>
+          <button onclick="deleteNews('${d.id}')" class="text-red-500">Hapus</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* SAVE */
+document.getElementById('news-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById('edit-id').value;
+
+  const data = {
+    title: news-title.value,
+    category: news-category.value,
+    author: news-author.value,
+    date: news-date.value,
+    contentBody: news-content.value,
+    featuredImage: news-image.value,
+    updatedAt: serverTimestamp()
+  };
+
+  if (id) {
+    await updateDoc(doc(db,'news',id), data);
+  } else {
+    data.createdAt = serverTimestamp();
+    await addDoc(collection(db,'news'), data);
+  }
+
+  showView('list');
+  loadNews();
+});
+
+/* EDIT SAFE FIXED */
+window.editNews = async (id) => {
+  try {
+    const snap = await getDocs(collection(db, 'news'));
+    const item = snap.docs.find(d => d.id === id)?.data();
+
+    if (!item) return;
+
+    showView('form');
+
+    document.getElementById('edit-id').value = id;
+    document.getElementById('news-title').value = item.title || '';
+    document.getElementById('news-category').value = item.category || '';
+    document.getElementById('news-author').value = item.author || '';
+    document.getElementById('news-date').value = item.date || '';
+    document.getElementById('news-content').value = item.contentBody || '';
+    document.getElementById('news-image').value = item.featuredImage || '';
+
+    // gallery (safe)
+    const galleryInputs = document.querySelectorAll('.gallery-input');
+    if (Array.isArray(item.gallery)) {
+      item.gallery.forEach((url, i) => {
+        if (galleryInputs[i]) galleryInputs[i].value = url;
+      });
+    }
+
+  } catch (err) {
+    console.error("Edit error:", err);
+  }
+};
+
+/* DELETE SAFE */
+window.deleteNews = async (id) => {
+  if (confirm("Hapus?")) {
+    await deleteDoc(doc(db,'news',id));
+    loadNews();
+  }
+};
+
+/* LOGOUT */
+document.getElementById('logout-btn')
+.addEventListener('click', () => signOut(auth));
+
+</script>
+
 </body>
 </html>
