@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Berita & Kegiatan - BEM FAI UNSIKA</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon/favicon-32.png.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon/favicon-192.png.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="../assets/favicon/favicon-512.png.png">
 
     <!-- Tailwind + Config -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -69,9 +73,25 @@
         .fade-up { transform: translateY(30px); }
         .visible { opacity: 1; transform: translateY(0); }
         
-        /* Card Hover */
-        .article-card { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .article-card:hover { transform: translateY(-10px); }
+        /* Card Hover (Enhanced 3D) */
+        .article-card { 
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            perspective: 2000px;
+            transform-style: preserve-3d;
+        }
+        .article-card:hover { 
+            transform: translateY(-15px) rotateX(4deg) rotateY(2deg);
+            box-shadow: 
+                0 30px 60px -12px rgba(45, 27, 78, 0.12),
+                0 18px 36px -18px rgba(155, 114, 207, 0.2),
+                0 -2px 10px rgba(155, 114, 207, 0.05);
+        }
+        .article-card img {
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .article-card:hover img {
+            transform: scale(1.08) translateZ(20px);
+        }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
@@ -79,21 +99,59 @@
 
         /* Search Input Focus */
         .search-focus:focus-within { box-shadow: 0 0 0 2px #9B72CF; }
-        
-        /* Pagination helper */
-        .pagination-btn.active { 
-            background-color: #5B3A8C; 
-            color: white; 
-            border-color: #5B3A8C;
-        }
 
-        /* Search Suggestions */
+        /* Category Buttons 3D */
+        .category-btn {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .category-btn:hover::before {
+            left: 100%;
+        }
+        .category-btn:hover:not(.active) {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 20px -8px rgba(155, 114, 207, 0.3);
+        }
+        .category-btn.active {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(91, 58, 140, 0.4);
+            background-color: #5B3A8C !important;
+            color: white !important;
+        }
+        .pagination-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .pagination-btn:hover:not(.active):not(:disabled) {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(91, 58, 140, 0.3);
+        }
+        /* Remove redundant second definition */
+        
+        /* Search Suggestions Animation */
         #search-suggestions {
             max-height: 300px;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #9B72CF transparent;
+            transform-origin: top;
+            animation: slideDown 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
+        @keyframes slideDown {
+            from { opacity: 0; transform: scaleY(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scaleY(1) translateY(0); }
+        }
+        
         #search-suggestions::-webkit-scrollbar { width: 4px; }
         #search-suggestions::-webkit-scrollbar-thumb { background: #9B72CF; border-radius: 10px; }
     </style>
@@ -107,7 +165,7 @@
             <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
                 <div class="px-6 lg:px-10">
                     <div class="flex items-center justify-between h-16 lg:h-20">
-                        <a href="home-berita.html" class="flex items-center gap-3 group">
+                        <a href="../index.html" class="flex items-center gap-3 group">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
                                 <img src="../assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
                             </div>
@@ -130,7 +188,7 @@
                                     <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
                                         <a href="../index.html#tentang" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Tentang Kami</a>
                                         <a href="../profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Profil Kabinet</a>
-                                        <a href="../sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah</a>
+                                        <a href="../sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah BEM FAI UNSIKA</a>
                                         <a href="../struktur.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Struktur Kabinet</a>
                                     </div>
                                 </div>
@@ -191,7 +249,7 @@
                         <div id="mob-org-menu" class="hidden pl-6 space-y-1 bg-purple-pale/10 rounded-xl">
                             <a href="../index.html#tentang" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Tentang Kami</a>
                             <a href="../profil.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Profil Kabinet</a>
-                            <a href="../sejarah.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sejarah</a>
+                            <a href="../sejarah.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sejarah BEM FAI UNSIKA</a>
                             <a href="../struktur.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Struktur Kabinet</a>
                         </div>
                     </div>
@@ -211,7 +269,17 @@
                     </div>
 
                     <a href="berita.html" class="block px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-xl">Berita</a>
-                    <a href="../index.html#kontak" class="block px-4 py-3 text-sm font-bold text-center text-white rounded-full mt-6 shadow-lg shadow-purple-med/20" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">Hubungi Kami</a>
+                    
+                    <div class="space-y-1 pt-4">
+                        <button onclick="toggleMobileDropdown('mob-hubungi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-black text-white rounded-2xl shadow-lg" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
+                            Kontak <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-hubungi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="../index.html#aspirasi-pengaduan" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Aspirasi & Pengaduan</a>
+                            <a href="../index.html#kontak" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Hubungi Kami</a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             </nav>
@@ -262,10 +330,10 @@
 
         <!-- FEATURED POST -->
         <section class="max-w-7xl mx-auto px-4 -mt-8 relative z-20">
-            <a href="detail-berita/berita-ldko.html" class="block group">
+            <a href="detail-berita/berita-upgrading.html" class="block group">
                 <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-deep/10 border border-white flex flex-col md:flex-row h-full md:h-[500px]">
                     <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
-                        <img src="../assets/Informasi/Berita/ldko.JPG" alt="Featured Post" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <img src="../assets/Informasi/Berita/upgrading.jpeg" alt="Featured Post" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute top-8 left-8">
                             <span class="px-4 py-2 bg-purple-med text-white text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">Berita Utama</span>
                         </div>
@@ -275,10 +343,10 @@
                             <i data-lucide="calendar" class="w-4 h-4"></i> 7 Februari 2026
                         </div>
                         <h2 class="font-display text-3xl md:text-4xl font-black text-purple-deep mb-6 leading-tight group-hover:text-purple-med transition-colors">
-                            Latihan Dasar Kepemimpinan Organisasi (LDKO 2026)
+                            Upgrading Pengurus BEM FAI 2026
                         </h2>
                         <p class="text-gray-500 line-clamp-3 mb-8 text-lg font-alice leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum sapien non interdum posuere. Curabitur pulvinar est enim, at sagittis dui interdum non. Duis iaculis luctus dolor et aliquam. Aliquam erat volutpat. Sed nec purus eu dui porttitor gravida et sit amet velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque ultrices felis a augue porttitor, quis ullamcorper elit maximus. Phasellus pellentesque eu leo eu vestibulum. Nullam posuere luctus lectus. Praesent neque velit, vestibulum ac rhoncus at, suscipit in erat. Aenean hendrerit pretium nunc, ut tristique leo tempus quis. Aliquam interdum augue purus, in consectetur neque suscipit vel. Donec sollicitudin risus vitae ex finibus, vitae efficitur ante facilisis. Aliquam faucibus sodales justo. Vivamus ac elit eget quam elementum volutpat vitae eget dolor. Integer metus eros, ornare ac gravida maximus, faucibus at ante. Sed rhoncus augue ut nunc elementum, et laoreet turpis faucibus. Curabitur sit amet lectus sem. Nulla sagittis velit at tristique facilisis. Quisque et condimentum enim. Nulla vitae metus tincidunt, gravida felis ut, lobortis libero. Phasellus congue vel libero non pulvinar. Cras in dictum risus, quis consectetur magna. Quisque id libero quis libero tempor rhoncus eget in mi. Maecenas ultrices metus non arcu euismod rutrum. Nullam id dui id ante feugiat ultrices. Nullam blandit pulvinar libero in efficitur. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce venenatis, erat cursus fringilla ultricies, ipsum dolor pretium libero, eget lacinia orci purus in urna. Donec sem felis, semper ut euismod in, commodo non erat. Cras pretium fermentum ex sed ullamcorper. Praesent mauris erat, ornare quis lacinia sed, tempus eu diam. Suspendisse eget gravida ligula. Vestibulum semper dui in ex viverra, id tempus lectus dapibus. Nunc quis felis vel lorem blandit finibus.
+                            Membangun sinergi and solidaritas antar pengurus melalui rangkaian kegiatan intensif di Purwakarta. Fokus utama pada penguatan karakter and harmonisasi kinerja...
                         </p>
                         <div class="flex items-center gap-3 text-purple-med font-bold text-sm tracking-widest group-hover:gap-5 transition-all">
                             BACA SELENGKAPNYA <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -306,7 +374,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 7 Feb 2026
                         </div>
                         <a href="detail-berita/berita-upgrading.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 Upgrading Pengurus BEM FAI 2026
                             </h3>
                         </a>
@@ -314,14 +382,14 @@
                             Menciptakan lingkungan kerja yang solid, kolaboratif, and berorientasi pada pelayanan mahasiswa di tahun kepengurusan 2026.
                         </p>
                         <a href="detail-berita/berita-upgrading.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
 
                 <!-- NEWS CARD 2 -->
                 <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Sosial" data-date="2026-03-01">
-                    <a href="detail-berita/testberita.html" class="block overflow-hidden">
+                    <a href="detail-berita/berita-fai-sigap.html" class="block overflow-hidden">
                         <div class="h-48 relative overflow-hidden">
                             <img src="../assets/Informasi/Berita/fai-sigap1.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
                             <div class="absolute inset-0 bg-black/20"></div>
@@ -332,16 +400,16 @@
                         <div class="flex items-center gap-2 text-xs text-gray-400 mb-3 uppercase tracking-widest">
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 1 Mar 2026
                         </div>
-                        <a href="detail-berita/testberita.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                        <a href="detail-berita/berita-fai-sigap.html" class="hover:text-purple-med transition-colors">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 FAI SIGAP (Siaga Peduli) Banjir
                             </h3>
                         </a>
                         <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
                             Wujud nyata kepedulian sosial BEM FAI terhadap masyarakat Karawang yang terdampak musibah banjir melalui aksi penggalangan dana.
                         </p>
-                        <a href="detail-berita/testberita.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                        <a href="detail-berita/berita-fai-sigap.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
@@ -360,7 +428,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 6 Mar 2026
                         </div>
                         <a href="detail-berita/berita-kisah-kasih-fai.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 Kisah-Kasih FAI Bersama Anak Yatim
                             </h3>
                         </a>
@@ -368,18 +436,18 @@
                             Menebar kehangatan di bulan suci Ramadhan melalui buka puasa bersama and santunan bagi adik-adik di panti asuhan.
                         </p>
                         <a href="detail-berita/berita-kisah-kasih-fai.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
 
                 <!-- NEWS CARD 4 -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kegiatan" data-date="2026-03-10">
+                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kajian" data-date="2026-03-10">
                     <a href="detail-berita/berita-literasa.html" class="block overflow-hidden">
                         <div class="h-48 relative overflow-hidden">
                             <img src="../assets/Informasi/Berita/literasa.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
                             <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">Kegiatan</span>
+                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium">Kajian</span>
                         </div>
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
@@ -387,7 +455,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 10 Mar 2026
                         </div>
                         <a href="detail-berita/berita-literasa.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 LITERASA: Literasi & Buka Puasa
                             </h3>
                         </a>
@@ -395,7 +463,7 @@
                             Menggabungkan penguatan budaya literasi dengan nilai kebersamaan dalam suasana Ramadhan yang penuh berkah.
                         </p>
                         <a href="detail-berita/berita-literasa.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
@@ -414,7 +482,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 16 Apr 2026
                         </div>
                         <a href="detail-berita/berita-ldko.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 Latihan Dasar Kepemimpinan Organisasi
                             </h3>
                         </a>
@@ -422,7 +490,7 @@
                             LDKO 2026 berfokus pada penguatan kapasitas kepemimpinan and manajemen organisasi bagi mahasiswa FAI.
                         </p>
                         <a href="detail-berita/berita-ldko.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
@@ -441,7 +509,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 2 Apr 2026
                         </div>
                         <a href="detail-berita/berita-akrab.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 AKRAB: Ajang Kebersamaan FAI
                             </h3>
                         </a>
@@ -449,7 +517,7 @@
                             Momen silaturahmi penuh keakraban dengan agenda bakar-bakar and berbagi cerita antar pengurus and civitas.
                         </p>
                         <a href="detail-berita/berita-akrab.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
@@ -468,7 +536,7 @@
                             <i data-lucide="calendar" style="width:12px;height:12px;"></i> 16 April 2026
                         </div>
                         <a href="detail-berita/berita-syuu.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep mb-2 line-clamp-2 leading-snug">
+                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
                                 Syukuran Ulang Tahun PDIP
                             </h3>
                         </a>
@@ -476,7 +544,7 @@
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
                         </p>
                         <a href="detail-berita/berita-syuu.html" class="mt-auto inline-flex items-center gap-2 text-purple-med font-bold text-xs hover:gap-3 transition-all">
-                            Lihat detail <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                            Lihat detail <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
                         </a>
                     </div>
                 </article>
