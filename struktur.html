@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struktur Kabinet</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32.png.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/favicon-192.png.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="assets/favicon/favicon-512.png.png">
 
     <!-- Tailwind + Config -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -37,8 +41,28 @@
         html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         .font-display { font-family: 'Playfair Display', serif; }
         
-        /* Navbar Styles from Index */
-        .nav-scrolled { box-shadow: 0 4px 30px rgba(45, 27, 78, 0.08); background: rgba(255, 255, 255, 0.98) !important; }
+        /* Navbar Styles - Floating Capsule Concept */
+        #nav-container { 
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 95%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nav-capsule {
+            margin-top: 1.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(155, 114, 207, 0.2);
+            box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05);
+        }
+        .nav-scrolled .nav-capsule {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12);
+            border: 1px solid rgba(155, 114, 207, 0.1);
+        }
+        
         .nav-active { color: #9B72CF; position: relative; }
         .nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
 
@@ -194,190 +218,194 @@
 
     <div id="app-wrapper" class="w-full h-full overflow-auto">
         
-        <!-- NAVBAR -->
-        <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-             style="background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(212,190,240,0.3);">
+        <!-- NAVBAR - Floating Capsule Concept -->
+        <div id="nav-container" class="fixed top-0 z-50 transition-all duration-500">
+            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
+                <div class="px-6 lg:px-10">
+                    <div class="flex items-center justify-between h-16 lg:h-20">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
+                                <img src="assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
+                            </div>
+                            <div class="block text-xs sm:text-sm">
+                                <div class="font-bold text-purple-deep text-sm leading-tight">BEM FAI UNSIKA</div>
+                                <div class="text-[10px] text-purple-med font-medium tracking-wider">Kabinet Poros Katalist</div>
+                            </div>
+                        </a>
 
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 lg:h-20">
+                        <!-- Desktop Menu -->
+                        <div class="hidden lg:flex items-center gap-2">
+                            <a href="index.html#beranda" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">Beranda</a>
+                            
+                            <!-- Organisasi Dropdown -->
+                            <div class="relative group">
+                                <button class="px-4 py-2 text-sm font-bold text-purple-med nav-active rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Organisasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="index.html#tentang" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Tentang Kami</a>
+                                        <a href="profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Profil Kabinet</a>
+                                        <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah BEM FAI UNSIKA</a>
+                                        <a href="struktur.html" class="block px-4 py-2 text-sm text-purple-med bg-purple-pale/50 rounded-xl transition-colors">Struktur Kabinet</a>
+                                    </div>
+                                </div>
+                            </div>
 
-              <!-- LOGO -->
-              <a href="index.html#Beranda" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl overflow-hidden shadow-sm">
-                  <img src="assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
-                </div>
-                <div class="block sm:block text-xs sm:text-sm">
-                  <div class="font-bold text-purple-deep text-sm leading-tight">
-                    BEM FAI UNSIKA
-                  </div>
-                  <div class="text-[10px] text-purple-med font-medium tracking-wider">
-                    Kabinet Poros Katalist
-                  </div>
-                </div>
-              </a>
+                            <a href="berita/home-berita.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">Berita</a>                
 
-              <!-- MENU DESKTOP -->
-              <div class="hidden lg:flex items-center gap-1">
+                            <!-- Kontak Dropdown -->
+                            <div class="relative group">
+                                <button class="ml-4 px-6 py-2.5 text-sm font-bold text-white rounded-full flex items-center gap-2 shadow-lg shadow-purple-med/20 group-hover:shadow-purple-med/40 transition-all hover:-translate-y-0.5"
+                                        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
+                                    Kontak <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block right-0 pt-2 w-56">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="index.html#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Aspirasi & Pengaduan</a>
+                                        <a href="index.html#kontak" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Hubungi Kami</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                <a href="index.html#Beranda" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
-                  Beranda
-                </a>
-
-                <a href="index.html#tentang" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
-                  Tentang
-                </a>
-
-                <!-- PROFIL -->
-                <div class="dropdown relative">
-                  <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 flex items-center gap-1 transition-colors">
-                    Profil <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                  </button>
-                  <div class="dropdown-menu pt-2">
-                    <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-                      <a href="profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Profil Kabinet</a>
-                      <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Sejarah BEM FAI UNSIKA</a>
+                        <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
+                            <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
+                        </button>
                     </div>
-                  </div>
                 </div>
 
-                <a href="struktur.html" class="nav-link px-3 py-2 text-sm font-medium text-purple-med nav-active rounded-lg hover:bg-purple-pale/50 transition-colors">
-                  Struktur Kabinet
-                </a>
-
-                <a href="index.html#proker" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 transition-colors">
-                  Program Kerja
-                </a>
-
-                <!-- INFORMASI -->
-                <div class="dropdown relative">
-                  <button class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-purple-med rounded-lg hover:bg-purple-pale/50 flex items-center gap-1 transition-colors">
-                    Informasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                  </button>
-                  <div class="dropdown-menu pt-2">
-                    <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-                      <a href="index.html#berita" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Berita</a>
-                      <a href="index.html#media" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Media</a>
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden lg:hidden px-6 py-8 space-y-2 bg-white rounded-[40px] mt-4 border border-purple-pale/30 shadow-2xl overflow-hidden transition-all duration-300">
+                    <a href="index.html#Beranda" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Beranda</a>                    
+                    
+                    <div class="space-y-1">
+                        <button onclick="toggleMobileDropdown('mob-organisasi')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-xl transition-colors">
+                            Organisasi <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-organisasi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="index.html#tentang" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Tentang Kami</a>
+                            <a href="profil.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Profil Kabinet</a>
+                            <a href="sejarah.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Sejarah BEM FAI UNSIKA</a>
+                            <a href="struktur.html" class="block px-4 py-2 text-xs font-bold text-purple-med transition-colors">Struktur Kabinet</a>
+                        </div>
                     </div>
-                  </div>
-                </div>
 
-                <!-- HUBUNGI KAMI DROPDOWN -->
-                <div class="dropdown relative">
-        <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all"
-        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
-        Hubungi Kami
-        <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-        </button>
-        <div class="dropdown-menu pt-2">
-         <div class="bg-white rounded-xl shadow-xl border border-purple-pale/50 overflow-hidden p-2">
-          <a href="index.html#aspirasi-pengaduan" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Aspirasi & Pengaduan</a>          
-          <a href="index.html#kontak" class="block px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-pale/50 hover:text-purple-med rounded-lg transition-colors">Kontak</a>
-         </div>
+                    <a href="berita/home-berita.html" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Berita</a>                                  
+
+                    <div class="space-y-1 pt-4">
+                        <button onclick="toggleMobileDropdown('mob-hubungi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-black text-white rounded-2xl shadow-lg" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
+                            Kontak <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-hubungi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="index.html#aspirasi-pengaduan" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Aspirasi & Pengaduan</a>
+                            <a href="index.html#kontak" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Hubungi Kami</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
-       </div>
-
-              </div>
-
-              <!-- MOBILE BUTTON -->
-              <button id="mobile-toggle" class="lg:hidden p-2 rounded-lg hover:bg-purple-pale/50 transition-colors">
-                <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
-              </button>
-
-            </div>
-          </div>
-
-          <!-- MOBILE MENU -->
-          <div id="mobile-menu" class="lg:hidden hidden border-t border-purple-pale/30 bg-white shadow-2xl">
-            <div class="px-4 py-4 space-y-2">
-              <a href="index.html#Beranda" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Beranda</a>
-              <a href="index.html#tentang" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Tentang</a>
-              
-              <div>
-                <button id="mob-profil-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg transition-colors">
-                  Profil <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                </button>
-                <div id="mob-profil-sub" class="hidden pl-4 mt-1 space-y-1">
-                  <a href="profil.html" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Profil Kabinet</a>
-                  <a href="sejarah.html" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Sejarah BEM FAI UNSIKA</a>
-                </div>
-              </div>
-
-              <a href="struktur.html" class="block px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-lg">Struktur Kabinet</a>
-              <a href="index.html#proker" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg">Program Kerja</a>
-              
-              <div>
-                <button id="mob-informasi-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-pale/50 rounded-lg transition-colors">
-                  Informasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                </button>
-                <div id="mob-informasi-sub" class="hidden pl-4 mt-1 space-y-1">
-                  <a href="index.html#berita" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Berita</a>
-                  <a href="index.html#media" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Media</a>
-                </div>
-              </div>
-
-              <div>
-                <button id="mob-hubungi-btn" class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-center text-white rounded-lg mt-4 transition-all" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
-                  Hubungi Kami <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                </button>
-                <div id="mob-hubungi-sub" class="hidden pl-4 mt-1 space-y-1">
-                  <a href="index.html#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Aspirasi & Pengaduan</a>
-                  <a href="index.html#kontak" class="block px-4 py-2 text-sm text-gray-500 hover:text-purple-med">Kontak</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
 
         <!-- HERO / Beranda -->
-        <section id="Beranda"
-          class="relative overflow-hidden flex items-center justify-center 
-                 min-h-[40vh] sm:min-h-[80vh] lg:min-h-screen
-                 bg-cover bg-center"
-          style="background-image: url('assets/Foto%20Card/kabinet.jpg');">
+<section class="relative overflow-hidden">
 
-          <!-- OVERLAY -->
-          <div class="absolute inset-0 bg-gray-700/60"></div>
+    <!-- Background Hero -->
+    <div class="absolute inset-0"
+        style="
+            background:
+            linear-gradient(
+                160deg,
+                rgba(45,27,78,0.45) 0%,
+                rgba(91,58,140,0.35) 50%,
+                rgba(155,114,207,0.25) 100%
+            ),
+            url('assets/informasi/media/ldko.JPG');
 
-          <!-- ORBS -->
-          <div class="hero-orb w-96 h-96 absolute -top-20 -right-10 bg-[#9B72CF]"></div>
-          <div class="hero-orb w-72 h-72 absolute bottom-10 -left-10 bg-[#D4BEF0]"></div>
-          <div class="hero-orb w-48 h-48 absolute top-1/3 right-1/3 bg-[#5B3A8C]/20"></div>
+            background-size: cover;
+            background-position: center 20%;
+        ">
+    </div>
 
-          <!-- SHAPES -->
-          <div class="absolute top-20 left-10 w-3 h-3 bg-purple-300/30 rounded-full float-anim"></div>
-          <div class="absolute top-40 right-20 w-2 h-2 bg-white/20 rounded-full float-anim delay-2000"></div>
-          <div class="absolute bottom-32 left-1/4 w-4 h-4 border border-white/10 rounded rotate-45 float-anim delay-1000"></div>
+    <!-- Soft Overlay -->
+    <div class="absolute inset-0 bg-black/10"></div>
 
-          <!-- CONTENT -->
-          <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
-                    text-center py-16 sm:py-24 lg:py-32 section-fade fade-up">
-            <h1 id="hero-title" class="font-display font-black text-white leading-tight">
-              <span class="block text-4xl sm:text-5xl md:text-6xl">
-                Struktur Kabinet
-              </span>
-              <span class="block text-5xl sm:text-6xl md:text-7xl">
-                Poros Katalist
-              </span>
-            </h1>
-          </div>
+    <!-- Hero Orbs -->
+    <div class="hero-orb w-96 h-96"
+        style="top:-10%;right:-5%;background:#9B72CF;">
+    </div>
 
-          <!-- WAVE -->
-          <div class="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" class="w-full h-auto">
-              <path
-                d="M0 120L48 108C96 96 192 72 288 66C384 60 480 72 576 78C672 84 768 84 864 78C960 72 1056 60 1152 60C1248 60 1344 72 1392 78L1440 84V120H0Z"
-                fill="#F3ECFA" />
-            </svg>
-          </div>
+    <div class="hero-orb w-72 h-72"
+        style="bottom:10%;left:-5%;background:#D4BEF0;">
+    </div>
 
-        </section>
+    <!-- Content -->
+    <main class="relative z-10 pt-36 md:pt-44 pb-40 overflow-x-hidden">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="text-center mb-10 section-fade">
+
+                <span class="inline-block px-5 py-2 bg-white/80 backdrop-blur-sm text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-8 shadow-sm border border-white/40">
+
+                    Struktur Kabinet
+
+                </span>
+
+                <h1 class="font-display text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
+
+                    STRUKTUR KABINET<br>
+
+                    <span class="text-purple-soft font-light italic">
+                        POROS KATALIST
+                    </span>
+
+                </h1>
+
+                <p class="text-white/80 max-w-2xl mx-auto text-lg leading-relaxed">
+                    Membangun sinergi, menghadirkan inovasi,
+                    dan menggerakkan perubahan bersama mahasiswa FAI UNSIKA.
+                </p>
+
+            </div>
+
+            <!-- TIMELINE SECTION -->
+            <div class="timeline-container max-w-5xl mx-auto">
+
+                <!-- The Track -->
+                <div class="timeline-line"></div>
+
+                <!-- The Train (Dot) -->
+                <div id="timeline-dot"></div>
+
+                <!-- Items -->
+                <div id="timeline-list" class="space-y-40">
+                    <!-- Cabinet entries injected by JS -->
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Bottom Wave -->
+<div class="absolute bottom-[-1px] left-0 right-0 leading-none">
+    <svg viewBox="0 0 1440 120" fill="none" class="block w-full">
+        <path
+          d="M0 120L48 108C96 96 192 72 288 66C384 60 480 72 576 78C672 84 768 84 864 78C960 72 1056 60 1152 60C1248 60 1344 72 1392 78L1440 84V120H0Z"
+          fill="#F3ECFA" />
+    </svg>
+</div>
+
+</section>
 
         <!-- MAIN CONTENT -->
-        <main class="max-w-7xl mx-auto px-4 mt-24 pb-32">
+        <main class="max-w-7xl mx-auto px-4 mt-10 pb-32">
             
             <!-- SECTION BPH -->
             <section id="BPH" class="mb-48 text-center section-fade fade-up">
-                <h2 class="font-display text-5xl md:text-7xl font-black text-purple-deep text-center mb-8 tracking-tighter">
+                <h2 class="font-display text-4xl md:text-5xl font-black text-purple-deep text-center mb-8 tracking-tighter">
                     BPH <br/> <span class="text-purple-med/30 font-light italic">Badan Pengurus Harian.</span>
                 </h2>
                 <p class="text-purple-med/70 max-w-xl mx-auto italic mb-20 font-sans">"Bergerak dari Nilai, Bertumbuh untuk Perubahan. Menjadi pusat energi yang mengkatalisasi setiap potensi mahasiswa FAI."</p>
@@ -395,8 +423,8 @@
 
             <!-- SECTION BIDANG -->
             <section id="bidang" class="section-fade">
-                <h2 class="font-display text-5xl md:text-7xl font-black text-purple-deep text-center mb-32 tracking-tighter">
-                    Cabang <br/> <span class="text-purple-med/30 font-light italic lowercase">pergerakan.</span>
+                <h2 class="font-display text-4xl md:text-5xl font-black text-purple-deep text-center mb-32 tracking-tighter">
+                    Struktur <br/> <span class="text-purple-med/30 font-light italic lowercase">Bidang.</span>
                 </h2>
                 <div id="divisions-container" class="space-y-24">
                     <!-- Rendered JS -->
@@ -747,125 +775,176 @@
             lucide.createIcons();
         }
 
-        function initInteractiveEffects() {
-            const cards = document.querySelectorAll('.card-container');
-            cards.forEach(card => {
-                const inner = card.querySelector('.card-inner');
-                const overlay = card.querySelector('.card-overlay');
+        /* =========================================================
+   1. MOBILE MENU TOGGLE
+========================================================= */
 
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = (centerY - y) / 10;
-                    const rotateY = (x - centerX) / 10;
-                    
-                    inner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                    inner.style.transition = 'none';
+// Klik tombol hamburger → buka/tutup menu mobile
+document.getElementById('mobile-toggle')
+    .addEventListener('click', toggleMobileMenu);
 
-                    const shadowX = (centerX - x) / 5;
-                    const shadowY = (centerY - y) / 5;
-                    inner.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0,0,0,0.15)`;
-                });
+// Fungsi toggle menu utama mobile
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+}
 
-                card.addEventListener('mouseleave', () => {
-                    inner.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-                    inner.style.transition = 'all 0.5s ease';
-                    inner.style.boxShadow = `0 10px 30px rgba(0,0,0,0.3)`;
-                });
+/* =========================================================
+   2. MOBILE DROPDOWN TOGGLE
+   (dipakai via onclick di HTML)
+========================================================= */
 
-                card.addEventListener('click', () => {
-                    overlay.classList.toggle('active');
-                });
-            });
+// Dipanggil langsung dari HTML:
+// onclick="toggleMobileDropdown('mob-organisasi')"
+function toggleMobileDropdown(id) {
+    const menu = document.getElementById(id);
+    if (!menu) return; // safety guard kalau ID tidak ada
 
-            const expandBtns = document.querySelectorAll('.expand-btn');
-            expandBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const content = btn.parentElement.nextElementSibling;
-                    const textSpan = btn.querySelector('span');
-                    const icon = btn.querySelector('i');
-                    const isHidden = content.classList.contains('hidden');
-                    
-                    content.classList.toggle('hidden');
-                    if (isHidden) {
-                        textSpan.textContent = "SEMBUNYIKAN DEPARTEMEN";
-                        icon.style.transform = "rotate(180deg)";
-                    } else {
-                        textSpan.textContent = "LIHAT DEPARTEMEN";
-                        icon.style.transform = "rotate(0deg)";
-                    }
-                });
-            });
-        }
+    menu.classList.toggle('hidden');
+}
 
-        function initBackToTop() {
-            const btn = document.getElementById('back-to-top');
-            const wrapper = document.getElementById('app-wrapper');
-            wrapper.addEventListener('scroll', () => {
-                if (wrapper.scrollTop > 500) {
-                    btn.classList.add('visible');
-                    btn.style.opacity = "1";
-                    btn.style.pointerEvents = "auto";
-                } else {
-                    btn.classList.remove('visible');
-                    btn.style.opacity = "0";
-                    btn.style.pointerEvents = "none";
-                }
-            });
-            btn.addEventListener('click', () => {
-                wrapper.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
+/* =========================================================
+   3. INTERACTIVE CARD EFFECT (3D HOVER)
+========================================================= */
 
-        function initNavbar() {
-            const navbar = document.getElementById('navbar');
-            const mobileToggle = document.getElementById('mobile-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const wrapper = document.getElementById('app-wrapper');
+function initInteractiveEffects() {
+    const cards = document.querySelectorAll('.card-container');
 
-            wrapper.addEventListener('scroll', () => {
-                if (wrapper.scrollTop > 50) {
-                    navbar.classList.add('nav-scrolled');
-                } else {
-                    navbar.classList.remove('nav-scrolled');
-                }
-            });
+    cards.forEach(card => {
+        const inner = card.querySelector('.card-inner');
+        const overlay = card.querySelector('.card-overlay');
 
-            mobileToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+        // Efek tilt 3D saat mouse bergerak
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
 
-            function setupMobileDropdown(btnId, subId) {
-                const btn = document.getElementById(btnId);
-                const sub = document.getElementById(subId);
-                if (btn && sub) {
-                    btn.addEventListener('click', () => {
-                        sub.classList.toggle('hidden');
-                    });
-                }
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = (centerY - y) / 10;
+            const rotateY = (x - centerX) / 10;
+
+            inner.style.transform =
+                `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            inner.style.transition = 'none';
+
+            const shadowX = (centerX - x) / 5;
+            const shadowY = (centerY - y) / 5;
+
+            inner.style.boxShadow =
+                `${shadowX}px ${shadowY}px 30px rgba(0,0,0,0.15)`;
+        });
+
+        // Reset posisi saat mouse keluar
+        card.addEventListener('mouseleave', () => {
+            inner.style.transform =
+                `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+
+            inner.style.transition = 'all 0.5s ease';
+
+            inner.style.boxShadow =
+                `0 10px 30px rgba(0,0,0,0.3)`;
+        });
+
+        // Klik card → tampilkan/hidden quote overlay
+        card.addEventListener('click', () => {
+            overlay.classList.toggle('active');
+        });
+    });
+
+    /* =====================================================
+       4. EXPAND / COLLAPSE DEPARTEMEN
+    ===================================================== */
+
+    const expandBtns = document.querySelectorAll('.expand-btn');
+
+    expandBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const content = btn.parentElement.nextElementSibling;
+            const textSpan = btn.querySelector('span');
+            const icon = btn.querySelector('i');
+
+            const isHidden = content.classList.contains('hidden');
+
+            content.classList.toggle('hidden');
+
+            if (isHidden) {
+                textSpan.textContent = "SEMBUNYIKAN DEPARTEMEN";
+                icon.style.transform = "rotate(180deg)";
+            } else {
+                textSpan.textContent = "LIHAT DEPARTEMEN";
+                icon.style.transform = "rotate(0deg)";
             }
+        });
+    });
+}
 
-            setupMobileDropdown('mob-profil-btn', 'mob-profil-sub');
-            setupMobileDropdown('mob-informasi-btn', 'mob-informasi-sub');
-            setupMobileDropdown('mob-hubungi-btn', 'mob-hubungi-sub');
+/* =========================================================
+   5. BACK TO TOP BUTTON
+========================================================= */
+
+function initBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    const wrapper = document.getElementById('app-wrapper');
+
+    // Scroll detect
+    wrapper.addEventListener('scroll', () => {
+        if (wrapper.scrollTop > 500) {
+            btn.classList.add('visible');
+            btn.style.opacity = "1";
+            btn.style.pointerEvents = "auto";
+        } else {
+            btn.classList.remove('visible');
+            btn.style.opacity = "0";
+            btn.style.pointerEvents = "none";
         }
+    });
 
-        function initScrollAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { 
-                threshold: 0.1 
-            });
+    // Klik → scroll ke atas
+    btn.addEventListener('click', () => {
+        wrapper.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
 
-            document.querySelectorAll('.section-fade').forEach(el => observer.observe(el));
+/* =========================================================
+   6. NAVBAR SCROLL EFFECT
+========================================================= */
+
+function initNavbar() {
+    const navbar = document.getElementById('navbar');
+    const wrapper = document.getElementById('app-wrapper');
+
+    wrapper.addEventListener('scroll', () => {
+        if (wrapper.scrollTop > 50) {
+            navbar.classList.add('nav-scrolled');
+        } else {
+            navbar.classList.remove('nav-scrolled');
         }
+    });
+}
+
+/* =========================================================
+   7. SCROLL ANIMATION (Intersection Observer)
+========================================================= */
+
+function initScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    document.querySelectorAll('.section-fade')
+        .forEach(el => observer.observe(el));
+}
     </script>
 
 
