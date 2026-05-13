@@ -304,293 +304,537 @@
         <button id="backToTop" class="fixed bottom-5 right-5 w-12 h-12 bg-purple-med text-white rounded-xl shadow-lg opacity-0 transition-opacity"><i data-lucide="chevron-up" class="m-auto"></i></button>
     </div>
 
-    <!-- FIREBASE LOGIC -->
-    <script type="module">
-    import { db, collection, getDocs, query, orderBy } from '../js/firebase-init.js';
+<!-- ========================================= -->
+<!-- SCRIPT UTAMA WEBSITE BERITA BEM FAI -->
+<!-- ========================================= -->
 
-    let currentPage = 1;
-    const itemsPerPage = 6;
-    let allNewsData = [];
+<script type="module">
 
-    /* FORMAT TANGGAL INDONESIA */
-    function formatTanggal(dateString) {
+/* =========================================
+   IMPORT FIREBASE
+========================================= */
+import {
+    db,
+    collection,
+    getDocs,
+    query,
+    orderBy
+} from '../js/firebase-init.js';
 
-        const bulanIndonesia = [
-            "Januari",
-            "Februari",
-            "Maret",
-            "April",
-            "Mei",
-            "Juni",
-            "Juli",
-            "Agustus",
-            "September",
-            "Oktober",
-            "November",
-            "Desember"
-        ];
 
-        const date = new Date(dateString);
+/* =========================================
+   GLOBAL VARIABLE
+========================================= */
+let currentPage = 1;
+const itemsPerPage = 6;
+let allNewsData = [];
 
-        const hari = date.getDate();
-        const bulan = bulanIndonesia[date.getMonth()];
-        const tahun = date.getFullYear();
 
-        return `${hari} ${bulan} ${tahun}`;
-    }
+/* =========================================
+   FORMAT TANGGAL INDONESIA
+========================================= */
+function formatTanggal(dateString) {
 
-    /* FETCH NEWS */
-    async function fetchNews() {
+    const bulanIndonesia = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
 
-        try {
+    const date = new Date(dateString);
 
-            const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+    const hari = date.getDate();
+    const bulan = bulanIndonesia[date.getMonth()];
+    const tahun = date.getFullYear();
 
-            const querySnapshot = await getDocs(q);
+    return `${hari} ${bulan} ${tahun}`;
+}
 
-            allNewsData = [];
 
-            querySnapshot.forEach(doc => {
-                allNewsData.push({
-                    id: doc.id,
-                    ...doc.data()
-                });
+/* =========================================
+   FETCH DATA BERITA DARI FIREBASE
+========================================= */
+async function fetchNews() {
+
+    try {
+
+        const q = query(
+            collection(db, 'news'),
+            orderBy('date', 'desc')
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        allNewsData = [];
+
+        querySnapshot.forEach(doc => {
+
+            allNewsData.push({
+                id: doc.id,
+                ...doc.data()
             });
 
-            if (allNewsData.length > 0) {
-                renderFeatured(allNewsData[0]);
-            }
+        });
 
-            updateDisplay();
+        /* =========================================
+           TAMPILKAN FEATURED BERITA PERTAMA
+        ========================================= */
+        if (allNewsData.length > 0) {
 
-        } catch (error) {
+            renderFeatured(allNewsData[0]);
 
-            console.error(error);
-
-            document.getElementById('berita-grid').innerHTML = `
-                <div class="col-span-full py-20 text-center text-red-500">
-                    Gagal memuat berita.
-                </div>
-            `;
         }
+
+        updateDisplay();
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById('berita-grid').innerHTML = `
+            <div class="col-span-full py-20 text-center text-red-500">
+                Gagal memuat berita.
+            </div>
+        `;
     }
+}
 
-    /* FEATURED */
-    function renderFeatured(item) {
 
-        const summary = item.contentBody
-            ? item.contentBody.substring(0, 200).replace(/<[^>]*>?/gm, '')
-            : '';
+/* =========================================
+   RENDER FEATURED NEWS
+========================================= */
+function renderFeatured(item) {
 
-        document.getElementById('featured-section').innerHTML = `
-            <a href="detail-berita/view.html?id=${item.id}" class="block group">
+    const summary = item.contentBody
+        ? item.contentBody
+            .substring(0, 200)
+            .replace(/<[^>]*>?/gm, '')
+        : '';
 
-                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-deep/10 border border-white flex flex-col md:flex-row h-full md:h-[500px]">
+    document.getElementById('featured-section').innerHTML = `
 
-                    <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
-                        <img src="${item.featuredImage}"
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    </div>
+        <a href="detail-berita/view.html?id=${item.id}"
+           class="block group">
 
-                    <div class="md:w-2/5 p-12 flex flex-col justify-center bg-white">
+            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-deep/10 border border-white flex flex-col md:flex-row h-full md:h-[500px]">
 
-                        <div class="absolute top-8 left-8">
-                            <span class="px-4 py-2 bg-purple-med text-white text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">Berita Terbaru</span>
-                        </div>
+                <!-- IMAGE -->
+                <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
 
-                        <div class="flex items-center gap-2 text-xs text-purple-med/60 font-bold mb-4">
-                            <i data-lucide="calendar" class="w-3 h-3"></i>
-                            <span>${formatTanggal(item.date)}</span>
-                        </div>
+                    <img src="${item.featuredImage}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
 
-                        <h2 class="font-display text-3xl md:text-4xl font-black text-purple-deep mb-6 leading-tight group-hover:text-purple-med transition-colors">
-                            ${item.title}
-                        </h2>
+                </div>
 
-                        <p class="text-gray-500 line-clamp-3 mb-8 text-lg font-alice leading-relaxed">
-                            ${summary}...
-                        </p>
+                <!-- CONTENT -->
+                <div class="md:w-2/5 p-12 flex flex-col justify-center bg-white">
 
-                        <span class="flex items-center gap-3 text-purple-med font-bold text-sm tracking-widest group-hover:gap-5 transition-all">
-                            Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <!-- BADGE -->
+                    <div class="absolute top-8 left-8">
+
+                        <span class="px-4 py-2 bg-purple-med text-white text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">
+                            Berita Terbaru
                         </span>
 
                     </div>
 
-                </div>
+                    <!-- DATE -->
+                    <div class="flex items-center gap-2 text-xs text-purple-med/60 font-bold mb-4">
 
-            </a>
-        `;
-
-        document.getElementById('featured-section')
-            .classList.remove('hidden');
-
-        lucide.createIcons();
-    }
-
-    /* UPDATE GRID */
-    function updateDisplay() {
-
-        const grid = document.getElementById('berita-grid');
-
-        const filter = document.querySelector('.category-btn.active')
-            .getAttribute('data-filter');
-
-        const buttons = document.querySelectorAll('.category-btn');
-
-        const searchQuery = document.getElementById('blog-search')
-            .value
-            .toLowerCase();
-
-        const filtered = allNewsData.filter(item => {
-
-            const categoryMatch =
-                filter === 'all' || item.category === filter;
-
-            const titleMatch =
-                item.title.toLowerCase().includes(searchQuery);
-
-            return categoryMatch && titleMatch;
-        });
-
-        const totalPages = Math.ceil(filtered.length / itemsPerPage);
-
-        const start = (currentPage - 1) * itemsPerPage;
-
-        const items = filtered.slice(start, start + itemsPerPage);
-
-        grid.innerHTML = items.map(item => `
-
-            <article class="article-card bg-white rounded-3xl overflow-hidden shadow-lg border border-purple-pale/30 flex flex-col">
-
-                <a href="detail-berita/view.html?id=${item.id}"
-                   class="block h-48 overflow-hidden relative">
-
-                    <img src="${item.featuredImage}"
-                         class="w-full h-full object-cover">
-
-                    <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 text-purple-med text-[10px] font-black rounded-full uppercase">
-                        ${item.category}
-                    </span>
-
-                </a>
-
-                <div class="p-6">
-
-                    <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
                         <i data-lucide="calendar" class="w-3 h-3"></i>
+
                         <span>${formatTanggal(item.date)}</span>
+
                     </div>
 
-                    <h3 class="font-bold text-purple-deep mb-4 italic line-clamp-2">
+                    <!-- TITLE -->
+                    <h2 class="font-display text-3xl md:text-4xl font-black text-purple-deep mb-6 leading-tight group-hover:text-purple-med transition-colors">
+
                         ${item.title}
-                    </h3>
 
-                    <a href="detail-berita/view.html?id=${item.id}"
-                       class="text-purple-med font-black text-xs tracking-widest flex items-center gap-2">
+                    </h2>
 
-                        BACA SELENGKAPNYA
+                    <!-- SUMMARY -->
+                    <p class="text-gray-500 line-clamp-3 mb-8 text-lg font-alice leading-relaxed">
+
+                        ${summary}...
+
+                    </p>
+
+                    <!-- BUTTON -->
+                    <span class="flex items-center gap-3 text-purple-med font-bold text-sm tracking-widest group-hover:gap-5 transition-all">
+
+                        Baca Selengkapnya
 
                         <i data-lucide="external-link" class="w-4 h-4"></i>
 
-                    </a>
+                    </span>
 
                 </div>
 
-            </article>
-
-        `).join('') || `
-            <div class="col-span-full py-20 text-center text-gray-400">
-                Tidak ada berita.
             </div>
+
+        </a>
+    `;
+
+    document
+        .getElementById('featured-section')
+        .classList.remove('hidden');
+
+    lucide.createIcons();
+}
+
+
+/* =========================================
+   UPDATE GRID BERITA
+========================================= */
+function updateDisplay() {
+
+    const grid = document.getElementById('berita-grid');
+
+    const filter = document
+        .querySelector('.category-btn.active')
+        .getAttribute('data-filter');
+
+    const searchQuery = document
+        .getElementById('blog-search')
+        .value
+        .toLowerCase();
+
+    /* =========================================
+       FILTER BERITA
+    ========================================= */
+    const filtered = allNewsData.filter(item => {
+
+        const categoryMatch =
+            filter === 'all' ||
+            item.category === filter;
+
+        const titleMatch =
+            item.title.toLowerCase()
+            .includes(searchQuery);
+
+        return categoryMatch && titleMatch;
+    });
+
+    /* =========================================
+       PAGINATION
+    ========================================= */
+    const totalPages = Math.ceil(
+        filtered.length / itemsPerPage
+    );
+
+    const start =
+        (currentPage - 1) * itemsPerPage;
+
+    const items =
+        filtered.slice(start, start + itemsPerPage);
+
+    /* =========================================
+       RENDER NEWS CARD
+    ========================================= */
+    grid.innerHTML = items.map(item => `
+
+        <article class="article-card bg-white rounded-3xl overflow-hidden shadow-lg border border-purple-pale/30 flex flex-col">
+
+            <!-- IMAGE -->
+            <a href="detail-berita/view.html?id=${item.id}"
+               class="block h-48 overflow-hidden relative">
+
+                <img src="${item.featuredImage}"
+                     class="w-full h-full object-cover">
+
+                <!-- CATEGORY -->
+                <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 text-purple-med text-[10px] font-black rounded-full uppercase">
+
+                    ${item.category}
+
+                </span>
+
+            </a>
+
+            <!-- CONTENT -->
+            <div class="p-6">
+
+                <!-- DATE -->
+                <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
+
+                    <i data-lucide="calendar" class="w-3 h-3"></i>
+
+                    <span>${formatTanggal(item.date)}</span>
+
+                </div>
+
+                <!-- TITLE -->
+                <h3 class="font-bold text-purple-deep mb-4 italic line-clamp-2">
+
+                    ${item.title}
+
+                </h3>
+
+                <!-- BUTTON -->
+                <a href="detail-berita/view.html?id=${item.id}"
+                   class="text-purple-med font-black text-xs tracking-widest flex items-center gap-2">
+
+                    BACA SELENGKAPNYA
+
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+
+                </a>
+
+            </div>
+
+        </article>
+
+    `).join('') || `
+
+        <div class="col-span-full py-20 text-center text-gray-400">
+
+            Tidak ada berita.
+
+        </div>
+
+    `;
+
+    renderPagination(totalPages);
+
+    lucide.createIcons();
+}
+
+
+/* =========================================
+   RENDER PAGINATION
+========================================= */
+function renderPagination(totalPages) {
+
+    const container =
+        document.getElementById('pagination-container');
+
+    container.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+
+        const btn = document.createElement('button');
+
+        btn.className = `
+            pagination-btn
+            w-10
+            h-10
+            rounded-lg
+            border
+            font-bold
+            ${
+                i === currentPage
+                ? 'bg-purple-med text-white'
+                : 'bg-white text-gray-500'
+            }
         `;
 
-        renderPagination(totalPages);
+        btn.innerText = i;
 
-        lucide.createIcons();
-    }
+        btn.onclick = () => {
 
-    /* PAGINATION */
-    function renderPagination(totalPages) {
+            currentPage = i;
 
-        const container = document.getElementById('pagination-container');
+            updateDisplay();
 
-        container.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        for (let i = 1; i <= totalPages; i++) {
-
-            const btn = document.createElement('button');
-
-            btn.className =
-                `w-10 h-10 rounded-lg border font-bold ${
-                    i === currentPage
-                    ? 'bg-purple-med text-white'
-                    : 'bg-white text-gray-500'
-                }`;
-
-            btn.innerText = i;
-
-            btn.onclick = () => {
-
-                currentPage = i;
-
-                updateDisplay();
-
-                window.scrollTo({
+            document.getElementById('app-wrapper')
+                .scrollTo({
                     top: 500,
                     behavior: 'smooth'
                 });
-            };
 
-            container.appendChild(btn);
-        }
+        };
+
+        container.appendChild(btn);
     }
+}
 
-    /* INIT */
-    document.addEventListener('DOMContentLoaded', () => {
 
-        fetchNews();
+/* =========================================
+   NAVBAR SCROLL EFFECT
+========================================= */
+function initNavbar() {
 
-        document.querySelectorAll('.category-btn')
-            .forEach(btn => {
+    const wrapper =
+        document.getElementById('app-wrapper');
 
-                btn.onclick = () => {
+    const mobileToggle =
+        document.getElementById('mobile-toggle');
 
-                    document.querySelectorAll('.category-btn')
-                        .forEach(b => b.classList.remove('active'));
+    wrapper.addEventListener('scroll', () => {
 
-                    btn.classList.add('active');
+        if (wrapper.scrollTop > 50) {
 
-                    currentPage = 1;
+            document
+                .getElementById('nav-container')
+                .classList.add('nav-scrolled');
 
-                    updateDisplay();
-                };
-            });
+        } else {
 
-        document.getElementById('blog-search')
-            .oninput = () => {
+            document
+                .getElementById('nav-container')
+                .classList.remove('nav-scrolled');
+        }
+    });
+
+    /* MOBILE TOGGLE */
+    mobileToggle.addEventListener(
+        'click',
+        toggleMobileMenu
+    );
+}
+
+
+/* =========================================
+   TOGGLE MOBILE MENU
+========================================= */
+function toggleMobileMenu() {
+
+    const mobileMenu =
+        document.getElementById('mobile-menu');
+
+    mobileMenu.classList.toggle('hidden');
+}
+
+
+/* =========================================
+   MOBILE DROPDOWN MENU
+========================================= */
+function toggleMobileDropdown(id) {
+
+    const menu =
+        document.getElementById(id);
+
+    const allDropdowns = [
+        'mob-org-menu',
+        'mob-cat-menu',
+        'mob-hubungi'
+    ];
+
+    allDropdowns.forEach(dId => {
+
+        if (dId !== id) {
+
+            document
+                .getElementById(dId)
+                ?.classList.add('hidden');
+        }
+    });
+
+    menu.classList.toggle('hidden');
+}
+
+
+/* =========================================
+   BACK TO TOP BUTTON
+========================================= */
+function initBackToTop() {
+
+    const btn =
+        document.getElementById('backToTop');
+
+    const wrapper =
+        document.getElementById('app-wrapper');
+
+    /* SHOW / HIDE BUTTON */
+    wrapper.addEventListener('scroll', () => {
+
+        if (wrapper.scrollTop > 500) {
+
+            btn.style.opacity = "1";
+            btn.style.pointerEvents = "auto";
+
+        } else {
+
+            btn.style.opacity = "0";
+            btn.style.pointerEvents = "none";
+        }
+    });
+
+    /* CLICK BUTTON */
+    btn.addEventListener('click', () => {
+
+        wrapper.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+    });
+}
+
+
+/* =========================================
+   GLOBAL WINDOW FUNCTION
+   AGAR BISA DIPANGGIL DI HTML
+========================================= */
+window.toggleMobileMenu = toggleMobileMenu;
+window.toggleMobileDropdown = toggleMobileDropdown;
+
+
+/* =========================================
+   INIT WEBSITE
+========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* FETCH NEWS */
+    fetchNews();
+
+    /* INIT NAVBAR */
+    initNavbar();
+
+    /* INIT BACK TO TOP */
+    initBackToTop();
+
+    /* CATEGORY FILTER */
+    document
+        .querySelectorAll('.category-btn')
+        .forEach(btn => {
+
+            btn.onclick = () => {
+
+                document
+                    .querySelectorAll('.category-btn')
+                    .forEach(b =>
+                        b.classList.remove('active')
+                    );
+
+                btn.classList.add('active');
 
                 currentPage = 1;
 
                 updateDisplay();
             };
-
-        const wrapper = document.getElementById('app-wrapper');
-
-        wrapper.addEventListener('scroll', () => {
-
-            if (wrapper.scrollTop > 500) {
-                document.getElementById('backToTop').style.opacity = 1;
-            } else {
-                document.getElementById('backToTop').style.opacity = 0;
-            }
         });
 
-        lucide.createIcons();
-    });
-</script>
+    /* SEARCH INPUT */
+    document
+        .getElementById('blog-search')
+        .oninput = () => {
+
+            currentPage = 1;
+
+            updateDisplay();
+        };
+
+    /* INIT ICON */
+    lucide.createIcons();
+
+});
+
+</script>    
+
+
 </body>
 </html>
