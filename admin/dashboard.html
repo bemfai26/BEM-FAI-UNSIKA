@@ -1,290 +1,387 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - BEM FAI UNSIKA</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            purple: {
-              deep: '#2D1B4E',
-              med: '#5B3A8C',
-              light: '#9B72CF',
-              soft: '#D4BEF0',
-              pale: '#F3ECFA'
-            }
-          }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Admin - BEM FAI UNSIKA</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Tailwind Config (AMAN - tidak ganggu Firebase) -->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        purple: {
+          deep: '#2D1B4E',
+          med: '#5B3A8C',
+          light: '#9B72CF',
+          soft: '#D4BEF0',
+          pale: '#F3ECFA'
         }
       }
     }
-    </script>
+  }
+}
+</script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .sidebar {
-          position: fixed; left: 20px; top: 20px; bottom: 20px; width: 280px;
-          background: rgba(255,255,255,0.4); backdrop-filter: blur(25px);
-          border: 1px solid rgba(255,255,255,0.3); border-radius: 40px;
-          padding: 30px; display: flex; flex-direction: column;
-          box-shadow: 0 25px 50px rgba(45,27,78,0.1); z-index: 50;
-        }
-        .sidebar-link {
-          display: flex; align-items: center; gap: 12px; padding: 12px 18px;
-          border-radius: 18px; font-weight: 600; color: #2D1B4E; transition: 0.3s;
-          width: 100%; text-align: left;
-        }
-        .sidebar-link:hover { background: rgba(255,255,255,0.6); transform: translateX(6px); }
-        .main { margin-left: 320px; }
-    </style>
+<!-- Icons -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+<style>
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Glass Sidebar */
+.sidebar {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 280px;
+  background: rgba(255,255,255,0.4);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 40px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(45,27,78,0.1);
+  z-index: 50;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-weight: 600;
+  color: #2D1B4E;
+  transition: 0.3s;
+}
+
+.sidebar-link:hover {
+  background: rgba(255,255,255,0.6);
+  transform: translateX(6px);
+}
+
+.main {
+  margin-left: 320px;
+}
+</style>
+
 </head>
 
 <body class="bg-[#FDFBFF]">
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
+
+  <!-- Logo -->
   <div class="text-center mb-10">
-    <img src="../assets/Logo/logo-bem.png" class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
-    <div class="font-black text-purple-deep">BEM FAI UNSIKA</div>
-    <div class="text-xs tracking-widest text-purple-med">Lord Sumanto</div>
+    <img src="../assets/Logo/logo-bem.png"
+         class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
+    <div class="font-black text-purple-900">BEM FAI UNSIKA</div>
+    <div class="text-xs tracking-widest text-purple-600">Lord Sumanto</div>
   </div>
 
+  <!-- MENU -->
   <nav class="flex flex-col gap-2 flex-1">
+
     <button onclick="showView('list')" class="sidebar-link">
       <i data-lucide="layout-grid"></i> Kelola Berita
     </button>
+
     <button onclick="showView('form')" class="sidebar-link">
       <i data-lucide="plus-circle"></i> Tulis Berita
     </button>
-    <button id="logout-btn" class="sidebar-link text-red-500 mt-auto">
+
+    <button id="logout-btn"
+      class="sidebar-link text-red-500 mt-auto">
       <i data-lucide="log-out"></i> Keluar
     </button>
+
   </nav>
+
 </aside>
 
 <!-- MAIN CONTENT -->
 <main class="main p-8">
-    <div class="mb-8">
-      <h1 id="view-title" class="text-2xl font-bold text-purple-deep">Kelola Berita</h1>
-      <p id="view-subtitle" class="text-gray-500 text-sm">Dashboard administrasi berita</p>
+
+<!-- HEADER -->
+<div class="mb-8">
+  <h1 id="view-title" class="text-2xl font-bold text-purple-900">
+    Kelola Berita
+  </h1>
+  <p id="view-subtitle" class="text-gray-500 text-sm">
+    Dashboard administrasi berita
+  </p>
+</div>
+
+<!-- LIST VIEW -->
+<div id="view-list">
+
+  <div class="bg-white rounded-2xl shadow p-4">
+    <table class="w-full text-sm">
+      <thead class="text-gray-400 border-b">
+        <tr>
+          <th class="text-left p-3">Judul</th>
+          <th>Kategori</th>
+          <th>Tanggal</th>
+          <th class="text-right">Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="news-table-body"></tbody>
+
+    </table>
+  </div>
+
+</div>
+
+<!-- FORM VIEW -->
+<div id="view-form" class="hidden max-w-3xl">
+
+  <form id="news-form" class="bg-white p-6 rounded-2xl shadow space-y-4">
+
+    <input type="hidden" id="edit-id">
+
+    <input id="news-title" placeholder="Judul"
+      class="w-full p-3 border rounded-xl">
+
+    <select id="news-category"
+      class="w-full p-3 border rounded-xl">
+      <option>Kegiatan</option>
+      <option>Sosial</option>
+      <option>Pelatihan</option>
+      <option>Pendidikan</option>
+      <option>Kajian</option>
+    </select>
+
+    <input id="news-author" placeholder="Penulis"
+      class="w-full p-3 border rounded-xl">
+
+    <input type="date" id="news-date"
+      class="w-full p-3 border rounded-xl">
+
+    <textarea id="news-content"
+      class="w-full p-3 border rounded-xl"
+      rows="6"></textarea>
+
+    <input id="news-image"
+      placeholder="URL gambar"
+      class="w-full p-3 border rounded-xl">
+
+    <div class="flex justify-end gap-3">
+      <button type="button"
+        onclick="showView('list')"
+        class="px-4 py-2 text-gray-500">
+        Batal
+      </button>
+
+      <button id="save-btn"
+        class="px-5 py-2 bg-purple-600 text-white rounded-xl">
+        Simpan
+      </button>
     </div>
 
-    <!-- LIST VIEW -->
-    <div id="view-list" class="space-y-4">
-      <div class="bg-white rounded-2xl shadow p-4 overflow-hidden border border-purple-pale">
-        <table class="w-full text-sm">
-          <thead class="text-gray-400 border-b">
-            <tr>
-              <th class="text-left p-3">Judul Berita</th>
-              <th class="text-left">Kategori</th>
-              <th class="text-left">Tanggal</th>
-              <th class="text-right p-3">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="news-table-body" class="divide-y divide-gray-50">
-            <!-- Data dari Firebase -->
-          </tbody>
-        </table>
-      </div>
-    </div>
+  </form>
 
-    <!-- FORM VIEW -->
-    <div id="view-form" class="hidden max-w-3xl">
-      <form id="news-form" class="bg-white p-8 rounded-3xl shadow-xl space-y-6 border border-purple-pale">
-        <input type="hidden" id="edit-id">
-        
-        <div class="space-y-2">
-            <label class="text-sm font-bold text-purple-deep">Judul Berita</label>
-            <input id="news-title" required placeholder="Contoh: Kegiatan SIGAP 1" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-purple-light/20">
-        </div>
+</div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-2">
-                <label class="text-sm font-bold text-purple-deep">Kategori</label>
-                <select id="news-category" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-                    <option>Kegiatan</option>
-                    <option>Sosial</option>
-                    <option>Prestasi</option>
-                    <option>Pendidikan</option>
-                </select>
-            </div>
-            <div class="space-y-2">
-                <label class="text-sm font-bold text-purple-deep">Tanggal</label>
-                <input type="date" id="news-date" required class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-            </div>
-        </div>
-
-        <div class="space-y-2">
-            <label class="text-sm font-bold text-purple-deep">Penulis</label>
-            <input id="news-author" placeholder="Departemen Kearsipan" required class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-        </div>
-
-        <div class="space-y-2">
-            <label class="text-sm font-bold text-purple-deep">Konten Berita</label>
-            <textarea id="news-content" required class="w-full p-3 bg-gray-50 border rounded-xl outline-none" rows="8"></textarea>
-        </div>
-
-        <div class="space-y-2">
-            <label class="text-sm font-bold text-purple-deep">URL Gambar Utama</label>
-            <input id="news-image" required placeholder="https://link-gambar-kamu.jpg" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
-            <p class="text-[10px] text-gray-400 italic">*Tempel link gambar dari host luar karena storage penuh.</p>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4">
-          <button type="button" onclick="showView('list')" class="px-6 py-2 text-gray-500 font-bold">Batal</button>
-          <button type="submit" id="save-btn" class="px-8 py-2 bg-purple-med text-white rounded-xl font-bold shadow-lg shadow-purple-med/30 hover:bg-purple-deep transition-all">
-            Simpan Berita
-          </button>
-        </div>
-      </form>
-    </div>
 </main>
 
+<!-- FIREBASE SAFE SCRIPT -->
 <script type="module">
-    import { auth, db, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, serverTimestamp, onAuthStateChanged, signOut } from '../js/firebase-init.js';
-    
-    lucide.createIcons();
 
-    // Proteksi Halaman
-    onAuthStateChanged(auth, (user) => {
-      if (!user) location.href = "login.html";
-      loadNews();
-    });
+import {
+  auth, db,
+  collection, addDoc, updateDoc, deleteDoc,
+  doc, getDocs, query, orderBy,
+  serverTimestamp,
+  onAuthStateChanged,
+  signOut
+} from '../js/firebase-init.js';
 
-    // Pindah Halaman
-    window.showView = (v) => {
-      document.getElementById('view-list').classList.add('hidden');
-      document.getElementById('view-form').classList.add('hidden');
-      document.getElementById('edit-id').value = "";
-      document.getElementById('news-form').reset();
+lucide.createIcons();
 
-      if (v === 'list') {
-        document.getElementById('view-list').classList.remove('hidden');
-        document.getElementById('view-title').innerText = 'Kelola Berita';
-        loadNews();
-      } else if (v === 'form') {
-        document.getElementById('view-form').classList.remove('hidden');
-        document.getElementById('view-title').innerText = 'Tulis Berita';
-      }
-    };
+/* FORMAT TANGGAL */
+function formatTanggal(dateString) {
+  const bulanIndonesia = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember"
+  ];
 
-    // Load Berita
-    async function loadNews() {
-      const table = document.getElementById('news-table-body');
-      table.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Memuat data...</td></tr>";
+  const date = new Date(dateString);
 
-      try {
-        const q = query(collection(db, 'news'), orderBy('date','desc'));
-        const snap = await getDocs(q);
-        table.innerHTML = "";
+  const hari = date.getDate();
+  const bulan = bulanIndonesia[date.getMonth()];
+  const tahun = date.getFullYear();
 
-        if (snap.empty) {
-            table.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Belum ada berita.</td></tr>";
-            return;
-        }
+  return `${hari} ${bulan} ${tahun}`;
+}
 
-        snap.forEach(d => {
-            const item = d.data();
-            table.innerHTML += `
-              <tr class="hover:bg-purple-pale/20 transition-all">
-                <td class="p-4 font-semibold text-purple-deep">${item.title}</td>
-                <td class="p-4"><span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-bold">${item.category}</span></td>
-                <td class="p-4 text-gray-500">${item.date}</td>
-                <td class="p-4 text-right">
-                  <button onclick="editNews('${d.id}')" class="text-blue-500 mr-3 font-bold hover:underline">Edit</button>
-                  <button onclick="deleteNews('${d.id}')" class="text-red-500 font-bold hover:underline">Hapus</button>
-                </td>
-              </tr>
-            `;
-        });
-      } catch (err) {
-        console.error("Load error:", err);
-        table.innerHTML = `<tr><td colspan='4' class='p-10 text-center text-red-500'>Izin ditolak. Anda mungkin belum terdaftar sebagai Admin.</td></tr>`;
-      }
-    }
+/* AUTH SAFE */
+onAuthStateChanged(auth, (user) => {
+  if (!user) location.href = "login.html";
+  loadNews();
+});
 
-    // SIMPAN BERITA (FIX)
-    document.getElementById('news-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.disabled = true;
-      saveBtn.innerText = 'Menyimpan...';
+/* VIEW SWITCH */
+window.showView = (v) => {
 
-      const id = document.getElementById('edit-id').value;
-      
-      // Ambil nilai dengan cara yang benar agar TIDAK error
-      const titleVal = document.getElementById('news-title').value;
-      const categoryVal = document.getElementById('news-category').value;
-      const authorVal = document.getElementById('news-author').value;
-      const dateVal = document.getElementById('news-date').value;
-      const contentVal = document.getElementById('news-content').value;
-      const imageVal = document.getElementById('news-image').value;
+  document.getElementById('view-list').classList.add('hidden');
+  document.getElementById('view-form').classList.add('hidden');
 
-      try {
-        const data = {
-          title: titleVal,
-          slug: titleVal.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''),
-          category: categoryVal,
-          author: authorVal,
-          date: dateVal,
-          contentBody: contentVal,
-          featuredImage: imageVal,
-          gallery: [], // Kosongkan dulu karena storage belum siap
-          updatedAt: serverTimestamp()
-        };
+  document.getElementById('news-form').reset();
+  document.getElementById('edit-id').value = "";
 
-        if (id) {
-          await updateDoc(doc(db, 'news', id), data);
-        } else {
-          data.createdAt = serverTimestamp();
-          await addDoc(collection(db, 'news'), data);
-        }
+  if (v === 'list') {
+    document.getElementById('view-list').classList.remove('hidden');
+  }
 
-        alert('Berita berhasil disimpan!');
-        showView('list');
-      } catch (error) {
-        console.error("Save error:", error);
-        alert('Gagal menyimpan: ' + error.message + '\n\nPastikan UID anda sudah terdaftar di koleksi "admins" di Firestore.');
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerText = 'Simpan Berita';
-      }
-    });
+  if (v === 'form') {
+    document.getElementById('view-form').classList.remove('hidden');
+  }
+};
 
-    // Edit Berita
-    window.editNews = async (id) => {
-        const snap = await getDocs(collection(db, 'news'));
-        const item = snap.docs.find(d => d.id === id).data();
-        
-        showView('form');
-        document.getElementById('view-title').innerText = 'Edit Berita';
-        document.getElementById('edit-id').value = id;
-        document.getElementById('news-title').value = item.title;
-        document.getElementById('news-category').value = item.category;
-        document.getElementById('news-author').value = item.author;
-        document.getElementById('news-date').value = item.date;
-        document.getElementById('news-content').value = item.contentBody;
-        document.getElementById('news-image').value = item.featuredImage;
-    };
+/* LOAD DATA */
+async function loadNews() {
 
-    // Hapus Berita
-    window.deleteNews = async (id) => {
-      if (confirm("Apakah anda yakin ingin menghapus berita ini?")) {
-        await deleteDoc(doc(db, 'news', id));
-        loadNews();
-      }
-    };
+  const table = document.getElementById('news-table-body');
+  table.innerHTML = "";
 
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+  const q = query(collection(db, 'news'), orderBy('date','desc'));
+  const snap = await getDocs(q);
+
+  snap.forEach(d => {
+
+    const item = d.data();
+
+    table.innerHTML += `
+      <tr class="border-b hover:bg-purple-50 transition">
+        <td class="p-3 font-semibold text-purple-900">
+          ${item.title}
+        </td>
+
+        <td class="text-center">
+          ${item.category}
+        </td>
+
+        <td class="text-center">
+          ${formatTanggal(item.date)}
+        </td>
+
+        <td class="text-right p-3 space-x-3">
+          <button
+            onclick="editNews('${d.id}')"
+            class="text-purple-600 hover:text-purple-800 font-semibold">
+            Edit
+          </button>
+
+          <button
+            onclick="deleteNews('${d.id}')"
+            class="text-red-500 hover:text-red-700 font-semibold">
+            Hapus
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* SAVE */
+document.getElementById('news-form')
+.addEventListener('submit', async (e) => {
+
+  e.preventDefault();
+
+  const id = document.getElementById('edit-id').value;
+
+  const data = {
+    title: document.getElementById('news-title').value,
+    category: document.getElementById('news-category').value,
+    author: document.getElementById('news-author').value,
+    date: document.getElementById('news-date').value,
+    contentBody: document.getElementById('news-content').value,
+    featuredImage: document.getElementById('news-image').value,
+    updatedAt: serverTimestamp()
+  };
+
+  if (id) {
+
+    await updateDoc(doc(db,'news',id), data);
+
+  } else {
+
+    data.createdAt = serverTimestamp();
+
+    await addDoc(collection(db,'news'), data);
+  }
+
+  showView('list');
+
+  loadNews();
+});
+
+/* EDIT */
+window.editNews = async (id) => {
+
+  try {
+
+    const snap = await getDocs(collection(db, 'news'));
+
+    const item = snap.docs.find(d => d.id === id)?.data();
+
+    if (!item) return;
+
+    showView('form');
+
+    document.getElementById('edit-id').value = id;
+    document.getElementById('news-title').value = item.title || '';
+    document.getElementById('news-category').value = item.category || '';
+    document.getElementById('news-author').value = item.author || '';
+    document.getElementById('news-date').value = item.date || '';
+    document.getElementById('news-content').value = item.contentBody || '';
+    document.getElementById('news-image').value = item.featuredImage || '';
+
+  } catch (err) {
+
+    console.error("Edit error:", err);
+  }
+};
+
+/* DELETE */
+window.deleteNews = async (id) => {
+
+  if (confirm("Hapus berita ini?")) {
+
+    await deleteDoc(doc(db,'news',id));
+
+    loadNews();
+  }
+};
+
+/* LOGOUT */
+document.getElementById('logout-btn')
+.addEventListener('click', () => signOut(auth));
 
 </script>
 
