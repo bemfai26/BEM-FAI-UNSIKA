@@ -170,7 +170,7 @@
             const summary = item.contentBody ? item.contentBody.substring(0, 200).replace(/<[^>]*>?/gm, '') : '';
             document.getElementById('featured-section').innerHTML = `
                 <a href="detail-berita/view.html?id=${item.id}" class="block group">
-                    <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border flex flex-col md:flex-row min-h-[500px]">
+                    <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-deep/10 border border-white flex flex-col md:flex-row h-full md:h-[500px]">
                         <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
                             <img src="${item.featuredImage}" class="w-full h-full object-cover group-hover:scale-105 transition-all">
                         </div>
