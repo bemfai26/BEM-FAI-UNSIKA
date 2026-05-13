@@ -40,9 +40,28 @@
         .font-display { font-family: 'Playfair Display', serif; }
         .font-alice { font-family: 'Alice', serif; }
         
-        #nav-container { transition: all 0.5s ease; width: 95%; left: 50%; transform: translateX(-50%); }
-        .nav-capsule { margin-top: 1.5rem; border-radius: 999px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(155, 114, 207, 0.2); box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05); }
-        .nav-scrolled .nav-capsule { margin-top: 0.75rem; background: rgba(255, 255, 255, 0.98); box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12); }
+        /* Navbar Styles - Floating Capsule Concept */
+        #nav-container { 
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 95%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nav-capsule {
+            margin-top: 1.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(155, 114, 207, 0.2);
+            box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05);
+        }
+        .nav-scrolled .nav-capsule {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12);
+            border: 1px solid rgba(155, 114, 207, 0.1);
+        }
+        
         .nav-active { color: #9B72CF; position: relative; }
         .nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
 
@@ -57,22 +76,128 @@
 
     <div id="app-wrapper" class="w-full h-full overflow-auto">
         
-        <!-- NAVBAR -->
-        <div id="nav-container" class="fixed top-0 z-50 transition-all">
-            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all">
-                <div class="px-6">
+        <!-- NAVBAR - Floating Capsule Concept -->
+        <div id="nav-container" class="fixed top-0 z-50 transition-all duration-500">
+            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
+                <div class="px-6 lg:px-10">
                     <div class="flex items-center justify-between h-16 lg:h-20">
-                        <a href="../index.html" class="flex items-center gap-3">
-                            <img src="../assets/Logo/logo-bem.png" class="w-10 h-10 rounded-full border-2 border-purple-pale">
-                            <div class="font-bold text-purple-deep text-sm leading-tight uppercase">BEM FAI UNSIKA</div>
+                        <a href="../index.html" class="flex items-center gap-3 group">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
+                                <img src="../assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
+                            </div>
+                            <div class="block text-xs sm:text-sm">
+                                <div class="font-bold text-purple-deep text-sm leading-tight">BEM FAI UNSIKA</div>
+                                <div class="text-[10px] text-purple-med font-medium tracking-wider">Kabinet Poros Katalist</div>
+                            </div>
                         </a>
-                        <div class="hidden lg:flex items-center gap-4">
-                            <a href="../index.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med">Beranda</a>
-                            <a href="home-berita.html" class="px-4 py-2 text-sm font-bold text-purple-med nav-active">Berita</a>
+
+                        <!-- Desktop Menu -->
+                        <div class="hidden lg:flex items-center gap-2">
+                            <a href="../index.html#Beranda" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50">Beranda</a>
+                            
+                            <!-- Organisasi Dropdown -->
+                            <div class="relative group">
+                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Organisasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="../index.html#tentang" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Tentang Kami</a>
+                                        <a href="../profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Profil Kabinet</a>
+                                        <a href="../sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah BEM FAI UNSIKA</a>
+                                        <a href="../struktur.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Struktur Kabinet</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kategori Dropdown -->
+                            <div class="relative group">
+                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Kategori <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <button onclick="document.querySelector('[data-filter=\'Kegiatan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Kegiatan</button>
+                                        <button onclick="document.querySelector('[data-filter=\'Sosial\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sosial</button>
+                                        <button onclick="document.querySelector('[data-filter=\'Pelatihan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Pelatihan</button>
+                                        <button onclick="document.querySelector('[data-filter=\'Pendidikan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Pendidikan</button>
+                                        <button onclick="document.querySelector('[data-filter=\'Kajian\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Kajian</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <a href="berita.html" class="px-4 py-2 text-sm font-bold text-purple-med nav-active rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
+                                    Berita
+                                </a>
+                            </div>
+
+                            <div class="relative group">
+                                <button class="ml-4 px-6 py-2.5 text-sm font-bold text-white rounded-full flex items-center gap-2 shadow-lg shadow-purple-med/20 group-hover:shadow-purple-med/40 transition-all hover:-translate-y-0.5"
+                                        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
+                                    Kontak <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
+                                </button>
+                                <div class="absolute hidden group-hover:block right-0 pt-2 w-56">
+                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
+                                        <a href="../index.html#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Aspirasi & Pengaduan</a>
+                                        <a href="../index.html#kontak" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Hubungi Kami</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button id="mobile-toggle" class="lg:hidden p-3"><i data-lucide="menu"></i></button>
+
+                        <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
+                            <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
+                        </button>
                     </div>
                 </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden lg:hidden border-t border-purple-pale/30 overflow-hidden rounded-b-[40px]">
+                <div class="px-6 py-6 space-y-1 bg-white/95 backdrop-blur-xl">
+                    <a href="../index.html" class="block px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">Beranda</a>
+                    
+                    <!-- Organisasi Mobile -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMobileDropdown('mob-org-menu')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">
+                            Organisasi <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-org-menu" class="hidden pl-6 space-y-1 bg-purple-pale/10 rounded-xl">
+                            <a href="../index.html#tentang" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Tentang Kami</a>
+                            <a href="../profil.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Profil Kabinet</a>
+                            <a href="../sejarah.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sejarah BEM FAI UNSIKA</a>
+                            <a href="../struktur.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Struktur Kabinet</a>
+                        </div>
+                    </div>
+
+                    <!-- Kategori Mobile -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMobileDropdown('mob-cat-menu')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">
+                            Kategori <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-cat-menu" class="hidden pl-6 space-y-1 bg-purple-pale/10 rounded-xl">
+                            <button onclick="document.querySelector('[data-filter=\'Kegiatan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Kegiatan</button>
+                            <button onclick="document.querySelector('[data-filter=\'Sosial\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sosial</button>
+                            <button onclick="document.querySelector('[data-filter=\'Pelatihan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Pelatihan</button>
+                            <button onclick="document.querySelector('[data-filter=\'Pendidikan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Pendidikan</button>
+                            <button onclick="document.querySelector('[data-filter=\'Kajian\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Kajian</button>
+                        </div>
+                    </div>
+
+                    <a href="berita.html" class="block px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-xl">Berita</a>
+                    
+                    <div class="space-y-1 pt-4">
+                        <button onclick="toggleMobileDropdown('mob-hubungi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-black text-white rounded-2xl shadow-lg" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
+                            Kontak <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div id="mob-hubungi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
+                            <a href="../index.html#aspirasi-pengaduan" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Aspirasi & Pengaduan</a>
+                            <a href="../index.html#kontak" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Hubungi Kami</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
             </nav>
         </div>
 
