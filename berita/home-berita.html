@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Berita & Kegiatan - BEM FAI UNSIKA</title>
     <link rel="icon" type="image/x-icon" href="../assets/favicon/logo.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon/favicon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="../assets/favicon/favicon-512.png">
 
     <!-- Tailwind + Config -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -43,861 +40,192 @@
         .font-display { font-family: 'Playfair Display', serif; }
         .font-alice { font-family: 'Alice', serif; }
         
-        /* Navbar Styles - Floating Capsule Concept */
-        #nav-container { 
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            width: 95%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .nav-capsule {
-            margin-top: 1.5rem;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(155, 114, 207, 0.2);
-            box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05);
-        }
-        .nav-scrolled .nav-capsule {
-            margin-top: 0.75rem;
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12);
-            border: 1px solid rgba(155, 114, 207, 0.1);
-        }
-        
+        #nav-container { transition: all 0.5s ease; width: 95%; left: 50%; transform: translateX(-50%); }
+        .nav-capsule { margin-top: 1.5rem; border-radius: 999px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(155, 114, 207, 0.2); box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05); }
+        .nav-scrolled .nav-capsule { margin-top: 0.75rem; background: rgba(255, 255, 255, 0.98); box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12); }
         .nav-active { color: #9B72CF; position: relative; }
         .nav-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: #9B72CF; border-radius: 1px; }
 
-        /* Animation */
-        .section-fade { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; }
-        .fade-up { transform: translateY(30px); }
-        .visible { opacity: 1; transform: translateY(0); }
+        .article-card { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .article-card:hover { transform: translateY(-15px); box-shadow: 0 30px 60px -12px rgba(45, 27, 78, 0.12); }
         
-        /* Card Hover (Enhanced 3D) */
-        .article-card { 
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            perspective: 2000px;
-            transform-style: preserve-3d;
-        }
-        .article-card:hover { 
-            transform: translateY(-15px) rotateX(4deg) rotateY(2deg);
-            box-shadow: 
-                0 30px 60px -12px rgba(45, 27, 78, 0.12),
-                0 18px 36px -18px rgba(155, 114, 207, 0.2),
-                0 -2px 10px rgba(155, 114, 207, 0.05);
-        }
-        .article-card img {
-            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .article-card:hover img {
-            transform: scale(1.08) translateZ(20px);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Search Input Focus */
-        .search-focus:focus-within { box-shadow: 0 0 0 2px #9B72CF; }
-
-        /* Category Buttons 3D */
-        .category-btn {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-        }
-        .category-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        .category-btn:hover::before {
-            left: 100%;
-        }
-        .category-btn:hover:not(.active) {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 12px 20px -8px rgba(155, 114, 207, 0.3);
-        }
-        .category-btn.active {
-            transform: scale(1.08) translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(91, 58, 140, 0.4);
-            background-color: #5B3A8C !important;
-            color: white !important;
-        }
-        .pagination-btn {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .pagination-btn:hover:not(.active):not(:disabled) {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(91, 58, 140, 0.3);
-        }
-        /* Remove redundant second definition */
-        
-        /* Search Suggestions Animation */
-        #search-suggestions {
-            max-height: 300px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #9B72CF transparent;
-            transform-origin: top;
-            animation: slideDown 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: scaleY(0.95) translateY(-10px); }
-            to { opacity: 1; transform: scaleY(1) translateY(0); }
-        }
-        
-        #search-suggestions::-webkit-scrollbar { width: 4px; }
-        #search-suggestions::-webkit-scrollbar-thumb { background: #9B72CF; border-radius: 10px; }
+        .category-btn.active { background-color: #5B3A8C !important; color: white !important; transform: scale(1.08); }
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body class="bg-[#FDFBFF] text-gray-800">
+<body class="bg-[#FDFBFF]">
 
     <div id="app-wrapper" class="w-full h-full overflow-auto">
         
-        <!-- NAVBAR - Floating Capsule Concept -->
-        <div id="nav-container" class="fixed top-0 z-50 transition-all duration-500">
-            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
-                <div class="px-6 lg:px-10">
+        <!-- NAVBAR -->
+        <div id="nav-container" class="fixed top-0 z-50 transition-all">
+            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all">
+                <div class="px-6">
                     <div class="flex items-center justify-between h-16 lg:h-20">
-                        <a href="../index.html" class="flex items-center gap-3 group">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
-                                <img src="../assets/Logo/logo-bem.png" alt="Logo BEM FAI UNSIKA" class="w-full h-full object-cover">
-                            </div>
-                            <div class="block text-xs sm:text-sm">
-                                <div class="font-bold text-purple-deep text-sm leading-tight">BEM FAI UNSIKA</div>
-                                <div class="text-[10px] text-purple-med font-medium tracking-wider">Kabinet Poros Katalist</div>
-                            </div>
+                        <a href="../index.html" class="flex items-center gap-3">
+                            <img src="../assets/Logo/logo-bem.png" class="w-10 h-10 rounded-full border-2 border-purple-pale">
+                            <div class="font-bold text-purple-deep text-sm leading-tight uppercase">BEM FAI UNSIKA</div>
                         </a>
-
-                        <!-- Desktop Menu -->
-                        <div class="hidden lg:flex items-center gap-2">
-                            <a href="../index.html#Beranda" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50">Beranda</a>
-                            
-                            <!-- Organisasi Dropdown -->
-                            <div class="relative group">
-                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
-                                    Organisasi <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                                </button>
-                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
-                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
-                                        <a href="../index.html#tentang" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Tentang Kami</a>
-                                        <a href="../profil.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Profil Kabinet</a>
-                                        <a href="../sejarah.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sejarah BEM FAI UNSIKA</a>
-                                        <a href="../struktur.html" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Struktur Kabinet</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Kategori Dropdown -->
-                            <div class="relative group">
-                                <button class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med transition-colors rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
-                                    Kategori <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
-                                </button>
-                                <div class="absolute hidden group-hover:block left-0 pt-2 w-48">
-                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
-                                        <button onclick="document.querySelector('[data-filter=\'Kegiatan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Kegiatan</button>
-                                        <button onclick="document.querySelector('[data-filter=\'Sosial\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Sosial</button>
-                                        <button onclick="document.querySelector('[data-filter=\'Pelatihan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Pelatihan</button>
-                                        <button onclick="document.querySelector('[data-filter=\'Pendidikan\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Pendidikan</button>
-                                        <button onclick="document.querySelector('[data-filter=\'Kajian\']').click()" class="w-full text-left block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl transition-colors">Kajian</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="relative">
-                                <a href="berita.html" class="px-4 py-2 text-sm font-bold text-purple-med nav-active rounded-full hover:bg-purple-pale/50 flex items-center gap-1">
-                                    Berita
-                                </a>
-                            </div>
-
-                            <div class="relative group">
-                                <button class="ml-4 px-6 py-2.5 text-sm font-bold text-white rounded-full flex items-center gap-2 shadow-lg shadow-purple-med/20 group-hover:shadow-purple-med/40 transition-all hover:-translate-y-0.5"
-                                        style="background: linear-gradient(135deg, #5B3A8C , #9B72CF);">
-                                    Kontak <i data-lucide="message-circle" style="width:14px;height:14px;"></i>
-                                </button>
-                                <div class="absolute hidden group-hover:block right-0 pt-2 w-56">
-                                    <div class="bg-white rounded-2xl shadow-xl border border-purple-pale/50 p-2">
-                                        <a href="../index.html#aspirasi-pengaduan" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Aspirasi & Pengaduan</a>
-                                        <a href="../index.html#kontak" class="block px-4 py-2 text-sm text-gray-600 hover:bg-purple-pale/50 rounded-xl">Hubungi Kami</a>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="hidden lg:flex items-center gap-4">
+                            <a href="../index.html" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-med">Beranda</a>
+                            <a href="home-berita.html" class="px-4 py-2 text-sm font-bold text-purple-med nav-active">Berita</a>
                         </div>
-
-                        <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
-                            <i data-lucide="menu" style="width:24px;height:24px;color:#2D1B4E;"></i>
-                        </button>
+                        <button id="mobile-toggle" class="lg:hidden p-3"><i data-lucide="menu"></i></button>
                     </div>
                 </div>
-
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden lg:hidden border-t border-purple-pale/30 overflow-hidden rounded-b-[40px]">
-                <div class="px-6 py-6 space-y-1 bg-white/95 backdrop-blur-xl">
-                    <a href="../index.html" class="block px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">Beranda</a>
-                    
-                    <!-- Organisasi Mobile -->
-                    <div class="space-y-1">
-                        <button onclick="toggleMobileDropdown('mob-org-menu')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">
-                            Organisasi <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
-                        <div id="mob-org-menu" class="hidden pl-6 space-y-1 bg-purple-pale/10 rounded-xl">
-                            <a href="../index.html#tentang" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Tentang Kami</a>
-                            <a href="../profil.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Profil Kabinet</a>
-                            <a href="../sejarah.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sejarah BEM FAI UNSIKA</a>
-                            <a href="../struktur.html" class="block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Struktur Kabinet</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori Mobile -->
-                    <div class="space-y-1">
-                        <button onclick="toggleMobileDropdown('mob-cat-menu')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl hover:bg-purple-pale/50 transition-colors">
-                            Kategori <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
-                        <div id="mob-cat-menu" class="hidden pl-6 space-y-1 bg-purple-pale/10 rounded-xl">
-                            <button onclick="document.querySelector('[data-filter=\'Kegiatan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Kegiatan</button>
-                            <button onclick="document.querySelector('[data-filter=\'Sosial\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Sosial</button>
-                            <button onclick="document.querySelector('[data-filter=\'Pelatihan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Pelatihan</button>
-                            <button onclick="document.querySelector('[data-filter=\'Pendidikan\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Pendidikan</button>
-                            <button onclick="document.querySelector('[data-filter=\'Kajian\']').click(); toggleMobileMenu();" class="w-full text-left block px-4 py-2 text-xs font-medium text-gray-500 hover:text-purple-med transition-colors">Kajian</button>
-                        </div>
-                    </div>
-
-                    <a href="berita.html" class="block px-4 py-3 text-sm font-bold text-purple-med bg-purple-pale/50 rounded-xl">Berita</a>
-                    
-                    <div class="space-y-1 pt-4">
-                        <button onclick="toggleMobileDropdown('mob-hubungi')" class="w-full flex items-center justify-between px-6 py-4 text-sm font-black text-white rounded-2xl shadow-lg" style="background: linear-gradient(135deg, #5B3A8C, #9B72CF);">
-                            Kontak <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
-                        <div id="mob-hubungi" class="hidden pl-4 space-y-1 bg-purple-pale/10 rounded-2xl">
-                            <a href="../index.html#aspirasi-pengaduan" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Aspirasi & Pengaduan</a>
-                            <a href="../index.html#kontak" class="block px-6 py-3 text-[13px] font-bold text-gray-500">Hubungi Kami</a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
             </nav>
         </div>
 
-        <div>
-            <!-- HEADER / SEARCH -->
-            <header class="pt-40 pb-20 bg-[#F3ECFA]/30 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-purple-soft/20 rounded-full blur-3xl -mr-48 -mt-48"></div>
-            <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-soft/20 rounded-full blur-3xl -ml-48 -mb-48"></div>
+        <header class="pt-40 pb-20 bg-[#F3ECFA]/30 text-center relative px-4">
+            <h1 class="font-display text-5xl sm:text-7xl font-black text-purple-deep mb-10 italic">Jendela <span class="text-purple-med/70 font-light">Aktivitas.</span></h1>
+            
+            <!-- SEARCH BAR -->
+            <div class="max-w-2xl mx-auto relative mb-10">
+                <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="blog-search" placeholder="Cari berita atau kegiatan..." class="w-full pl-14 pr-6 py-4 bg-white rounded-2xl shadow-lg border border-purple-pale focus:outline-none">
+            </div>
 
-            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-                <span class="inline-block px-5 py-2 bg-white text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-8 shadow-sm border border-purple-pale/50">
-                    BLog & Informasi
-                </span>
-                <h1 class="font-display text-5xl sm:text-7xl font-black text-purple-deep mb-10 tracking-tighter italic">
-                    Jendela <span class="text-purple-med/70 font-light">Aktivitas.</span>
-                </h1>
-                
-                <!-- Search Bar -->
-                <div class="max-w-2xl mx-auto relative group">
-                    <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-purple-med">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                    </div>
-                    <input type="text" id="blog-search" placeholder="Cari berita atau kegiatan..." autocomplete="off"
-                           class="w-full pl-14 pr-12 py-4 bg-white rounded-2xl shadow-lg shadow-purple-deep/5 border border-purple-pale focus:outline-none focus:ring-2 focus:ring-purple-light/50 transition-all text-gray-700">
-                    <button id="clear-search" class="absolute inset-y-0 right-4 hidden items-center text-gray-400 hover:text-purple-med transition-colors">
-                        <i data-lucide="x-circle" class="w-5 h-5"></i>
-                    </button>
-                    
-                    <!-- Suggestions Dropdown -->
-                    <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-purple-pale/50 hidden z-50 overflow-hidden text-left">
-                        <!-- Items injected by JS -->
-                    </div>
-                </div>
-
-                <!-- Categories -->
-                <div class="flex flex-wrap justify-center gap-3 mt-10">
-                    <button class="category-btn active px-6 py-2 rounded-full border border-purple-pale bg-purple-med text-white text-sm font-bold transition-all shadow-md" data-filter="all">Semua</button>
-                    <button class="category-btn px-6 py-2 rounded-full border border-purple-pale bg-white text-gray-500 hover:border-purple-light hover:text-purple-med text-sm font-bold transition-all shadow-sm" data-filter="Kegiatan">Kegiatan</button>
-                    <button class="category-btn px-6 py-2 rounded-full border border-purple-pale bg-white text-gray-500 hover:border-purple-light hover:text-purple-med text-sm font-bold transition-all shadow-sm" data-filter="Sosial">Sosial</button>
-                    <button class="category-btn px-6 py-2 rounded-full border border-purple-pale bg-white text-gray-500 hover:border-purple-light hover:text-purple-med text-sm font-bold transition-all shadow-sm" data-filter="Pelatihan">Pelatihan</button>
-                    <button class="category-btn px-6 py-2 rounded-full border border-purple-pale bg-white text-gray-500 hover:border-purple-light hover:text-purple-med text-sm font-bold transition-all shadow-sm" data-filter="Pendidikan">Pendidikan</button>
-                    <button class="category-btn px-6 py-2 rounded-full border border-purple-pale bg-white text-gray-500 hover:border-purple-light hover:text-purple-med text-sm font-bold transition-all shadow-sm" data-filter="Kajian">Kajian</button>
-                </div>
+            <!-- CATEGORY FILTERS -->
+            <div class="flex flex-wrap justify-center gap-3">
+                <button class="category-btn active px-6 py-2 rounded-full border bg-white text-gray-500 font-bold" data-filter="all">Semua</button>
+                <button class="category-btn px-6 py-2 rounded-full border bg-white text-gray-500 font-bold" data-filter="Kegiatan">Kegiatan</button>
+                <button class="category-btn px-6 py-2 rounded-full border bg-white text-gray-500 font-bold" data-filter="Sosial">Sosial</button>
+                <button class="category-btn px-6 py-2 rounded-full border bg-white text-gray-500 font-bold" data-filter="Pelatihan">Pelatihan</button>
             </div>
         </header>
 
-        <!-- FEATURED POST -->
-        <section class="max-w-7xl mx-auto px-4 -mt-8 relative z-20">
-            <a href="detail-berita/berita-upgrading.html" class="block group">
-                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl shadow-purple-deep/10 border border-white flex flex-col md:flex-row h-full md:h-[500px]">
-                    <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
-                        <img src="../assets/Informasi/Berita/upgrading.jpeg" alt="Featured Post" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute top-8 left-8">
-                            <span class="px-4 py-2 bg-purple-med text-white text-xs font-bold rounded-full uppercase tracking-widest shadow-lg">Berita Utama</span>
-                        </div>
-                    </div>
-                    <div class="md:w-2/5 p-8 md:p-12 flex flex-col justify-center bg-gradient-to-br from-white to-purple-pale/20">
-                        <div class="flex items-center gap-2 text-xs text-purple-med/60 font-bold mb-6">
-                            <i data-lucide="calendar" class="w-4 h-4"></i> 7 Februari 2026
-                        </div>
-                        <h2 class="font-display text-3xl md:text-4xl font-black text-purple-deep mb-6 leading-tight group-hover:text-purple-med transition-colors">
-                            Upgrading Pengurus BEM FAI 2026
-                        </h2>
-                        <p class="text-gray-500 line-clamp-3 mb-8 text-lg font-alice leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <div class="flex items-center gap-3 text-purple-med font-bold text-sm tracking-widest group-hover:gap-5 transition-all">
-                            Baca Selengkapnya <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </section>
+        <!-- BERITA UTAMA (FEATURED) -->
+        <section id="featured-section" class="max-w-7xl mx-auto px-4 -mt-8 relative z-20 hidden"></section>
 
-        <!-- ARTICLES GRID -->
+        <!-- GRID BERITA -->
         <main class="max-w-7xl mx-auto px-4 py-24">
-            <div id="berita-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-
-                <!-- Tambah Dengan Salin kartu dibawah (terbaru) -->
-                                                                            
-                <!-- CARD NEW -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kegiatan" data-date="2026-05-04">
-                    <a href="detail-berita/berita-syuu.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/kca.jpeg" class="absolute left-0 -top-20 w-full h-auto transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Kegiatan</span>                            
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-3 h-3"></i> 10 Mei 2026
-                        </div>
-                        <a href="detail-berita/berita-syuu.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                FAI Siaga Peduli untuk Bumi Lestari
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-                
-                <!-- CARD LDKO -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Pelatihan" data-date="2026-04-16">
-                    <a href="detail-berita/berita-ldko.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/ldko.JPG" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Pelatihan</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 16 Apr 2026
-                        </div>
-                        <a href="detail-berita/berita-ldko.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                Latihan Dasar Kepemimpinan Organisasi
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- CARD AKRAB -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kegiatan" data-date="2026-04-02">
-                    <a href="detail-berita/berita-akrab.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/akrab.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Kegiatan</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 2 Apr 2026
-                        </div>
-                        <a href="detail-berita/berita-akrab.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                AKRAB: Ajang Kebersamaan FAI
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- CARD LITERASA -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kajian" data-date="2026-03-10">
-                    <a href="detail-berita/berita-literasa.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/literasa.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Kajian</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 10 Mar 2026
-                        </div>
-                        <a href="detail-berita/berita-literasa.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                LITERASA: Literasi & Buka Puasa
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- CARD KK FAI -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Sosial" data-date="2026-03-06">
-                    <a href="detail-berita/berita-kisah-kasih-fai.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/kisah-kasih-fai.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Sosial</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 6 Mar 2026
-                        </div>
-                        <a href="detail-berita/berita-kisah-kasih-fai.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                Kisah-Kasih FAI Bersama Anak Yatim
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- CARD FAI SIGAP -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Sosial" data-date="2026-03-01">
-                    <a href="detail-berita/berita-fai-sigap.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/fai-sigap1.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Sosial</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 1 Mar 2026
-                        </div>
-                        <a href="detail-berita/berita-fai-sigap.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                FAI SIGAP (Siaga Peduli) Banjir
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- CARD UPGRADING -->
-                <article class="article-card section-fade fade-up bg-white rounded-3xl overflow-hidden shadow-lg shadow-purple-deep/5 border border-purple-pale/30 flex flex-col" data-category="Kegiatan" data-date="2026-02-07">
-                    <a href="detail-berita/berita-upgrading.html" class="block overflow-hidden">
-                        <div class="h-48 relative overflow-hidden">
-                            <img src="../assets/Informasi/Berita/upgrading.jpeg" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-                            <div class="absolute inset-0 bg-black/20"></div>
-                            <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-purple-med text-xs font-black rounded-full font-medium tracking-tighter">Kegiatan</span>
-                        </div>
-                    </a>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
-                            <i data-lucide="calendar" style="width:12px;height:12px;"></i> 7 Feb 2026
-                        </div>
-                        <a href="detail-berita/berita-upgrading.html" class="hover:text-purple-med transition-colors">
-                            <h3 class="font-sans font-bold text-purple-deep text-base mb-2 line-clamp-2 leading-snug">
-                                Upgrading Pengurus BEM FAI 2026
-                            </h3>
-                        </a>
-                        <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at quam purus. Morbi pulvinar, lacus vel malesuada gravida, purus nunc varius lacus, ac eleifend augue risus eget elit. Nulla id finibus felis. Morbi vitae posuere mi. Fusce consequat massa odio, vel ornare ex pharetra quis. Integer nulla metus, imperdiet vel sem malesuada, suscipit sollicitudin lacus. Sed ac sagittis augue. Nulla facilisi. Maecenas egestas est nec quam tincidunt viverra id quis tortor. Integer venenatis nibh sit amet sem ullamcorper pharetra. Donec eget massa ultricies, vulputate nisi eget, ultrices quam. Nullam id mollis metus, nec fermentum arcu. Donec vel tincidunt velit. Aenean nec fringilla nisl.
-                        </p>
-                        <a href="berita/detail-berita/ldko.html"
-                            class="text-purple-med font-black text-xs tracking-widest inline-flex items-center gap-2 hover:gap-3 transition-all">
-                                Baca Selengkapnya
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </article>
-
-                
+            <h2 class="font-display text-4xl font-black text-purple-deep mb-12">Semua Berita</h2>
+            <div id="berita-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Loading State -->
+                <div class="h-64 bg-gray-100 animate-pulse rounded-3xl"></div>
+                <div class="h-64 bg-gray-100 animate-pulse rounded-3xl"></div>
+                <div class="h-64 bg-gray-100 animate-pulse rounded-3xl"></div>
             </div>
-
-            <!-- Pagination Container -->
-            <div id="pagination-container" class="mt-20 flex justify-center gap-4">
-                <!-- Will be populated by JS -->
-            </div>
+            <!-- PAGINATION -->
+            <div id="pagination-container" class="mt-20 flex justify-center gap-4"></div>
         </main>
 
-        <!-- FOOTER -->
-        <footer class="py-14 border-t border-purple-pale/30 text-white" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md">
-                            <img src="../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <div class="text-lg font-bold text-white leading-tight">BEM FAI UNSIKA</div>
-                            <div class="text-sm text-white/70">Kabinet Poros Katalist</div>
-                        </div>
-                    </div>
-                    <p class="text-white/60 text-sm text-center">© 2026 BEM FAI UNSIKA</p>
-                    <div class="flex items-center gap-4">
-                        <a href="https://www.instagram.com/bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
-                            <i data-lucide="instagram" style="width:18px;height:18px;"></i>
-                        </a>
-                        <a href="https://www.youtube.com/@officialbemfaiunsika2570" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
-                            <i data-lucide="youtube" style="width:18px;height:18px;"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <footer class="py-10 text-white text-center" style="background: linear-gradient(160deg, #2D1B4E, #5B3A8C);">
+            <p>© 2026 BEM FAI UNSIKA - Kabinet Poros Katalist</p>
         </footer>
 
-        <!-- Back to Top -->
-        <button id="backToTop"
-          onclick="document.getElementById('app-wrapper').scrollTo({top:0, behavior:'smooth'})"
-          style="
-            position:fixed;
-            bottom:20px;
-            right:20px;
-            width:45px;
-            height:45px;
-            background:#5B3A8C;
-            color:white;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-            z-index:9999;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            opacity:0;
-            pointer-events:none;
-            transition:0.3s;
-          ">
-          <i data-lucide="chevron-up" style="width:24px;height:24px;"></i>
-        </button>
-
+        <button id="backToTop" class="fixed bottom-5 right-5 w-12 h-12 bg-purple-med text-white rounded-xl shadow-lg opacity-0 transition-opacity"><i data-lucide="chevron-up" class="m-auto"></i></button>
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script>
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        import { db, collection, getDocs, query, orderBy } from '../js/firebase-init.js';
+
         let currentPage = 1;
         const itemsPerPage = 6;
-        let filteredCards = [];
+        let allNewsData = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        async function fetchNews() {
+            try {
+                const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+                const querySnapshot = await getDocs(q);
+                allNewsData = [];
+                querySnapshot.forEach(doc => { allNewsData.push({ id: doc.id, ...doc.data() }); });
+                
+                if (allNewsData.length > 0) renderFeatured(allNewsData[0]);
+                updateDisplay();
+            } catch (error) {
+                console.error(error);
+                document.getElementById('berita-grid').innerHTML = '<div class="col-span-full py-20 text-center text-red-500">Gagal memuat berita.</div>';
+            }
+        }
+
+        function renderFeatured(item) {
+            const summary = item.contentBody ? item.contentBody.substring(0, 200).replace(/<[^>]*>?/gm, '') : '';
+            document.getElementById('featured-section').innerHTML = `
+                <a href="detail-berita/view.html?id=${item.id}" class="block group">
+                    <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border flex flex-col md:flex-row min-h-[500px]">
+                        <div class="md:w-3/5 h-64 md:h-full relative overflow-hidden">
+                            <img src="${item.featuredImage}" class="w-full h-full object-cover group-hover:scale-105 transition-all">
+                        </div>
+                        <div class="md:w-2/5 p-12 flex flex-col justify-center bg-white">
+                            <div class="text-xs text-purple-med/60 font-bold mb-4">${item.date}</div>
+                            <h2 class="font-display text-4xl font-black text-purple-deep mb-6 italic">${item.title}</h2>
+                            <p class="text-gray-500 font-alice italic mb-8">${summary}...</p>
+                            <span class="text-purple-med font-black text-xs tracking-widest flex items-center gap-2">BACA SELENGKAPNYA <i data-lucide="external-link"></i></span>
+                        </div>
+                    </div>
+                </a>
+            `;
+            document.getElementById('featured-section').classList.remove('hidden');
             lucide.createIcons();
-            initNavbar();
-            initScrollAnimations();
-            initBackToTop();
-            initFiltersAndSearch();
-            sortBeritaByDate(); 
-            updateDisplay();
-        });
-
-        function sortBeritaByDate() {
-            const grid = document.getElementById('berita-grid');
-            const cards = Array.from(grid.getElementsByClassName('article-card'));
-
-            cards.sort((a, b) => {
-                const dateA = new Date(a.getAttribute('data-date'));
-                const dateB = new Date(b.getAttribute('data-date'));
-                return dateB - dateA;
-            });
-
-            cards.forEach(card => grid.appendChild(card));
         }
 
         function updateDisplay() {
-            const allCards = Array.from(document.querySelectorAll('.article-card'));
+            const grid = document.getElementById('berita-grid');
             const filter = document.querySelector('.category-btn.active').getAttribute('data-filter');
             const searchQuery = document.getElementById('blog-search').value.toLowerCase();
 
-            // Filter cards based on category and search
-            filteredCards = allCards.filter(card => {
-                const categoryMatch = filter === 'all' || card.getAttribute('data-category') === filter;
-                const title = card.querySelector('h3').innerText.toLowerCase();
-                const desc = card.querySelector('p').innerText.toLowerCase();
-                const searchMatch = title.includes(searchQuery) || desc.includes(searchQuery);
-                return categoryMatch && searchMatch;
+            const filtered = allNewsData.filter(item => {
+                const categoryMatch = filter === 'all' || item.category === filter;
+                const titleMatch = item.title.toLowerCase().includes(searchQuery);
+                return categoryMatch && titleMatch;
             });
 
-            // Hide all cards first
-            allCards.forEach(card => {
-                card.style.display = 'none';
-                card.classList.remove('visible');
-            });
-
-            // Calculate pagination
-            const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
-            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-            if (currentPage < 1) currentPage = 1;
-
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
             const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginatedCards = filteredCards.slice(start, end);
+            const items = filtered.slice(start, start + itemsPerPage);
 
-            // Show paginated cards
-            paginatedCards.forEach(card => {
-                card.style.display = 'flex';
-                setTimeout(() => card.classList.add('visible'), 50);
-            });
+            grid.innerHTML = items.map(item => `
+                <article class="article-card bg-white rounded-3xl overflow-hidden shadow-lg border border-purple-pale/30 flex flex-col">
+                    <a href="detail-berita/view.html?id=${item.id}" class="block h-48 overflow-hidden relative">
+                        <img src="${item.featuredImage}" class="w-full h-full object-cover">
+                        <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 text-purple-med text-[10px] font-black rounded-full uppercase">${item.category}</span>
+                    </a>
+                    <div class="p-6">
+                        <div class="text-xs text-gray-400 mb-2">${item.date}</div>
+                        <h3 class="font-bold text-purple-deep mb-4 italic line-clamp-2">${item.title}</h3>
+                        <a href="detail-berita/view.html?id=${item.id}" class="text-purple-med font-black text-xs tracking-widest flex items-center gap-2">BACA SELENGKAPNYA <i data-lucide="external-link"></i></a>
+                    </div>
+                </article>
+            `).join('') || '<div class="col-span-full py-20 text-center text-gray-400">Tidak ada berita.</div>';
 
-            renderPaginationLinks(totalPages);
-            initScrollAnimations();
-        }
-
-        function renderPaginationLinks(totalPages) {
-            const container = document.getElementById('pagination-container');
-            container.innerHTML = '';
-
-            if (totalPages <= 0) return;
-
-            // Prev Button
-            const prevBtn = document.createElement('button');
-            prevBtn.className = `w-12 h-12 rounded-xl border border-purple-pale bg-white flex items-center justify-center transition-all ${currentPage === 1 ? 'text-gray-300 pointer-events-none' : 'text-gray-500 hover:border-purple-light hover:text-purple-med'}`;
-            prevBtn.innerHTML = '<i data-lucide="chevron-left" style="width:20px;height:20px;"></i>';
-            prevBtn.onclick = () => { currentPage--; updateDisplay(); scrollToGrid(); };
-            container.appendChild(prevBtn);
-
-            // Page Numbers
-            for (let i = 1; i <= totalPages; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `w-12 h-12 rounded-xl border flex items-center justify-center font-bold transition-all ${i === currentPage ? 'bg-purple-med text-white border-purple-med' : 'bg-white text-gray-500 border-purple-pale hover:border-purple-light hover:text-purple-med'}`;
-                pageBtn.innerText = i;
-                pageBtn.onclick = () => { currentPage = i; updateDisplay(); scrollToGrid(); };
-                container.appendChild(pageBtn);
-            }
-
-            // Next Button
-            const nextBtn = document.createElement('button');
-            nextBtn.className = `w-12 h-12 rounded-xl border border-purple-pale bg-white flex items-center justify-center transition-all ${currentPage === totalPages ? 'text-gray-300 pointer-events-none' : 'text-gray-500 hover:border-purple-light hover:text-purple-med'}`;
-            nextBtn.innerHTML = '<i data-lucide="chevron-right" style="width:20px;height:20px;"></i>';
-            nextBtn.onclick = () => { currentPage++; updateDisplay(); scrollToGrid(); };
-            container.appendChild(nextBtn);
-
+            renderPagination(totalPages);
             lucide.createIcons();
         }
 
-        function scrollToGrid() {
-            const grid = document.getElementById('berita-grid');
-            const wrapper = document.getElementById('app-wrapper');
-            wrapper.scrollTo({
-                top: grid.offsetTop - 200,
-                behavior: 'smooth'
-            });
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination-container');
+            container.innerHTML = '';
+            if (totalPages <= 1) return;
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `w-10 h-10 rounded-lg border font-bold ${i === currentPage ? 'bg-purple-med text-white' : 'bg-white text-gray-500'}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentPage = i; updateDisplay(); window.scrollTo({top: 500, behavior: 'smooth'}); };
+                container.appendChild(btn);
+            }
         }
 
-        function initFiltersAndSearch() {
-            const buttons = document.querySelectorAll('.category-btn');
-            const searchInput = document.getElementById('blog-search');
-            const clearBtn = document.getElementById('clear-search');
-            const suggestionsBox = document.getElementById('search-suggestions');
-            const allCards = Array.from(document.querySelectorAll('.article-card'));
-
-            function handleSearchInput() {
-                const query = searchInput.value.toLowerCase();
-                currentPage = 1;
-                
-                // Show/Hide Clear Button
-                if (query.length > 0) {
-                    clearBtn.classList.remove('hidden');
-                    clearBtn.classList.add('flex');
-                } else {
-                    clearBtn.classList.add('hidden');
-                    clearBtn.classList.remove('flex');
-                }
-
-                // Suggestions Logic
-                if (query.length >= 2) {
-                    const matches = allCards.filter(card => {
-                        const title = card.querySelector('h3').innerText.toLowerCase();
-                        return title.includes(query);
-                    }).slice(0, 5); // Limit to 5 suggestions
-
-                    if (matches.length > 0) {
-                        suggestionsBox.innerHTML = matches.map(card => {
-                            const title = card.querySelector('h3').innerText;
-                            const category = card.getAttribute('data-category');
-                            return `
-                                <button class="w-full px-6 py-3 text-left hover:bg-purple-pale/50 flex items-center justify-between transition-colors suggestion-item">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-purple-deep line-clamp-1">${title}</span>
-                                        <span class="text-[10px] text-purple-med/70 font-medium uppercase tracking-widest">${category}</span>
-                                    </div>
-                                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
-                                </button>
-                            `;
-                        }).join('');
-                        suggestionsBox.classList.remove('hidden');
-                        lucide.createIcons();
-
-                        // Add click listeners to suggestions
-                        suggestionsBox.querySelectorAll('.suggestion-item').forEach((item, index) => {
-                            item.onclick = () => {
-                                const selectedTitle = matches[index].querySelector('h3').innerText;
-                                searchInput.value = selectedTitle;
-                                suggestionsBox.classList.add('hidden');
-                                updateDisplay();
-                                scrollToGrid();
-                            };
-                        });
-                    } else {
-                        suggestionsBox.classList.add('hidden');
-                    }
-                } else {
-                    suggestionsBox.classList.add('hidden');
-                }
-
-                updateDisplay();
-
-                // Auto-scroll logic: If matches found and query is specific
-                if (query.length >= 3 && filteredCards.length > 0) {
-                    scrollToGrid();
-                }
-            }
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    buttons.forEach(b => {
-                        b.classList.remove('active', 'bg-purple-med', 'text-white');
-                        b.classList.add('bg-white', 'text-gray-500');
-                    });
-                    btn.classList.add('active', 'bg-purple-med', 'text-white');
-                    btn.classList.remove('bg-white', 'text-gray-500');
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchNews();
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
                     currentPage = 1;
                     updateDisplay();
-                });
+                };
             });
-
-            searchInput.addEventListener('input', handleSearchInput);
-
-            // Clear Search
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                clearBtn.classList.add('hidden');
-                suggestionsBox.classList.add('hidden');
-                currentPage = 1;
-                updateDisplay();
-                searchInput.focus();
-            });
-
-            // Close suggestions on click outside
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-                    suggestionsBox.classList.add('hidden');
-                }
-            });
-        }
-
-        function initNavbar() {
-            const wrapper = document.getElementById('app-wrapper');
-            const mobileToggle = document.getElementById('mobile-toggle');
-
-            wrapper.addEventListener('scroll', () => {
-                if (wrapper.scrollTop > 50) {
-                    document.getElementById('nav-container').classList.add('nav-scrolled');
-                } else {
-                    document.getElementById('nav-container').classList.remove('nav-scrolled');
-                }
-            });
-
-            mobileToggle.addEventListener('click', toggleMobileMenu);
-        }
-
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        }
-
-        function toggleMobileDropdown(id) {
-            const menu = document.getElementById(id);
-            const allDropdowns = ['mob-org-menu', 'mob-cat-menu'];
-            allDropdowns.forEach(dId => {
-                if(dId !== id) {
-                    document.getElementById(dId).classList.add('hidden');
-                }
-            });
-            menu.classList.toggle('hidden');
-        }
-
-        function initScrollAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.section-fade').forEach(el => observer.observe(el));
-        }
-
-        function initBackToTop() {
-            const btn = document.getElementById('backToTop');
+            document.getElementById('blog-search').oninput = () => { currentPage = 1; updateDisplay(); };
+            
             const wrapper = document.getElementById('app-wrapper');
             wrapper.addEventListener('scroll', () => {
-                if (wrapper.scrollTop > 500) {
-                    btn.style.opacity = "1";
-                    btn.style.pointerEvents = "auto";
-                } else {
-                    btn.style.opacity = "0";
-                    btn.style.pointerEvents = "none";
-                }
+                if (wrapper.scrollTop > 500) document.getElementById('backToTop').style.opacity = 1;
+                else document.getElementById('backToTop').style.opacity = 0;
             });
-        }
-        
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
