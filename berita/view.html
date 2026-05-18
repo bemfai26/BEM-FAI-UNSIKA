@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Berita - BEM FAI UNSIKA</title>
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon/logo.png">
+
+    <!-- Tailwind + Config -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'purple-deep': '#2D1B4E',
+                        'purple-med': '#5B3A8C',
+                        'purple-light': '#9B72CF',
+                        'purple-soft': '#D4BEF0',
+                        'purple-pale': '#F3ECFA',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                        alice: ['Alice', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Alice&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+    <style>
+        html, body { height: 100%; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        /* Navbar Styles */
+        #nav-container { 
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            width: 95%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nav-capsule {
+            margin-top: 1.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 190, 240, 0.3);
+            box-shadow: 0 10px 40px rgba(45, 27, 78, 0.05);
+        }
+        .nav-scrolled .nav-capsule {
+            margin-top: 0.75rem;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 15px 45px rgba(45, 27, 78, 0.12);
+            border: 1px solid rgba(155, 114, 207, 0.1);
+        }
+
+        /* Reading Progress Bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #5B3A8C, #9B72CF);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Content Styling */
+        .article-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #4B5563; }
+        .article-content h2 { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.875rem; color: #2D1B4E; margin-top: 2.5rem; margin-bottom: 1rem; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animation */
+        .section-fade { opacity: 0; transition: all 0.8s ease; transform: translateY(20px); }
+        .visible { opacity: 1; transform: translateY(0); }
+
+        /* Image Clarity */
+        .gallery-item img {
+            filter: contrast(1.05) saturate(1.1);
+            transition: all 0.5s ease;
+        }
+        .gallery-item:hover img {
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        /* Lightbox Styles */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .lightbox-content { max-width: 65%; max-height: 75%; position: relative; transform: scale(0.9); transition: transform 0.3s ease; }
+        #lightbox.open { display: flex; animation: fadeIn 0.3s ease forwards; }
+        #lightbox.open .lightbox-content { transform: scale(1); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Skeleton */
+        .skeleton { background: #f3f4f6; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; border-radius: 1rem; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-[#FDFBFF] text-gray-800">
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="p-4">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white hover:text-purple-soft transition-colors z-[2001]">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <button id="prev-btn" class="absolute left-6 top-1/2 -translate-y-1/2 text-white bg-white/10 p-3 rounded-full hidden sm:flex">
+            <i data-lucide="chevron-left" class="w-8 h-8"></i>
+        </button>
+        <div class="lightbox-content flex items-center justify-center">
+            <img id="lightbox-img" src="" class="max-w-[90vw] max-h-[90vh] rounded-2xl shadow-2xl object-contain">
+        </div>
+        <button id="next-btn" class="absolute right-6 top-1/2 -translate-y-1/2 text-white bg-white/10 p-3 rounded-full hidden sm:flex">
+            <i data-lucide="chevron-right" class="w-8 h-8"></i>
+        </button>
+    </div>
+
+    <div id="progress-bar"></div>
+
+    <div id="app-wrapper" class="w-full h-full overflow-auto">
+        
+        <!-- NAVBAR -->
+        <div id="nav-container" class="fixed top-0 z-50 transition-all duration-500">
+            <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
+                <div class="px-6 lg:px-10">
+                    <div class="flex items-center justify-between h-16 lg:h-20">
+                        <a href="../../index.html" class="flex items-center gap-3 group">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
+                                <img src="../../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
+                            </div>
+                            <div class="block">
+                                <div class="font-bold text-purple-deep text-sm leading-tight uppercase">BEM FAI UNSIKA</div>
+                                <div class="text-[9px] text-purple-med/60 font-medium tracking-wider">Kabinet Poros Katalist</div>
+                            </div>
+                        </a>
+                        <div class="hidden lg:flex items-center gap-4">
+                            <a href="../home-berita.html" class="px-5 py-2 text-sm font-bold text-gray-500 hover:text-purple-med transition-colors flex items-center gap-2">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Berita
+                            </a>
+                            <a href="../../index.html#kontak" class="px-6 py-2.5 bg-purple-med text-white text-sm font-bold rounded-full hover:bg-purple-deep transition-all shadow-lg shadow-purple-med/20">
+                                Hubungi Kami
+                            </a>
+                        </div>
+                        <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
+                            <i data-lucide="menu" class="w-6 h-6 text-purple-deep"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- HERO HEADER -->
+        <header class="pt-48 pb-20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-purple-pale/30 -z-10"></div>
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid lg:grid-cols-12 gap-16">
+                    <div class="lg:col-span-8">
+                        <div class="flex items-center gap-4 mb-6 section-fade visible">
+                            <span id="article-category" class="px-4 py-1.5 bg-purple-med text-white text-[10px] font-black rounded-full tracking-widest uppercase">Loading...</span>
+                            <div class="h-px w-8 bg-purple-pale"></div>
+                            <span id="article-date" class="text-xs text-gray-400 font-medium flex items-center gap-1">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5"></i> -- -- ----
+                            </span>
+                        </div>
+                        <h1 id="article-title" class="font-display text-4xl md:text-6xl font-black text-purple-deep mb-8 leading-tight tracking-tight section-fade visible">
+                            Memuat Berita...
+                        </h1>
+                        <div class="flex items-center justify-between py-8 border-y border-purple-pale/50 section-fade visible gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-purple-soft/30 flex items-center justify-center text-purple-med">
+                                    <i data-lucide="user" class="w-5 h-5"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div id="article-author" class="text-sm font-bold text-purple-deep">
+                                        Admin BEM FAI
+                                    </div>
+                                    <div class="text-[10px] text-gray-400 font-medium">
+                                        Pengurus BEM FAI
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-center gap-3">                            
+                                <!-- COPY LINK -->
+<button id="copy-link" class="w-9 h-9 rounded-full bg-purple-pale text-purple-med flex items-center justify-center hover:bg-purple-med hover:text-white transition-all shadow-sm relative" title="Salin Link">
+    <i data-lucide="link-2" class="w-4 h-4"></i>
+    <span id="copy-toast" class="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-deep text-white text-[10px] rounded-lg opacity-0 pointer-events-none transition-opacity">
+        Tersalin!
+    </span>
+</button>
+
+<!-- SHARE BUTTON -->
+<div class="relative">
+    <button id="share-toggle" class="w-9 h-9 rounded-full bg-purple-pale text-purple-med flex items-center justify-center hover:bg-purple-med hover:text-white transition-all shadow-sm">
+        <i data-lucide="share-2" class="w-4 h-4"></i>
+    </button>
+
+    <!-- DROPDOWN -->
+    <div id="share-menu"
+    class="absolute right-0 top-12 bg-white shadow-xl rounded-2xl py-1.5 px-3 grid grid-cols-2 gap-2 opacity-0 pointer-events-none transition-all z-50 w-28">
+
+    <!-- WhatsApp -->
+<a id="wa-share"
+   target="_blank"
+   class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-green-50 transition"
+   title="WhatsApp">
+    <i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i>
+</a>
+
+<!-- Instagram -->
+<a id="ig-share"
+   target="_blank"
+   class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-pink-50 transition"
+   title="Instagram">
+    <i data-lucide="instagram" class="w-5 h-5 text-pink-500"></i>
+</a>
+
+<!-- TikTok -->
+<a id="tiktok-share"
+   target="_blank"
+   class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition"
+   title="TikTok">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+         viewBox="0 0 24 24">
+        <path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/>
+    </svg>
+</a>
+
+<!-- X -->
+<a id="x-share"
+   target="_blank"
+   class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-black/10 transition"
+   title="X">
+    <i data-lucide="x" class="w-5 h-5 text-black-500"></i>
+</a>
+
+</div>
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <main class="max-w-7xl mx-auto px-6 pb-32">
+            <div class="grid lg:grid-cols-12 gap-16">
+                <!-- Main Content -->
+                <article class="lg:col-span-8 section-fade visible">
+                    <div class="rounded-3xl overflow-hidden shadow-2xl mb-12 relative bg-gray-100 min-h-[400px]">
+                        <img id="article-feature-image" src="" class="w-full h-auto object-cover opacity-0 transition-opacity duration-500">
+                    </div>
+                    <div id="article-body" class="article-content font-alice text-lg">
+                        <!-- Content injected -->
+                    </div>
+                </article>
+
+                <!-- Sidebar -->
+                <aside class="lg:col-span-4 space-y-12">
+                    <div class="p-8 bg-white rounded-3xl border border-purple-pale shadow-xl section-fade visible">
+                        <h4 class="font-display font-bold text-purple-deep mb-6">Cari Berita Lain</h4>
+                        <div class="relative">
+                            <input id="sidebar-search" type="text" placeholder="Masukkan kata kunci..." class="w-full px-6 py-3 bg-purple-pale/50 rounded-xl border border-purple-pale outline-none text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-display font-bold text-purple-deep mb-6">Terkait</h4>
+                        <div id="related-news" class="space-y-6">
+                            <!-- Related injected -->
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Gallery -->
+            <div id="gallery-container" class="mt-24 pt-16 border-t border-purple-pale/50 section-fade visible hidden">
+                <h3 class="font-display font-black text-3xl text-purple-deep mb-12 text-center">Galeri Kegiatan</h3>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- Gallery items injected -->
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="py-14 border-t border-purple-pale/30 text-white" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md">
+                            <img src="../../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-white leading-tight">BEM FAI UNSIKA</div>
+                            <div class="text-sm text-white/70">Kabinet Poros Katalist</div>
+                        </div>
+                    </div>
+                    <p class="text-white/60 text-sm text-center">© 2026 BEM FAI UNSIKA</p>
+                    <div class="flex items-center gap-4">
+                        <a href="https://www.instagram.com/bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
+                            <i data-lucide="instagram" style="width:18px;height:18px;"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@officialbemfaiunsika2570" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
+                            <i data-lucide="youtube" style="width:18px;height:18px;"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@bemfaiunsika" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script type="module">
+    import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../../js/firebase-init.js';
+
+    /* =========================================
+       FORMAT TANGGAL INDONESIA
+    ========================================= */
+    function formatTanggal(dateString) {
+        const bulanIndonesia = [
+            "Januari", "Februari", "Maret", "April",
+            "Mei", "Juni", "Juli", "Agustus",
+            "September", "Oktober", "November", "Desember"
+        ];
+
+        const date = new Date(dateString);
+
+        const hari = date.getDate();
+        const bulan = bulanIndonesia[date.getMonth()];
+        const tahun = date.getFullYear();
+
+        return `${hari} ${bulan} ${tahun}`;
+    }
+
+    /* =========================================
+       INIT HALAMAN
+    ========================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('id');
+
+        if (newsId) {
+            loadArticle(newsId);
+        } else {
+            window.location.href = '../home-berita.html';
+        }
+
+        initNavbar();
+        initScrollProgress();
+        initCopyLink();
+        initShareDropdown();
+    });
+
+    /* =========================================
+       LOAD ARTIKEL DARI FIREBASE
+    ========================================= */
+    async function loadArticle(id) {
+        try {
+            const docRef = doc(db, 'news', id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                displayArticle(data);
+                loadRelated(data.category, id);
+            } else {
+                document.getElementById('article-title').innerText = 'Berita Tidak Ditemukan';
+                document.getElementById('article-body').innerHTML = `
+                    <p class="text-center py-20 px-4 bg-red-50 rounded-2xl text-red-500 font-bold">
+                        Maaf, berita yang anda cari tidak ada atau sudah dihapus.
+                    </p>
+                `;
+                document.getElementById('article-category').innerText = '404';
+                document.getElementById('article-feature-image').classList.add('hidden');
+            }
+
+        } catch (error) {
+            console.error("Error loading article:", error);
+            document.getElementById('article-title').innerText = 'Error';
+            document.getElementById('article-body').innerHTML = `
+                <p class="text-center py-20 text-red-500 font-bold">
+                    Gagal memuat berita: ${error.message}
+                </p>
+            `;
+        }
+    }
+
+    /* =========================================
+   DISPLAY ARTIKEL KE UI (FINAL CLEAN)
+========================================= */
+function displayArticle(data) {
+
+    document.title = `${data.title} - BEM FAI UNSIKA`;
+
+    const titleParts = data.title.split(' ');
+    const mainTitle = titleParts.slice(0, 3).join(' ');
+    const subTitle = titleParts.slice(3).join(' ');
+
+    document.getElementById('article-title').innerHTML = `
+        ${mainTitle}
+        ${subTitle ? `
+        <span class="italic text-purple-med/70 font-light underline decoration-purple-soft/50 underline-offset-8">
+            ${subTitle}
+        </span>
+        ` : ''}
+    `;
+
+    document.getElementById('article-category').innerText = data.category;
+
+    document.getElementById('article-date').innerHTML = `
+        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+        ${formatTanggal(data.date)}
+    `;
+
+    document.getElementById('article-author').innerText = data.author;
+
+    document.getElementById('article-body').innerHTML = data.contentBody;
+
+    const featureImg = document.getElementById('article-feature-image');
+    if (featureImg) {
+        featureImg.src = data.featuredImage;
+        featureImg.classList.remove('opacity-0');
+    }
+
+    /* =========================================
+       SHARE LINKS (FINAL FIXED)
+    ========================================= */
+
+    const url = window.location.href;
+const text = `${data.title} ${url}`;
+const encodedText = encodeURIComponent(text);
+
+// WhatsApp
+document.getElementById('wa-share')?.setAttribute(
+    'href',
+    `https://wa.me/?text=${encodedText}`
+);
+
+// Instagram (profile aja, IG tidak support share text)
+document.getElementById('ig-share')?.setAttribute(
+    'href',
+    'https://www.instagram.com/bemfaiunsika'
+);
+
+// TikTok (profile)
+document.getElementById('tiktok-share')?.setAttribute(
+    'href',
+    'https://www.tiktok.com/@bemfaiunsika'
+);
+
+// X (Twitter share)
+document.getElementById('x-share')?.setAttribute(
+    'href',
+    `https://twitter.com/intent/tweet?text=${encodedText}`
+);
+
+    /* =========================================
+       FIX LUCIDE ICON RENDER (WAJIB)
+    ========================================= */
+    requestAnimationFrame(() => {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+}
+
+    /* =========================================
+       GALERI (kalau ada)
+    ========================================= */
+    if (data.gallery && data.gallery.length > 0) {
+        const galleryContainer = document.getElementById('gallery-container');
+        const grid = document.getElementById('gallery-grid');
+
+        galleryContainer.classList.remove('hidden');
+
+        grid.innerHTML = data.gallery.map((url, i) => `
+            <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
+                 onclick="openLightbox(${i})">
+
+                <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+
+                <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+        `).join('');
+
+        window.galleryImages = data.gallery;
+        initLightbox();
+    }
+
+    lucide.createIcons();
+
+
+        /* GALERI */
+        if (data.gallery && data.gallery.length > 0) {
+            const galleryContainer = document.getElementById('gallery-container');
+            const grid = document.getElementById('gallery-grid');
+
+            galleryContainer.classList.remove('hidden');
+
+            grid.innerHTML = data.gallery.map((url, i) => `
+                <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
+                     onclick="openLightbox(${i})">
+
+                    <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+
+                    <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+            `).join('');
+
+            window.galleryImages = data.gallery;
+            initLightbox();
+        }
+
+        lucide.createIcons();
+    
+
+    /* =========================================
+       BERITA TERKAIT
+    ========================================= */
+    async function loadRelated(category, currentId) {
+        const container = document.getElementById('related-news');
+
+        const q = query(collection(db, 'news'), limit(5));
+        const querySnapshot = await getDocs(q);
+
+        let html = '';
+
+        querySnapshot.forEach(docSnap => {
+            const item = docSnap.data();
+
+            if (docSnap.id !== currentId) {
+                html += `
+                    <a href="view.html?id=${docSnap.id}" class="group flex items-center gap-4">
+
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
+                            <img src="${item.featuredImage}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] text-purple-med font-bold uppercase tracking-tighter">
+                                ${item.category}
+                            </span>
+
+                            <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
+                                ${item.title}
+                            </h5>
+                        </div>
+
+                    </a>
+                `;
+            }
+        });
+
+        container.innerHTML = html || `
+            <p class="text-xs text-gray-400 italic">Tidak ada berita terkait.</p>
+        `;
+    }
+
+    /* =========================================
+       NAVBAR SCROLL EFFECT
+    ========================================= */
+    function initNavbar() {
+        const wrapper = document.getElementById('app-wrapper');
+
+        wrapper.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav-container');
+
+            if (wrapper.scrollTop > 50) {
+                nav.classList.add('nav-scrolled');
+            } else {
+                nav.classList.remove('nav-scrolled');
+            }
+        });
+    }
+
+    /* =========================================
+       PROGRESS BAR SCROLL
+    ========================================= */
+    function initScrollProgress() {
+        const wrapper = document.getElementById('app-wrapper');
+        const bar = document.getElementById('progress-bar');
+
+        wrapper.addEventListener('scroll', () => {
+            const winScroll = wrapper.scrollTop;
+            const height = wrapper.scrollHeight - wrapper.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+
+            bar.style.width = scrolled + "%";
+        });
+    }
+
+    /* =========================================
+       COPY LINK BUTTON
+    ========================================= */
+    function initCopyLink() {
+        const btn = document.getElementById('copy-link');
+        const toast = document.getElementById('copy-toast');
+
+        btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                toast.classList.replace('opacity-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.replace('opacity-100', 'opacity-0');
+                }, 2000);
+            });
+        });
+    }
+
+    /* =========================================
+       SHARE DROPDOWN
+    ========================================= */
+    function initShareDropdown() {
+    const toggle = document.getElementById('share-toggle');
+    const menu = document.getElementById('share-menu');
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        menu.classList.toggle('opacity-0');
+        menu.classList.toggle('pointer-events-none');
+    });
+
+    // klik luar untuk nutup
+    document.addEventListener('click', () => {
+        menu.classList.add('opacity-0');
+        menu.classList.add('pointer-events-none');
+    });
+    }
+
+    /* =========================================
+       LIGHTBOX GALERI
+    ========================================= */
+    function initLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        let currentIndex = 0;
+
+        window.openLightbox = (index) => {
+            currentIndex = index;
+            lightboxImg.src = window.galleryImages[currentIndex];
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        document.getElementById('close-lightbox').onclick = () => {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        };
+
+        const next = () => {
+            currentIndex = (currentIndex + 1) % window.galleryImages.length;
+            lightboxImg.src = window.galleryImages[currentIndex];
+        };
+
+        const prev = () => {
+            currentIndex = (currentIndex - 1 + window.galleryImages.length) % window.galleryImages.length;
+            lightboxImg.src = window.galleryImages[currentIndex];
+        };
+
+        document.getElementById('next-btn').onclick = next;
+        document.getElementById('prev-btn').onclick = prev;
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('open')) return;
+
+            if (e.key === 'ArrowRight') next();
+            if (e.key === 'ArrowLeft') prev();
+            if (e.key === 'Escape') {
+                lightbox.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
