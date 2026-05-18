@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Berita - BEM FAI UNSIKA</title>
-    <link rel="icon" type="image/x-icon" href="../../assets/favicon/logo.png">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon/logo.png">
 
     <!-- Tailwind + Config -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -142,9 +142,9 @@
             <nav id="navbar" class="nav-capsule max-w-7xl mx-auto transition-all duration-500">
                 <div class="px-6 lg:px-10">
                     <div class="flex items-center justify-between h-16 lg:h-20">
-                        <a href="../../index.html" class="flex items-center gap-3 group">
+                        <a href="../index.html" class="flex items-center gap-3 group">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-purple-pale transition-transform group-hover:rotate-12">
-                                <img src="../../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
+                                <img src="../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
                             </div>
                             <div class="block">
                                 <div class="font-bold text-purple-deep text-sm leading-tight uppercase">BEM FAI UNSIKA</div>
@@ -152,10 +152,10 @@
                             </div>
                         </a>
                         <div class="hidden lg:flex items-center gap-4">
-                            <a href="../home-berita.html" class="px-5 py-2 text-sm font-bold text-gray-500 hover:text-purple-med transition-colors flex items-center gap-2">
+                            <a href="home-berita.html" class="px-5 py-2 text-sm font-bold text-gray-500 hover:text-purple-med transition-colors flex items-center gap-2">
                                 <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Berita
                             </a>
-                            <a href="../../index.html#kontak" class="px-6 py-2.5 bg-purple-med text-white text-sm font-bold rounded-full hover:bg-purple-deep transition-all shadow-lg shadow-purple-med/20">
+                            <a href="../index.html" class="px-6 py-2.5 bg-purple-med text-white text-sm font-bold rounded-full hover:bg-purple-deep transition-all shadow-lg shadow-purple-med/20">
                                 Hubungi Kami
                             </a>
                         </div>
@@ -305,7 +305,7 @@
                 <div class="flex flex-col md:flex-row items-center justify-between gap-8">
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 rounded-xl overflow-hidden shadow-md">
-                            <img src="../../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
+                            <img src="../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <div class="text-lg font-bold text-white leading-tight">BEM FAI UNSIKA</div>
@@ -331,7 +331,7 @@
 
     <!-- JAVASCRIPT -->
     <script type="module">
-    import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../../js/firebase-init.js';
+    import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../js/firebase-init.js';
 
     /* =========================================
        FORMAT TANGGAL INDONESIA
@@ -364,7 +364,7 @@
         if (newsId) {
             loadArticle(newsId);
         } else {
-            window.location.href = '../home-berita.html';
+            window.location.href = 'home-berita.html';
         }
 
         initNavbar();
