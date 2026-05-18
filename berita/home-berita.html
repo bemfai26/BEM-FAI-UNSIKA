@@ -646,45 +646,34 @@ function renderPagination(totalPages) {
 
     container.innerHTML = '';
 
-    if (totalPages <= 1) return;
+    if (totalPages <= 0) return;
 
+    // Prev Button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = `w-12 h-12 rounded-xl border border-purple-pale bg-white flex items-center justify-center transition-all ${currentPage === 1 ? 'text-gray-300 pointer-events-none' : 'text-gray-500 hover:border-purple-light hover:text-purple-med'}`;
+    prevBtn.innerHTML = '<i data-lucide="chevron-left" style="width:20px;height:20px;"></i>';
+    prevBtn.onclick = () => { currentPage--; updateDisplay(); scrollToGrid(); };
+    container.appendChild(prevBtn);
+
+    // Page Numbers
     for (let i = 1; i <= totalPages; i++) {
-
-        const btn = document.createElement('button');
-
-        btn.className = `
-            pagination-btn
-            w-10
-            h-10
-            rounded-lg
-            border
-            font-bold
-            ${
-                i === currentPage
-                ? 'bg-purple-med text-white'
-                : 'bg-white text-gray-500'
-            }
-        `;
-
-        btn.innerText = i;
-
-        btn.onclick = () => {
-
-            currentPage = i;
-
-            updateDisplay();
-
-            document.getElementById('app-wrapper')
-                .scrollTo({
-                    top: 500,
-                    behavior: 'smooth'
-                });
-
-        };
-
-        container.appendChild(btn);
+    const pageBtn = document.createElement('button');
+    pageBtn.className = `w-12 h-12 rounded-xl border flex items-center justify-center font-bold transition-all ${i === currentPage ? 'bg-purple-med text-white border-purple-med' : 'bg-white text-gray-500 border-purple-pale hover:border-purple-light hover:text-purple-med'}`;
+    pageBtn.innerText = i;
+    pageBtn.onclick = () => { currentPage = i; updateDisplay(); scrollToGrid(); };
+    container.appendChild(pageBtn);
     }
-}
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = `w-12 h-12 rounded-xl border border-purple-pale bg-white flex items-center justify-center transition-all ${currentPage === totalPages ? 'text-gray-300 pointer-events-none' : 'text-gray-500 hover:border-purple-light hover:text-purple-med'}`;
+    nextBtn.innerHTML = '<i data-lucide="chevron-right" style="width:20px;height:20px;"></i>';
+    nextBtn.onclick = () => { currentPage++; updateDisplay(); scrollToGrid(); };
+    container.appendChild(nextBtn);
+
+    lucide.createIcons();
+    }
+
 
 
 /* =========================================
