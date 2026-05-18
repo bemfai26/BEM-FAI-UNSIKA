@@ -674,6 +674,15 @@ function renderPagination(totalPages) {
     lucide.createIcons();
     }
 
+        function scrollToGrid() {
+            const grid = document.getElementById('berita-grid');
+            const wrapper = document.getElementById('app-wrapper');
+            wrapper.scrollTo({
+                top: grid.offsetTop - 200,
+                behavior: 'smooth'
+            });
+        
+}
 
 
 /* =========================================
