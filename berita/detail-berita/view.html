@@ -417,7 +417,7 @@
         featureImg.src = data.featuredImage;
         featureImg.classList.remove('opacity-0');
 
-        const waShare = document.getElementById('wa-share');
+        const waShare = document.getElementById('share-wa');
 if (waShare) {
     waShare.href =
         `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
@@ -539,6 +539,27 @@ if (waShare) {
                 }, 2000);
             });
         });
+    }
+
+    /* =========================================
+       SHARE DROPDOWN
+    ========================================= */
+    function initShareDropdown() {
+    const toggle = document.getElementById('share-toggle');
+    const menu = document.getElementById('share-menu');
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        menu.classList.toggle('opacity-0');
+        menu.classList.toggle('pointer-events-none');
+    });
+
+    // klik luar untuk nutup
+    document.addEventListener('click', () => {
+        menu.classList.add('opacity-0');
+        menu.classList.add('pointer-events-none');
+    });
     }
 
     /* =========================================
