@@ -291,168 +291,270 @@
 
     <!-- JAVASCRIPT -->
     <script type="module">
-        import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../../js/firebase-init.js';
+    import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../../js/firebase-init.js';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            const urlParams = new URLSearchParams(window.location.search);
-            const newsId = urlParams.get('id');
+    /* =========================================
+       FORMAT TANGGAL INDONESIA
+    ========================================= */
+    function formatTanggal(dateString) {
+        const bulanIndonesia = [
+            "Januari", "Februari", "Maret", "April",
+            "Mei", "Juni", "Juli", "Agustus",
+            "September", "Oktober", "November", "Desember"
+        ];
 
-            if (newsId) {
-                loadArticle(newsId);
+        const date = new Date(dateString);
+
+        const hari = date.getDate();
+        const bulan = bulanIndonesia[date.getMonth()];
+        const tahun = date.getFullYear();
+
+        return `${hari} ${bulan} ${tahun}`;
+    }
+
+    /* =========================================
+       INIT HALAMAN
+    ========================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('id');
+
+        if (newsId) {
+            loadArticle(newsId);
+        } else {
+            window.location.href = '../home-berita.html';
+        }
+
+        initNavbar();
+        initScrollProgress();
+        initCopyLink();
+    });
+
+    /* =========================================
+       LOAD ARTIKEL DARI FIREBASE
+    ========================================= */
+    async function loadArticle(id) {
+        try {
+            const docRef = doc(db, 'news', id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                displayArticle(data);
+                loadRelated(data.category, id);
             } else {
-                window.location.href = '../home-berita.html';
+                document.getElementById('article-title').innerText = 'Berita Tidak Ditemukan';
+                document.getElementById('article-body').innerHTML = `
+                    <p class="text-center py-20 px-4 bg-red-50 rounded-2xl text-red-500 font-bold">
+                        Maaf, berita yang anda cari tidak ada atau sudah dihapus.
+                    </p>
+                `;
+                document.getElementById('article-category').innerText = '404';
+                document.getElementById('article-feature-image').classList.add('hidden');
             }
 
-            initNavbar();
-            initScrollProgress();
-            initCopyLink();
+        } catch (error) {
+            console.error("Error loading article:", error);
+            document.getElementById('article-title').innerText = 'Error';
+            document.getElementById('article-body').innerHTML = `
+                <p class="text-center py-20 text-red-500 font-bold">
+                    Gagal memuat berita: ${error.message}
+                </p>
+            `;
+        }
+    }
+
+    /* =========================================
+       DISPLAY ARTIKEL KE UI
+    ========================================= */
+    function displayArticle(data) {
+
+        document.title = `${data.title} - BEM FAI UNSIKA`;
+
+        document.getElementById('article-title').innerText = data.title;
+        document.getElementById('article-category').innerText = data.category;
+
+        /* FIX: FORMAT TANGGAL INDONESIA */
+        document.getElementById('article-date').innerHTML = `
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+            ${formatTanggal(data.date)}
+        `;
+
+        document.getElementById('article-author').innerText = data.author;
+        document.getElementById('article-body').innerHTML = data.contentBody;
+
+        const featureImg = document.getElementById('article-feature-image');
+        featureImg.src = data.featuredImage;
+        featureImg.classList.remove('opacity-0');
+
+        document.getElementById('share-wa').href =
+            `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
+
+        /* GALERI */
+        if (data.gallery && data.gallery.length > 0) {
+            const galleryContainer = document.getElementById('gallery-container');
+            const grid = document.getElementById('gallery-grid');
+
+            galleryContainer.classList.remove('hidden');
+
+            grid.innerHTML = data.gallery.map((url, i) => `
+                <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
+                     onclick="openLightbox(${i})">
+
+                    <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+
+                    <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+            `).join('');
+
+            window.galleryImages = data.gallery;
+            initLightbox();
+        }
+
+        lucide.createIcons();
+    }
+
+    /* =========================================
+       BERITA TERKAIT
+    ========================================= */
+    async function loadRelated(category, currentId) {
+        const container = document.getElementById('related-news');
+
+        const q = query(collection(db, 'news'), limit(5));
+        const querySnapshot = await getDocs(q);
+
+        let html = '';
+
+        querySnapshot.forEach(docSnap => {
+            const item = docSnap.data();
+
+            if (docSnap.id !== currentId) {
+                html += `
+                    <a href="view.html?id=${docSnap.id}" class="group flex items-center gap-4">
+
+                        <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
+                            <img src="${item.featuredImage}"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] text-purple-med font-bold uppercase tracking-tighter">
+                                ${item.category}
+                            </span>
+
+                            <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
+                                ${item.title}
+                            </h5>
+                        </div>
+
+                    </a>
+                `;
+            }
         });
 
-        async function loadArticle(id) {
-            try {
-                const docRef = doc(db, 'news', id);
-                const docSnap = await getDoc(docRef);
+        container.innerHTML = html || `
+            <p class="text-xs text-gray-400 italic">Tidak ada berita terkait.</p>
+        `;
+    }
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    displayArticle(data);
-                    loadRelated(data.category, id);
-                } else {
-                    document.getElementById('article-title').innerText = 'Berita Tidak Ditemukan';
-                    document.getElementById('article-body').innerHTML = '<p class="text-center py-20 px-4 bg-red-50 rounded-2xl text-red-500 font-bold">Maaf, berita yang anda cari tidak ada atau sudah dihapus.</p>';
-                    document.getElementById('article-category').innerText = '404';
-                    document.getElementById('article-feature-image').classList.add('hidden');
-                }
-            } catch (error) {
-                console.error("Error loading article:", error);
-                document.getElementById('article-title').innerText = 'Error';
-                document.getElementById('article-body').innerHTML = `<p class="text-center py-20 text-red-500 font-bold">Gagal memuat berita: ${error.message}</p>`;
+    /* =========================================
+       NAVBAR SCROLL EFFECT
+    ========================================= */
+    function initNavbar() {
+        const wrapper = document.getElementById('app-wrapper');
+
+        wrapper.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav-container');
+
+            if (wrapper.scrollTop > 50) {
+                nav.classList.add('nav-scrolled');
+            } else {
+                nav.classList.remove('nav-scrolled');
             }
-        }
+        });
+    }
 
-        function displayArticle(data) {
-            document.title = `${data.title} - BEM FAI UNSIKA`;
-            document.getElementById('article-title').innerText = data.title;
-            document.getElementById('article-category').innerText = data.category;
-            document.getElementById('article-date').innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${data.date}`;
-            document.getElementById('article-author').innerText = data.author;
-            document.getElementById('article-body').innerHTML = data.contentBody;
-            
-            const featureImg = document.getElementById('article-feature-image');
-            featureImg.src = data.featuredImage;
-            featureImg.classList.remove('opacity-0');
+    /* =========================================
+       PROGRESS BAR SCROLL
+    ========================================= */
+    function initScrollProgress() {
+        const wrapper = document.getElementById('app-wrapper');
+        const bar = document.getElementById('progress-bar');
 
-            document.getElementById('share-wa').href = `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
+        wrapper.addEventListener('scroll', () => {
+            const winScroll = wrapper.scrollTop;
+            const height = wrapper.scrollHeight - wrapper.clientHeight;
+            const scrolled = (winScroll / height) * 100;
 
-            if (data.gallery && data.gallery.length > 0) {
-                const galleryContainer = document.getElementById('gallery-container');
-                const grid = document.getElementById('gallery-grid');
-                galleryContainer.classList.remove('hidden');
-                grid.innerHTML = data.gallery.map((url, i) => `
-                    <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56" onclick="openLightbox(${i})">
-                        <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                `).join('');
-                window.galleryImages = data.gallery;
-                initLightbox();
-            }
-            lucide.createIcons();
-        }
+            bar.style.width = scrolled + "%";
+        });
+    }
 
-        async function loadRelated(category, currentId) {
-            const container = document.getElementById('related-news');
-            const q = query(collection(db, 'news'), limit(5)); // Simplified for speed
-            const querySnapshot = await getDocs(q);
-            
-            let html = '';
-            querySnapshot.forEach(docSnap => {
-                const item = docSnap.data();
-                if (docSnap.id !== currentId) {
-                    html += `
-                        <a href="view.html?id=${docSnap.id}" class="group flex items-center gap-4">
-                            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
-                                <img src="${item.featuredImage}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-purple-med font-bold uppercase tracking-tighter">${item.category}</span>
-                                <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">${item.title}</h5>
-                            </div>
-                        </a>
-                    `;
-                }
+    /* =========================================
+       COPY LINK BUTTON
+    ========================================= */
+    function initCopyLink() {
+        const btn = document.getElementById('copy-link');
+        const toast = document.getElementById('copy-toast');
+
+        btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                toast.classList.replace('opacity-0', 'opacity-100');
+
+                setTimeout(() => {
+                    toast.classList.replace('opacity-100', 'opacity-0');
+                }, 2000);
             });
-            container.innerHTML = html || '<p class="text-xs text-gray-400 italic">Tidak ada berita terkait.</p>';
-        }
+        });
+    }
 
-        function initNavbar() {
-            const wrapper = document.getElementById('app-wrapper');
-            wrapper.addEventListener('scroll', () => {
-                const nav = document.getElementById('nav-container');
-                if (wrapper.scrollTop > 50) nav.classList.add('nav-scrolled');
-                else nav.classList.remove('nav-scrolled');
-            });
-        }
+    /* =========================================
+       LIGHTBOX GALERI
+    ========================================= */
+    function initLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        let currentIndex = 0;
 
-        function initScrollProgress() {
-            const wrapper = document.getElementById('app-wrapper');
-            const bar = document.getElementById('progress-bar');
-            wrapper.addEventListener('scroll', () => {
-                const winScroll = wrapper.scrollTop;
-                const height = wrapper.scrollHeight - wrapper.clientHeight;
-                const scrolled = (winScroll / height) * 100;
-                bar.style.width = scrolled + "%";
-            });
-        }
+        window.openLightbox = (index) => {
+            currentIndex = index;
+            lightboxImg.src = window.galleryImages[currentIndex];
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
 
-        function initCopyLink() {
-            const btn = document.getElementById('copy-link');
-            const toast = document.getElementById('copy-toast');
-            btn.addEventListener('click', () => {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    toast.classList.replace('opacity-0', 'opacity-100');
-                    setTimeout(() => toast.classList.replace('opacity-100', 'opacity-0'), 2000);
-                });
-            });
-        }
+        document.getElementById('close-lightbox').onclick = () => {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        };
 
-        function initLightbox() {
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
-            let currentIndex = 0;
+        const next = () => {
+            currentIndex = (currentIndex + 1) % window.galleryImages.length;
+            lightboxImg.src = window.galleryImages[currentIndex];
+        };
 
-            window.openLightbox = (index) => {
-                currentIndex = index;
-                lightboxImg.src = window.galleryImages[currentIndex];
-                lightbox.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            };
+        const prev = () => {
+            currentIndex = (currentIndex - 1 + window.galleryImages.length) % window.galleryImages.length;
+            lightboxImg.src = window.galleryImages[currentIndex];
+        };
 
-            document.getElementById('close-lightbox').onclick = () => {
+        document.getElementById('next-btn').onclick = next;
+        document.getElementById('prev-btn').onclick = prev;
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('open')) return;
+
+            if (e.key === 'ArrowRight') next();
+            if (e.key === 'ArrowLeft') prev();
+            if (e.key === 'Escape') {
                 lightbox.classList.remove('open');
                 document.body.style.overflow = 'auto';
-            };
+            }
+        });
+    }
 
-            const next = () => {
-                currentIndex = (currentIndex + 1) % window.galleryImages.length;
-                lightboxImg.src = window.galleryImages[currentIndex];
-            };
-            const prev = () => {
-                currentIndex = (currentIndex - 1 + window.galleryImages.length) % window.galleryImages.length;
-                lightboxImg.src = window.galleryImages[currentIndex];
-            };
-
-            document.getElementById('next-btn').onclick = next;
-            document.getElementById('prev-btn').onclick = prev;
-            
-            document.addEventListener('keydown', (e) => {
-                if (!lightbox.classList.contains('open')) return;
-                if (e.key === 'ArrowRight') next();
-                if (e.key === 'ArrowLeft') prev();
-                if (e.key === 'Escape') lightbox.classList.remove('open');
-            });
-        }
-    </script>
+</script>
 </body>
 </html>
