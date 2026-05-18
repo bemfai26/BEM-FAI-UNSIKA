@@ -446,40 +446,40 @@ function displayArticle(data) {
     featureImg.classList.remove('opacity-0');
 
     /* =========================================
-       SHARE SECTION
-    ========================================= */
-    const url = window.location.href;
-    const text = encodeURIComponent(`${data.title} ${url}`);
+   SHARE LINKS (FINAL FIXED VERSION)
+========================================= */
+const url = window.location.href;
+const text = `${data.title} ${url}`;
 
-    // WhatsApp
-    const waShare = document.getElementById('wa-share');
-    if (waShare) {
-        waShare.href = `https://wa.me/?text=${text}`;
-    }
+// WhatsApp (share langsung)
+const waShare = document.getElementById('wa-share');
+if (waShare) {
+    waShare.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
 
-    // Instagram (tidak ada direct share → fallback)
-    const igShare = document.getElementById('ig-share');
-    if (igShare) {
-        igShare.href = `https://www.instagram.com/`;
-    }
+// Instagram → ke akun BEM
+const igShare = document.getElementById('ig-share');
+if (igShare) {
+    igShare.href = `https://www.instagram.com/bemfaiunsika`;
+}
 
-    // Messenger
-    const msgShare = document.getElementById('msg-share');
-    if (msgShare) {
-        msgShare.href = `https://m.me/`;
-    }
+// Messenger → fallback
+const msgShare = document.getElementById('msg-share');
+if (msgShare) {
+    msgShare.href = `https://www.messenger.com/`;
+}
 
-    // TikTok (tidak ada API share universal)
-    const tiktokShare = document.getElementById('tiktok-share');
-    if (tiktokShare) {
-        tiktokShare.href = `https://www.tiktok.com/`;
-    }
+// TikTok → ke akun BEM
+const tiktokShare = document.getElementById('tiktok-share');
+if (tiktokShare) {
+    tiktokShare.href = `https://www.tiktok.com/@bemfaiunsika`;
+}
 
-    // X (Twitter)
-    const xShare = document.getElementById('x-share');
-    if (xShare) {
-        xShare.href = `https://twitter.com/intent/tweet?text=${text}`;
-    }
+// X (Twitter) → tweet composer
+const xShare = document.getElementById('x-share');
+if (xShare) {
+    xShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+}
 
     /* =========================================
        GALERI (kalau ada)
