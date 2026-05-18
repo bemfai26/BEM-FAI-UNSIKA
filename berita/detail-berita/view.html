@@ -346,6 +346,7 @@
         initNavbar();
         initScrollProgress();
         initCopyLink();
+        initShareDropdown();
     });
 
     /* =========================================
@@ -417,7 +418,7 @@
         featureImg.src = data.featuredImage;
         featureImg.classList.remove('opacity-0');
 
-        const waShare = document.getElementById('share-wa');
+        const waShare = document.getElementById('wa-share');
 if (waShare) {
     waShare.href =
         `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
