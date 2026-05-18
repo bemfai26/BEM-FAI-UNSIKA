@@ -84,7 +84,7 @@
     }
 
     /* Drop Area */
-    #drop-area {
+    .drop-area {
       border: 2px dashed #9B72CF;
       border-radius: 1rem;
       padding: 1.5rem;
@@ -92,20 +92,17 @@
       cursor: pointer;
       transition: background 0.2s;
     }
+    .drop-area:hover { background: #F3ECFA; }
 
-    #drop-area:hover {
-      background: #F3ECFA;
-    }
-
-    #image-preview {
-      max-height: 300px;
+    #image-preview, .gallery-preview-item {
+      max-height: 200px;
       object-fit: cover;
+      border-radius: 12px;
     }
     
     .ql-editor {
       min-height: 250px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 16px;
     }
     </style>
 </head>
@@ -113,14 +110,12 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <!-- Logo -->
   <div class="text-center mb-10">
     <img src="../assets/Logo/logo-bem.png" class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
     <div class="font-black text-purple-900 leading-tight">BEM FAI UNSIKA</div>
     <div class="text-[10px] tracking-widest text-purple-600 mt-1 uppercase font-bold">Poros Katalist</div>
   </div>
 
-  <!-- MENU -->
   <nav class="flex flex-col gap-2 flex-1">
     <button onclick="showView('list')" class="sidebar-link">
       <i data-lucide="layout-grid"></i> Kelola Berita
@@ -135,8 +130,7 @@
 </aside>
 
 <!-- MAIN CONTENT -->
-<main class="main p-8">
-  <!-- HEADER -->
+<main class="main p-8 pb-20">
   <div class="mb-8">
     <h1 id="view-title" class="text-2xl font-bold text-purple-900">Kelola Berita</h1>
     <p id="view-subtitle" class="text-gray-500 text-sm">Dashboard administrasi berita</p>
@@ -146,11 +140,11 @@
   <div id="view-list">
     <div class="bg-white rounded-2xl shadow p-4 overflow-hidden border border-purple-pale">
       <table class="w-full text-sm">
-        <thead class="text-gray-400 border-b">
+        <thead class="text-gray-400 border-b text-center">
           <tr>
             <th class="text-left p-3">Judul Berita</th>
-            <th class="text-center">Kategori</th>
-            <th class="text-center">Tanggal</th>
+            <th>Kategori</th>
+            <th>Tanggal</th>
             <th class="text-right p-3">Aksi</th>
           </tr>
         </thead>
@@ -160,13 +154,13 @@
   </div>
 
   <!-- FORM VIEW -->
-  <div id="view-form" class="hidden max-w-4xl">
-    <form id="news-form" class="bg-white p-8 rounded-3xl shadow-xl space-y-6 border border-purple-pale">
+  <div id="view-form" class="hidden">
+    <form id="news-form" class="max-w-4xl bg-white p-8 rounded-3xl shadow-xl space-y-6 border border-purple-pale">
       <input type="hidden" id="edit-id">
 
       <div class="space-y-2">
           <label class="text-sm font-bold text-purple-deep">Judul Berita</label>
-          <input id="news-title" required placeholder="Contoh: Kegiatan SIGAP 1" class="w-full p-3 bg-gray-50 border border-purple-pale rounded-xl outline-none focus:ring-2 focus:ring-purple-light/20">
+          <input id="news-title" required placeholder="Masukkan judul berita..." class="w-full p-3 bg-gray-50 border border-purple-pale rounded-xl outline-none focus:ring-2 focus:ring-purple-light/20">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -186,46 +180,73 @@
           </div>
       </div>
 
-      <div class="space-y-2">
-          <label class="text-sm font-bold text-purple-deep">Penulis</label>
-          <input id="news-author" placeholder="Departemen Kearsipan" required class="w-full p-3 bg-gray-50 border border-purple-pale rounded-xl outline-none">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+              <label class="text-sm font-bold text-purple-deep">Penulis</label>
+              <input id="news-author" placeholder="Nama Penulis" required class="w-full p-3 bg-gray-50 border border-purple-pale rounded-xl outline-none">
+          </div>
+          <div class="space-y-2">
+              <label class="text-sm font-bold text-purple-deep">Departemen</label>
+              <select id="news-department" class="w-full p-3 bg-gray-50 border border-purple-pale rounded-xl outline-none">
+                  <option>Sekretaris Umum</option>
+                  <option>Bendahara Umum</option>
+                  <option>Departemen Kearsipan</option>
+                  <option>Departemen Agama</option>
+                  <option>Departemen PSDA</option>
+                  <option>Departemen Sospol</option>
+                  <option>Departemen Kominfo</option>
+                  <option>Departemen Luar Negeri</option>
+                  <option>Departemen Dalam Negeri</option>
+                  <option>Departemen Minat & Bakat</option>
+              </select>
+          </div>
       </div>
 
-      <!-- Quill Editor -->
       <div class="space-y-2">
           <label class="text-sm font-bold text-purple-deep">Konten Berita</label>
-          <div id="editor" class="bg-gray-50 border border-purple-pale rounded-xl mt-2 overflow-hidden"></div>
+          <div id="editor" class="bg-gray-50 border border-purple-pale rounded-xl overflow-hidden"></div>
       </div>
 
-      <!-- Image Upload / URL -->
+      <!-- MAIN IMAGE -->
       <div class="border border-purple-pale rounded-2xl p-6 bg-purple-pale/10 space-y-4">
         <div class="flex items-center justify-between">
-          <p class="font-bold text-purple-deep flex items-center gap-2">
+          <p class="font-bold text-purple-deep flex items-center gap-2 italic">
             <i data-lucide="image" class="w-4 h-4"></i> Gambar Utama
           </p>
-          <select id="image-mode" class="text-xs bg-white border border-purple-pale rounded-lg p-2 font-bold text-purple-med">
+          <select id="image-mode" class="text-[10px] bg-white border border-purple-pale rounded-lg p-2 font-black uppercase text-purple-med">
             <option value="url">Gunakan URL</option>
-            <option value="upload">Upload Gambar</option>
+            <option value="upload">Upload File</option>
           </select>
         </div>
-
         <div id="url-input-group">
-          <input id="news-image" placeholder="https://i.ibb.co/..." class="w-full p-3 bg-white border border-purple-pale rounded-xl outline-none focus:ring-2 focus:ring-purple-light/20">
+          <input id="news-image" placeholder="https://..." class="w-full p-3 bg-white border border-purple-pale rounded-xl outline-none">
         </div>
-
         <div id="upload-input-group" class="hidden">
           <input type="file" id="news-file" accept="image/*" class="hidden">
-          <div id="drop-area">
-            <p class="text-sm text-gray-500">Drag & Drop gambar atau <span class="text-purple-med font-bold">klik untuk upload</span></p>
+          <div id="main-drop-area" class="drop-area text-xs text-gray-400">
+            Drag & Drop atau Klik untuk Upload Gambar Utama
           </div>
         </div>
-
-        <img id="image-preview" class="hidden w-full rounded-xl border border-purple-pale mt-2 bg-white object-cover shadow-sm">
+        <img id="image-preview" class="hidden w-full border border-purple-pale bg-white">
       </div>
 
-      <div class="flex justify-end gap-3 pt-4">
+      <!-- DOCUMENTATION GALLERY -->
+      <div class="border border-purple-pale rounded-2xl p-6 bg-gray-50 space-y-4">
+          <div class="flex items-center justify-between">
+              <p class="font-bold text-purple-deep flex items-center gap-2 italic">
+                  <i data-lucide="images" class="w-4 h-4"></i> Dokumentasi <span class="text-[10px] text-gray-400 font-normal">(Maksimal 8 Foto)</span>
+              </p>
+              <button type="button" onclick="document.getElementById('gallery-files').click()" class="text-xs bg-purple-med text-white px-4 py-2 rounded-lg font-bold">Tambah Foto</button>
+          </div>
+          <input type="file" id="gallery-files" accept="image/*" multiple class="hidden">
+          <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <!-- Gallery items will appear here -->
+          </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-6 border-t border-purple-pale/30">
         <button type="button" onclick="showView('list')" class="px-6 py-2 text-gray-500 font-bold">Batal</button>
-        <button id="save-btn" class="px-10 py-3 bg-purple-med text-white rounded-xl font-bold shadow-lg shadow-purple-med/30 hover:bg-purple-deep transition-all">
+        <button id="save-btn" class="px-10 py-3 bg-purple-med text-white rounded-xl font-black shadow-xl shadow-purple-med/30 hover:-translate-y-1 transition-all uppercase tracking-widest text-xs">
           Simpan Berita
         </button>
       </div>
@@ -233,7 +254,6 @@
   </div>
 </main>
 
-<!-- FIREBASE & DASHBOARD SCRIPT -->
 <script type="module">
 import {
   auth, db, storage, ref, uploadBytes, getDownloadURL,
@@ -245,31 +265,22 @@ import {
   signOut
 } from '../js/firebase-init.js';
 
-/* =======================================================
-   INIT
-======================================================= */
 lucide.createIcons();
 
-/* =======================================================
-   QUILL EDITOR
-======================================================= */
 const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: 'Tulis isi berita di sini...',
   modules: {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      ['link', 'blockquote', 'code-block'],
+      ['bold', 'italic', 'underline'],
+      ['link', 'blockquote'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['clean']
     ]
   }
 });
 
-/* =======================================================
-   ELEMENTS
-======================================================= */
 const viewList = document.getElementById('view-list');
 const viewForm = document.getElementById('view-form');
 const tableBody = document.getElementById('news-table-body');
@@ -279,11 +290,18 @@ const imageMode = document.getElementById('image-mode');
 const imageInput = document.getElementById('news-image');
 const fileInput = document.getElementById('news-file');
 const imagePreview = document.getElementById('image-preview');
-const dropArea = document.getElementById('drop-area');
+const dropArea = document.getElementById('main-drop-area');
+const galleryFiles = document.getElementById('gallery-files');
+const galleryPreview = document.getElementById('gallery-preview');
 
-/* =======================================================
-   VIEW SWITCH (Global)
-======================================================= */
+let selectedGalleryFiles = []; // To store files to upload
+let existingGalleryUrls = [];   // To store existing URLs when editing
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) { location.href = "login.html"; return; }
+  loadNews();
+});
+
 window.showView = (view) => {
   viewList.classList.add('hidden');
   viewForm.classList.add('hidden');
@@ -293,77 +311,40 @@ window.showView = (view) => {
     editIdInput.value = "";
     quill.root.innerHTML = "";
     imagePreview.classList.add('hidden');
+    galleryPreview.innerHTML = "";
+    selectedGalleryFiles = [];
+    existingGalleryUrls = [];
     document.getElementById('view-title').innerText = 'Tulis Berita';
     viewForm.classList.remove('hidden');
-  }
-
-  if (view === 'list') {
+  } else {
     document.getElementById('view-title').innerText = 'Kelola Berita';
     viewList.classList.remove('hidden');
     loadNews();
   }
 };
 
-/* =======================================================
-   AUTH CHECK
-======================================================= */
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    location.href = "login.html";
-    return;
-  }
-  loadNews();
-});
-
-/* =======================================================
-   IMAGE MODE
-======================================================= */
 imageMode.addEventListener('change', () => {
-  const urlGroup = document.getElementById('url-input-group');
-  const uploadGroup = document.getElementById('upload-input-group');
-  
-  if (imageMode.value === 'url') {
-    urlGroup.classList.remove('hidden');
-    uploadGroup.classList.add('hidden');
-  } else {
-    urlGroup.classList.add('hidden');
-    uploadGroup.classList.remove('hidden');
-  }
+  document.getElementById('url-input-group').classList.toggle('hidden', imageMode.value !== 'url');
+  document.getElementById('upload-input-group').classList.toggle('hidden', imageMode.value === 'url');
 });
 
-/* =======================================================
-   IMAGE PREVIEW (URL)
-======================================================= */
 imageInput.addEventListener('input', () => {
-  if (!imageInput.value) {
-    imagePreview.classList.add('hidden');
-    return;
-  }
-  imagePreview.src = imageInput.value;
-  imagePreview.classList.remove('hidden');
+  if (imageInput.value) { imagePreview.src = imageInput.value; imagePreview.classList.remove('hidden'); }
+  else { imagePreview.classList.add('hidden'); }
 });
 
-/* =======================================================
-   FILE PREVIEW
-======================================================= */
 fileInput.addEventListener('change', () => {
   const file = fileInput.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    imagePreview.src = e.target.result;
-    imagePreview.classList.remove('hidden');
-  };
-  reader.readAsDataURL(file);
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => { imagePreview.src = e.target.result; imagePreview.classList.remove('hidden'); };
+    reader.readAsDataURL(file);
+  }
 });
 
-/* =======================================================
-   DRAG & DROP
-======================================================= */
 dropArea.addEventListener('click', () => fileInput.click());
 dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('bg-purple-100'); });
-dropArea.addEventListener('dragleave', () => { dropArea.classList.remove('bg-purple-100'); });
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('bg-purple-100'));
 dropArea.addEventListener('drop', (e) => {
   e.preventDefault();
   dropArea.classList.remove('bg-purple-100');
@@ -371,168 +352,150 @@ dropArea.addEventListener('drop', (e) => {
   fileInput.dispatchEvent(new Event('change'));
 });
 
-/* =======================================================
-   LOAD NEWS
-======================================================= */
-async function loadNews() {
-  tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Memuat data...</td></tr>";
-
-  try {
-    const q = query(collection(db, "news"), orderBy("date", "desc"));
-    const snap = await getDocs(q);
-    tableBody.innerHTML = "";
-
-    if (snap.empty) {
-        tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Belum ada berita.</td></tr>";
+// Gallery Logic
+galleryFiles.addEventListener('change', () => {
+    const files = Array.from(galleryFiles.files);
+    if (selectedGalleryFiles.length + existingGalleryUrls.length + files.length > 8) {
+        alert("Maksimal 8 foto dokumentasi!");
         return;
     }
-
-    snap.forEach((d) => {
-      const item = d.data();
-      const row = document.createElement('tr');
-      row.className = "border-b hover:bg-purple-pale/10 transition-all";
-      row.innerHTML = `
-          <td class="p-4 font-semibold text-purple-deep text-sm">${item.title || "-"}</td>
-          <td class="p-4 text-center">
-            <span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-bold">${item.category || "-"}</span>
-          </td>
-          <td class="p-4 text-center text-gray-500 text-xs">${item.date || "-"}</td>
-          <td class="p-4 text-right space-x-3">
-            <button class="edit-btn text-purple-med font-bold hover:underline">Edit</button>
-            <button class="delete-btn text-red-500 font-bold hover:underline">Hapus</button>
-          </td>
-      `;
-      
-      row.querySelector('.edit-btn').onclick = () => window.editNews(d.id);
-      row.querySelector('.delete-btn').onclick = () => window.deleteNews(d.id);
-      
-      tableBody.appendChild(row);
+    
+    files.forEach(file => {
+        selectedGalleryFiles.push(file);
+        const reader = new FileReader();
+        reader.onload = (e) => { renderGalleryItem(e.target.result, true, selectedGalleryFiles.length - 1); };
+        reader.readAsDataURL(file);
     });
-  } catch (err) {
-    console.error("Load error:", err);
-    tableBody.innerHTML = `<tr><td colspan='4' class='p-10 text-center text-red-500'>Gagal memuat berita. Periksa izin Firestore.</td></tr>`;
-  }
+});
+
+function renderGalleryItem(src, isNew, index) {
+    const div = document.createElement('div');
+    div.className = "relative group aspect-square";
+    div.innerHTML = `
+        <img src="${src}" class="w-full h-full object-cover rounded-xl border border-purple-pale">
+        <button type="button" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeGalleryItem(${isNew}, ${index})">
+            <i data-lucide="x" class="w-3 h-3"></i>
+        </button>
+    `;
+    galleryPreview.appendChild(div);
+    lucide.createIcons();
 }
 
-/* =======================================================
-   EDIT NEWS (Global)
-======================================================= */
+window.removeGalleryItem = (isNew, index) => {
+    if (isNew) { selectedGalleryFiles.splice(index, 1); }
+    else { existingGalleryUrls.splice(index, 1); }
+    refreshGalleryPreview();
+};
+
+function refreshGalleryPreview() {
+    galleryPreview.innerHTML = "";
+    existingGalleryUrls.forEach((url, i) => renderGalleryItem(url, false, i));
+    selectedGalleryFiles.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (e) => renderGalleryItem(e.target.result, true, i);
+        reader.readAsDataURL(file);
+    });
+}
+
+async function loadNews() {
+  tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-300 italic'>Memuat Berita...</td></tr>";
+  const q = query(collection(db, "news"), orderBy("date", "desc"));
+  const snap = await getDocs(q);
+  tableBody.innerHTML = "";
+  if (snap.empty) { tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Belum Ada Berita.</td></tr>"; return; }
+  snap.forEach(d => {
+    const item = d.data();
+    const tr = document.createElement('tr');
+    tr.className = "border-b hover:bg-purple-pale/10 transition-all";
+    tr.innerHTML = `
+      <td class="p-4 font-semibold text-purple-deep text-sm">${item.title}</td>
+      <td class="p-4 text-center"><span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-black uppercase italic">${item.category}</span></td>
+      <td class="p-4 text-center text-gray-400 text-xs">${item.date}</td>
+      <td class="p-4 text-right space-x-3">
+        <button class="edit-btn text-purple-med font-black text-[10px] uppercase hover:underline">Edit</button>
+        <button class="delete-btn text-red-500 font-black text-[10px] uppercase hover:underline">Hapus</button>
+      </td>
+    `;
+    tr.querySelector('.edit-btn').onclick = () => window.editNews(d.id);
+    tr.querySelector('.delete-btn').onclick = () => window.deleteNews(d.id);
+    tableBody.appendChild(tr);
+  });
+}
+
 window.editNews = async (id) => {
-  try {
-    const snap = await getDoc(doc(db, "news", id));
-    if (!snap.exists()) return;
-    const item = snap.data();
-
-    showView('form');
-    document.getElementById('view-title').innerText = 'Edit Berita';
-    editIdInput.value = id;
-
-    document.getElementById('news-title').value = item.title || "";
-    document.getElementById('news-category').value = item.category || "Kegiatan";
-    document.getElementById('news-author').value = item.author || "";
-    document.getElementById('news-date').value = item.date || "";
-    quill.root.innerHTML = item.contentBody || "";
-
-    if (item.featuredImage) {
-      if (item.featuredImage.startsWith('http')) {
-          imageMode.value = 'url';
-          imageInput.value = item.featuredImage;
-          document.getElementById('url-input-group').classList.remove('hidden');
-          document.getElementById('upload-input-group').classList.add('hidden');
-      }
-      imagePreview.src = item.featuredImage;
-      imagePreview.classList.remove('hidden');
-    }
-  } catch (err) {
-    alert("Gagal memuat data: " + err.message);
-  }
+  const snap = await getDoc(doc(db, "news", id));
+  if (!snap.exists()) return;
+  const item = snap.data();
+  showView('form');
+  document.getElementById('view-title').innerText = 'Edit Berita';
+  editIdInput.value = id;
+  document.getElementById('news-title').value = item.title || "";
+  document.getElementById('news-category').value = item.category || "Kegiatan";
+  document.getElementById('news-date').value = item.date || "";
+  document.getElementById('news-author').value = item.author || "";
+  document.getElementById('news-department').value = item.department || "Sekretaris Umum";
+  quill.root.innerHTML = item.contentBody || "";
+  imageInput.value = item.featuredImage || "";
+  imagePreview.src = item.featuredImage || "";
+  imagePreview.classList.toggle('hidden', !item.featuredImage);
+  existingGalleryUrls = item.gallery || [];
+  refreshGalleryPreview();
 };
 
-/* =======================================================
-   DELETE NEWS (Global)
-======================================================= */
 window.deleteNews = async (id) => {
-  if (!confirm("Hapus berita ini selamanya?")) return;
-  try {
-    await deleteDoc(doc(db, "news", id));
-    loadNews();
-  } catch (err) {
-    alert("Gagal menghapus: " + err.message);
-  }
+  if (confirm("Hapus berita ini?")) { await deleteDoc(doc(db, "news", id)); loadNews(); }
 };
 
-/* =======================================================
-   LOGOUT
-======================================================= */
 document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-/* =======================================================
-   SAVE (ADD / UPDATE)
-======================================================= */
 newsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const saveBtn = document.getElementById('save-btn');
-  saveBtn.disabled = true;
-  saveBtn.innerText = "Menyimpan...";
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.innerText = "SEDANG MENYIMPAN...";
 
   try {
-    let imageUrl = imageInput.value;
-
-    // HANDLE UPLOAD IF MODE IS UPLOAD
-    if (imageMode.value === "upload") {
-      const file = fileInput.files[0];
-      if (file) {
-        const storageRef = ref(storage, `news/${Date.now()}_${file.name}`);
-        const snap = await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(snap.ref);
-      }
+    let featuredImage = imageInput.value;
+    if (imageMode.value === 'upload' && fileInput.files[0]) {
+      const refImg = ref(storage, `news/${Date.now()}_main`);
+      const snapImg = await uploadBytes(refImg, fileInput.files[0]);
+      featuredImage = await getDownloadURL(snapImg.ref);
     }
 
-    const id = editIdInput.value;
-    const titleVal = document.getElementById('news-title').value;
-    const slug = titleVal.toLowerCase().trim().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    const galleryUrls = [...existingGalleryUrls];
+    for (const file of selectedGalleryFiles) {
+        const refGal = ref(storage, `news/${Date.now()}_gal_${Math.random()}`);
+        const snapGal = await uploadBytes(refGal, file);
+        galleryUrls.push(await getDownloadURL(snapGal.ref));
+    }
 
     const data = {
-      title: titleVal,
-      slug: slug,
+      title: document.getElementById('news-title').value,
       category: document.getElementById('news-category').value,
-      author: document.getElementById('news-author').value,
       date: document.getElementById('news-date').value,
+      author: document.getElementById('news-author').value,
+      department: document.getElementById('news-department').value,
       contentBody: quill.root.innerHTML,
-      featuredImage: imageUrl,
+      featuredImage: featuredImage,
+      gallery: galleryUrls,
       updatedAt: serverTimestamp()
     };
 
-    if (id) {
-      await updateDoc(doc(db, "news", id), data);
+    if (editIdInput.value) {
+      await updateDoc(doc(db, "news", editIdInput.value), data);
     } else {
       data.createdAt = serverTimestamp();
-      // Gunakan slug sebagai ID jika memungkinkan
-      const docRef = doc(db, 'news', slug);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-          // Jika slug sudah ada, tambahkan timestamp unik
-          const uniqueSlug = slug + '-' + Math.floor(Date.now() / 1000);
-          await setDoc(doc(db, 'news', uniqueSlug), data);
-      } else {
-          await setDoc(docRef, data);
-      }
+      const slug = data.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      await setDoc(doc(db, "news", slug + '-' + Date.now().toString().slice(-4)), data);
     }
 
-    alert("Berita berhasil disimpan!");
+    alert("Berita Berhasil Disimpan!");
     showView('list');
   } catch (err) {
-    console.error("Save error:", err);
-    alert("Gagal menyimpan: " + err.message);
+    alert("Error: " + err.message);
   } finally {
-    saveBtn.disabled = false;
-    saveBtn.innerText = "Simpan Berita";
+    btn.disabled = false; btn.innerText = "SIMPAN BERITA";
   }
 });
-
 </script>
-
 </body>
 </html>
