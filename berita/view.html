@@ -156,7 +156,7 @@
                                 <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Berita
                             </a>
                             <a href="../index.html" class="px-6 py-2.5 bg-purple-med text-white text-sm font-bold rounded-full hover:bg-purple-deep transition-all shadow-lg shadow-purple-med/20">
-                                Hubungi Kami
+                                Beranda
                             </a>
                         </div>
                         <button id="mobile-toggle" class="lg:hidden p-3 rounded-full hover:bg-purple-pale/50 transition-colors">
@@ -164,6 +164,29 @@
                         </button>
                     </div>
                 </div>
+
+            <!-- MOBILE MENU -->
+            <div id="mobile-menu"
+                class="lg:hidden mt-3 mx-4 bg-white/95 backdrop-blur-xl border border-purple-pale rounded-3xl shadow-2xl overflow-hidden max-h-0 opacity-0 transition-all duration-500 pointer-events-none">
+
+                <div class="flex flex-col p-4 gap-3">
+
+                <a href="home-berita.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-purple-pale/50 text-purple-deep font-semibold transition">
+                    <i data-lucide="newspaper" class="w-5 h-5"></i>
+                    Kembali ke Berita
+                </a>
+
+                <a href="../index.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-purple-med text-white font-semibold hover:bg-purple-deep transition">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    Beranda
+                </a>
+
+                </div>
+            </div>
+            
+
             </nav>
         </div>
 
@@ -248,7 +271,7 @@
    target="_blank"
    class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-black/10 transition"
    title="X">
-    <i data-lucide="x" class="w-5 h-5 text-black-500"></i>
+    <i data-lucide="x" class="w-5 h-5 text-black"></i>
 </a>
 
 </div>
@@ -329,97 +352,142 @@
         </footer>
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script type="module">
-    import { db, doc, getDoc, collection, getDocs, query, orderBy, limit } from '../js/firebase-init.js';
+```html
+<!-- =========================================
+     JAVASCRIPT MODULE
+========================================= -->
+<script type="module">
 
-    /* =========================================
-       FORMAT TANGGAL INDONESIA
-    ========================================= */
-    function formatTanggal(dateString) {
-        const bulanIndonesia = [
-            "Januari", "Februari", "Maret", "April",
-            "Mei", "Juni", "Juli", "Agustus",
-            "September", "Oktober", "November", "Desember"
-        ];
+/* =========================================
+   IMPORT FIREBASE
+========================================= */
+import {
+    db,
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    query,
+    orderBy,
+    limit
+} from '../js/firebase-init.js';
 
-        const date = new Date(dateString);
 
-        const hari = date.getDate();
-        const bulan = bulanIndonesia[date.getMonth()];
-        const tahun = date.getFullYear();
+/* =========================================
+   FORMAT TANGGAL INDONESIA
+========================================= */
+function formatTanggal(dateString) {
 
-        return `${hari} ${bulan} ${tahun}`;
+    const bulanIndonesia = [
+        "Januari", "Februari", "Maret", "April",
+        "Mei", "Juni", "Juli", "Agustus",
+        "September", "Oktober", "November", "Desember"
+    ];
+
+    const date = new Date(dateString);
+
+    return `${date.getDate()} ${bulanIndonesia[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+
+/* =========================================
+   INIT HALAMAN
+========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+
+    // render lucide icon
+    lucide.createIcons();
+
+    // ambil parameter id dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const newsId = urlParams.get('id');
+
+    // jika ada id -> load artikel
+    if (newsId) {
+        loadArticle(newsId);
+    } else {
+        // redirect jika tidak ada id
+        window.location.href = 'home-berita.html';
     }
 
-    /* =========================================
-       INIT HALAMAN
-    ========================================= */
-    document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
+    // init semua component
+    initNavbar();
+    initScrollProgress();
+    initCopyLink();
+    initShareDropdown();
+    initMobileMenu();
+});
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const newsId = urlParams.get('id');
 
-        if (newsId) {
-            loadArticle(newsId);
+/* =========================================
+   LOAD ARTIKEL DARI FIREBASE
+========================================= */
+async function loadArticle(id) {
+
+    try {
+
+        const docRef = doc(db, 'news', id);
+        const docSnap = await getDoc(docRef);
+
+        // jika artikel ditemukan
+        if (docSnap.exists()) {
+
+            const data = docSnap.data();
+
+            displayArticle(data);
+            loadRelated(data.category, id);
+
         } else {
-            window.location.href = 'home-berita.html';
-        }
 
-        initNavbar();
-        initScrollProgress();
-        initCopyLink();
-        initShareDropdown();
-    });
+            // artikel tidak ditemukan
+            document.getElementById('article-title').innerText =
+                'Berita Tidak Ditemukan';
 
-    /* =========================================
-       LOAD ARTIKEL DARI FIREBASE
-    ========================================= */
-    async function loadArticle(id) {
-        try {
-            const docRef = doc(db, 'news', id);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                displayArticle(data);
-                loadRelated(data.category, id);
-            } else {
-                document.getElementById('article-title').innerText = 'Berita Tidak Ditemukan';
-                document.getElementById('article-body').innerHTML = `
-                    <p class="text-center py-20 px-4 bg-red-50 rounded-2xl text-red-500 font-bold">
-                        Maaf, berita yang anda cari tidak ada atau sudah dihapus.
-                    </p>
-                `;
-                document.getElementById('article-category').innerText = '404';
-                document.getElementById('article-feature-image').classList.add('hidden');
-            }
-
-        } catch (error) {
-            console.error("Error loading article:", error);
-            document.getElementById('article-title').innerText = 'Error';
             document.getElementById('article-body').innerHTML = `
-                <p class="text-center py-20 text-red-500 font-bold">
-                    Gagal memuat berita: ${error.message}
+                <p class="text-center py-20 px-4 bg-red-50 rounded-2xl text-red-500 font-bold">
+                    Maaf, berita yang anda cari tidak ada atau sudah dihapus.
                 </p>
             `;
-        }
-    }
 
-    /* =========================================
-   DISPLAY ARTIKEL KE UI (FINAL CLEAN)
+            document.getElementById('article-category').innerText = '404';
+
+            document
+                .getElementById('article-feature-image')
+                .classList.add('hidden');
+        }
+
+    } catch (error) {
+
+        console.error("Error loading article:", error);
+
+        document.getElementById('article-title').innerText = 'Error';
+
+        document.getElementById('article-body').innerHTML = `
+            <p class="text-center py-20 text-red-500 font-bold">
+                Gagal memuat berita: ${error.message}
+            </p>
+        `;
+    }
+}
+
+
+/* =========================================
+   DISPLAY ARTIKEL KE UI
 ========================================= */
 function displayArticle(data) {
 
+    // title browser
     document.title = `${data.title} - BEM FAI UNSIKA`;
 
+    // split title biar aesthetic
     const titleParts = data.title.split(' ');
     const mainTitle = titleParts.slice(0, 3).join(' ');
     const subTitle = titleParts.slice(3).join(' ');
 
+    // inject title
     document.getElementById('article-title').innerHTML = `
         ${mainTitle}
+
         ${subTitle ? `
         <span class="italic text-purple-med/70 font-light underline decoration-purple-soft/50 underline-offset-8">
             ${subTitle}
@@ -427,275 +495,477 @@ function displayArticle(data) {
         ` : ''}
     `;
 
-    document.getElementById('article-category').innerText = data.category;
+    // category
+    document.getElementById('article-category').innerText =
+        data.category;
 
+    // tanggal
     document.getElementById('article-date').innerHTML = `
         <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
         ${formatTanggal(data.date)}
     `;
 
-    document.getElementById('article-author').innerText = data.author;
+    // author
+    document.getElementById('article-author').innerText =
+        data.author;
 
-    document.getElementById('article-body').innerHTML = data.contentBody;
+    // body artikel
+    document.getElementById('article-body').innerHTML =
+        data.contentBody;
 
-    const featureImg = document.getElementById('article-feature-image');
-    if (featureImg) {
+    // featured image
+    const featureImg =
+        document.getElementById('article-feature-image');
+
+    if (featureImg && data.featuredImage) {
+
         featureImg.src = data.featuredImage;
-        featureImg.classList.remove('opacity-0');
+
+        featureImg.onload = () => {
+            featureImg.classList.remove('opacity-0');
+        };
     }
 
+
     /* =========================================
-       SHARE LINKS (FINAL FIXED)
+       SHARE LINK
     ========================================= */
 
     const url = window.location.href;
-const text = `${data.title} ${url}`;
-const encodedText = encodeURIComponent(text);
 
-// WhatsApp
-document.getElementById('wa-share')?.setAttribute(
-    'href',
-    `https://wa.me/?text=${encodedText}`
-);
+    const text = `${data.title} ${url}`;
 
-// Instagram (profile aja, IG tidak support share text)
-document.getElementById('ig-share')?.setAttribute(
-    'href',
-    'https://www.instagram.com/bemfaiunsika'
-);
+    const encodedText = encodeURIComponent(text);
 
-// TikTok (profile)
-document.getElementById('tiktok-share')?.setAttribute(
-    'href',
-    'https://www.tiktok.com/@bemfaiunsika'
-);
+    // whatsapp
+    document.getElementById('wa-share')?.setAttribute(
+        'href',
+        `https://wa.me/?text=${encodedText}`
+    );
 
-// X (Twitter share)
-document.getElementById('x-share')?.setAttribute(
-    'href',
-    `https://twitter.com/intent/tweet?text=${encodedText}`
-);
+    // instagram
+    document.getElementById('ig-share')?.setAttribute(
+        'href',
+        'https://www.instagram.com/bemfaiunsika'
+    );
 
-    /* =========================================
-       FIX LUCIDE ICON RENDER (WAJIB)
-    ========================================= */
-    requestAnimationFrame(() => {
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    });
-}
+    // tiktok
+    document.getElementById('tiktok-share')?.setAttribute(
+        'href',
+        'https://www.tiktok.com/@bemfaiunsika'
+    );
+
+    // x / twitter
+    document.getElementById('x-share')?.setAttribute(
+        'href',
+        `https://twitter.com/intent/tweet?text=${encodedText}`
+    );
+
 
     /* =========================================
-       GALERI (kalau ada)
+       GALERI
     ========================================= */
     if (data.gallery && data.gallery.length > 0) {
-        const galleryContainer = document.getElementById('gallery-container');
-        const grid = document.getElementById('gallery-grid');
+
+        const galleryContainer =
+            document.getElementById('gallery-container');
+
+        const grid =
+            document.getElementById('gallery-grid');
 
         galleryContainer.classList.remove('hidden');
 
         grid.innerHTML = data.gallery.map((url, i) => `
-            <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
-                 onclick="openLightbox(${i})">
 
-                <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+            <div
+                class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
+                onclick="openLightbox(${i})">
+
+                <img
+                    src="${url}"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
 
                 <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
             </div>
+
         `).join('');
 
+        // simpan gallery global
         window.galleryImages = data.gallery;
+
+        // init lightbox
         initLightbox();
     }
 
-    lucide.createIcons();
 
+    /* =========================================
+       RE-RENDER ICON
+    ========================================= */
+    requestAnimationFrame(() => {
 
-        /* GALERI */
-        if (data.gallery && data.gallery.length > 0) {
-            const galleryContainer = document.getElementById('gallery-container');
-            const grid = document.getElementById('gallery-grid');
-
-            galleryContainer.classList.remove('hidden');
-
-            grid.innerHTML = data.gallery.map((url, i) => `
-                <div class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
-                     onclick="openLightbox(${i})">
-
-                    <img src="${url}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-
-                    <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-            `).join('');
-
-            window.galleryImages = data.gallery;
-            initLightbox();
+        if (window.lucide) {
+            lucide.createIcons();
         }
 
-        lucide.createIcons();
-    
+    });
+}
 
-    /* =========================================
-       BERITA TERKAIT
-    ========================================= */
-    async function loadRelated(category, currentId) {
-        const container = document.getElementById('related-news');
 
-        const q = query(collection(db, 'news'), limit(5));
-        const querySnapshot = await getDocs(q);
+/* =========================================
+   LOAD BERITA TERKAIT
+========================================= */
+async function loadRelated(category, currentId) {
 
-        let html = '';
+    const container =
+        document.getElementById('related-news');
 
-        querySnapshot.forEach(docSnap => {
-            const item = docSnap.data();
+    // query berita terbaru
+    const q = query(
+        collection(db, 'news'),
+        orderBy('date', 'desc'),
+        limit(5)
+    );
 
-            if (docSnap.id !== currentId) {
-                html += `
-                    <a href="view.html?id=${docSnap.id}" class="group flex items-center gap-4">
+    const querySnapshot = await getDocs(q);
 
-                        <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
-                            <img src="${item.featuredImage}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        </div>
+    let html = '';
 
-                        <div>
-                            <span class="text-[10px] text-purple-med font-bold uppercase tracking-tighter">
-                                ${item.category}
-                            </span>
+    querySnapshot.forEach(docSnap => {
 
-                            <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
-                                ${item.title}
-                            </h5>
-                        </div>
+        const item = docSnap.data();
 
-                    </a>
-                `;
-            }
-        });
+        // skip artikel sekarang
+        if (docSnap.id !== currentId) {
 
-        container.innerHTML = html || `
-            <p class="text-xs text-gray-400 italic">Tidak ada berita terkait.</p>
-        `;
-    }
+            html += `
+                <a href="view.html?id=${docSnap.id}"
+                   class="group flex items-center gap-4">
 
-    /* =========================================
-       NAVBAR SCROLL EFFECT
-    ========================================= */
-    function initNavbar() {
-        const wrapper = document.getElementById('app-wrapper');
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0">
 
-        wrapper.addEventListener('scroll', () => {
-            const nav = document.getElementById('nav-container');
+                        <img
+                            src="${item.featuredImage}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
 
-            if (wrapper.scrollTop > 50) {
-                nav.classList.add('nav-scrolled');
-            } else {
-                nav.classList.remove('nav-scrolled');
-            }
-        });
-    }
+                    </div>
 
-    /* =========================================
-       PROGRESS BAR SCROLL
-    ========================================= */
-    function initScrollProgress() {
-        const wrapper = document.getElementById('app-wrapper');
-        const bar = document.getElementById('progress-bar');
+                    <div>
 
-        wrapper.addEventListener('scroll', () => {
-            const winScroll = wrapper.scrollTop;
-            const height = wrapper.scrollHeight - wrapper.clientHeight;
-            const scrolled = (winScroll / height) * 100;
+                        <span class="text-[10px] text-purple-med font-bold uppercase tracking-tighter">
+                            ${item.category}
+                        </span>
 
-            bar.style.width = scrolled + "%";
-        });
-    }
+                        <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
+                            ${item.title}
+                        </h5>
 
-    /* =========================================
-       COPY LINK BUTTON
-    ========================================= */
-    function initCopyLink() {
-        const btn = document.getElementById('copy-link');
-        const toast = document.getElementById('copy-toast');
+                    </div>
 
-        btn.addEventListener('click', () => {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                toast.classList.replace('opacity-0', 'opacity-100');
+                </a>
+            `;
+        }
+    });
 
-                setTimeout(() => {
-                    toast.classList.replace('opacity-100', 'opacity-0');
-                }, 2000);
-            });
-        });
-    }
+    container.innerHTML = html || `
+        <p class="text-xs text-gray-400 italic">
+            Tidak ada berita terkait.
+        </p>
+    `;
+}
 
-    /* =========================================
-       SHARE DROPDOWN
-    ========================================= */
-    function initShareDropdown() {
-    const toggle = document.getElementById('share-toggle');
-    const menu = document.getElementById('share-menu');
+
+/* =========================================
+   NAVBAR EFFECT SAAT SCROLL
+========================================= */
+function initNavbar() {
+
+    const wrapper =
+        document.getElementById('app-wrapper');
+
+    wrapper.addEventListener('scroll', () => {
+
+        const nav =
+            document.getElementById('nav-container');
+
+        if (wrapper.scrollTop > 50) {
+            nav.classList.add('nav-scrolled');
+        } else {
+            nav.classList.remove('nav-scrolled');
+        }
+
+    });
+}
+
+
+/* =========================================
+   PROGRESS BAR
+========================================= */
+function initScrollProgress() {
+
+    const wrapper =
+        document.getElementById('app-wrapper');
+
+    const bar =
+        document.getElementById('progress-bar');
+
+    wrapper.addEventListener('scroll', () => {
+
+        const winScroll = wrapper.scrollTop;
+
+        const height =
+            wrapper.scrollHeight - wrapper.clientHeight;
+
+        const scrolled =
+            (winScroll / height) * 100;
+
+        bar.style.width = `${scrolled}%`;
+
+    });
+}
+
+
+/* =========================================
+   COPY LINK
+========================================= */
+function initCopyLink() {
+
+    const btn =
+        document.getElementById('copy-link');
+
+    const toast =
+        document.getElementById('copy-toast');
+
+    btn.addEventListener('click', async () => {
+
+        try {
+
+            await navigator.clipboard.writeText(
+                window.location.href
+            );
+
+            toast.classList.replace(
+                'opacity-0',
+                'opacity-100'
+            );
+
+            setTimeout(() => {
+
+                toast.classList.replace(
+                    'opacity-100',
+                    'opacity-0'
+                );
+
+            }, 2000);
+
+        } catch (err) {
+
+            console.error('Copy gagal:', err);
+
+        }
+
+    });
+}
+
+
+/* =========================================
+   SHARE DROPDOWN
+========================================= */
+function initShareDropdown() {
+
+    const toggle =
+        document.getElementById('share-toggle');
+
+    const menu =
+        document.getElementById('share-menu');
 
     toggle.addEventListener('click', (e) => {
+
         e.stopPropagation();
 
         menu.classList.toggle('opacity-0');
         menu.classList.toggle('pointer-events-none');
+
     });
 
-    // klik luar untuk nutup
+    // klik luar -> close
     document.addEventListener('click', () => {
+
         menu.classList.add('opacity-0');
         menu.classList.add('pointer-events-none');
+
     });
-    }
+}
 
-    /* =========================================
-       LIGHTBOX GALERI
-    ========================================= */
-    function initLightbox() {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        let currentIndex = 0;
 
-        window.openLightbox = (index) => {
-            currentIndex = index;
-            lightboxImg.src = window.galleryImages[currentIndex];
-            lightbox.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        };
+/* =========================================
+   LIGHTBOX GALERI
+========================================= */
+function initLightbox() {
 
-        document.getElementById('close-lightbox').onclick = () => {
+    const lightbox =
+        document.getElementById('lightbox');
+
+    const lightboxImg =
+        document.getElementById('lightbox-img');
+
+    let currentIndex = 0;
+
+    // buka lightbox
+    window.openLightbox = (index) => {
+
+        currentIndex = index;
+
+        lightboxImg.src =
+            window.galleryImages[currentIndex];
+
+        lightbox.classList.add('open');
+
+        document.body.style.overflow = 'hidden';
+    };
+
+    // close
+    document.getElementById('close-lightbox').onclick = () => {
+
+        lightbox.classList.remove('open');
+
+        document.body.style.overflow = 'auto';
+    };
+
+    // next image
+    const next = () => {
+
+        currentIndex =
+            (currentIndex + 1) % window.galleryImages.length;
+
+        lightboxImg.src =
+            window.galleryImages[currentIndex];
+    };
+
+    // prev image
+    const prev = () => {
+
+        currentIndex =
+            (currentIndex - 1 + window.galleryImages.length)
+            % window.galleryImages.length;
+
+        lightboxImg.src =
+            window.galleryImages[currentIndex];
+    };
+
+    // button next prev
+    document.getElementById('next-btn').onclick = next;
+    document.getElementById('prev-btn').onclick = prev;
+
+    // keyboard support
+    document.addEventListener('keydown', (e) => {
+
+        if (!lightbox.classList.contains('open')) return;
+
+        if (e.key === 'ArrowRight') next();
+
+        if (e.key === 'ArrowLeft') prev();
+
+        if (e.key === 'Escape') {
+
             lightbox.classList.remove('open');
+
             document.body.style.overflow = 'auto';
-        };
+        }
+    });
+}
 
-        const next = () => {
-            currentIndex = (currentIndex + 1) % window.galleryImages.length;
-            lightboxImg.src = window.galleryImages[currentIndex];
-        };
 
-        const prev = () => {
-            currentIndex = (currentIndex - 1 + window.galleryImages.length) % window.galleryImages.length;
-            lightboxImg.src = window.galleryImages[currentIndex];
-        };
+/* =========================================
+   MOBILE MENU
+========================================= */
+function initMobileMenu() {
 
-        document.getElementById('next-btn').onclick = next;
-        document.getElementById('prev-btn').onclick = prev;
+    const toggle =
+        document.getElementById('mobile-toggle');
 
-        document.addEventListener('keydown', (e) => {
-            if (!lightbox.classList.contains('open')) return;
+    const menu =
+        document.getElementById('mobile-menu');
 
-            if (e.key === 'ArrowRight') next();
-            if (e.key === 'ArrowLeft') prev();
-            if (e.key === 'Escape') {
-                lightbox.classList.remove('open');
-                document.body.style.overflow = 'auto';
-            }
-        });
-    }
+    let isOpen = false;
+
+    // toggle menu
+    toggle.addEventListener('click', (e) => {
+
+        e.stopPropagation();
+
+        isOpen = !isOpen;
+
+        if (isOpen) {
+
+            menu.classList.remove(
+                'max-h-0',
+                'opacity-0',
+                'pointer-events-none'
+            );
+
+            menu.classList.add(
+                'max-h-96',
+                'opacity-100'
+            );
+
+            toggle.innerHTML = `
+                <i data-lucide="x" class="w-6 h-6 text-purple-deep"></i>
+            `;
+
+        } else {
+
+            menu.classList.add(
+                'max-h-0',
+                'opacity-0',
+                'pointer-events-none'
+            );
+
+            menu.classList.remove(
+                'max-h-96',
+                'opacity-100'
+            );
+
+            toggle.innerHTML = `
+                <i data-lucide="menu" class="w-6 h-6 text-purple-deep"></i>
+            `;
+        }
+
+        lucide.createIcons();
+    });
+
+    // klik luar -> close
+    document.addEventListener('click', () => {
+
+        isOpen = false;
+
+        menu.classList.add(
+            'max-h-0',
+            'opacity-0',
+            'pointer-events-none'
+        );
+
+        menu.classList.remove(
+            'max-h-96',
+            'opacity-100'
+        );
+
+        toggle.innerHTML = `
+            <i data-lucide="menu" class="w-6 h-6 text-purple-deep"></i>
+        `;
+
+        lucide.createIcons();
+    });
+
+    // klik dalam menu tidak close
+    menu.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
 
 </script>
+```
+
+
 </body>
 </html>
