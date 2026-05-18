@@ -103,7 +103,9 @@
     }
     
     .ql-editor {
-      min-height: 200px;
+      min-height: 250px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
     }
     </style>
 </head>
@@ -219,8 +221,6 @@
         </div>
 
         <img id="image-preview" class="hidden w-full rounded-xl border border-purple-pale mt-2 bg-white object-cover shadow-sm">
-        
-        <p class="text-[10px] text-gray-400 italic">Kamu bisa menggunakan link eksternal (seperti ImgBB) atau mengunggah langsung ke database.</p>
       </div>
 
       <div class="flex justify-end gap-3 pt-4">
@@ -282,18 +282,7 @@ const imagePreview = document.getElementById('image-preview');
 const dropArea = document.getElementById('drop-area');
 
 /* =======================================================
-   AUTH CHECK
-======================================================= */
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    location.href = "login.html";
-    return;
-  }
-  loadNews();
-});
-
-/* =======================================================
-   VIEW SWITCH
+   VIEW SWITCH (Global)
 ======================================================= */
 window.showView = (view) => {
   viewList.classList.add('hidden');
@@ -314,6 +303,17 @@ window.showView = (view) => {
     loadNews();
   }
 };
+
+/* =======================================================
+   AUTH CHECK
+======================================================= */
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+  loadNews();
+});
 
 /* =======================================================
    IMAGE MODE
@@ -389,19 +389,24 @@ async function loadNews() {
 
     snap.forEach((d) => {
       const item = d.data();
-      tableBody.innerHTML += `
-        <tr class="border-b hover:bg-purple-pale/10 transition-all">
-          <td class="p-4 font-semibold text-purple-deep">${item.title || "-"}</td>
+      const row = document.createElement('tr');
+      row.className = "border-b hover:bg-purple-pale/10 transition-all";
+      row.innerHTML = `
+          <td class="p-4 font-semibold text-purple-deep text-sm">${item.title || "-"}</td>
           <td class="p-4 text-center">
             <span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-bold">${item.category || "-"}</span>
           </td>
-          <td class="p-4 text-center text-gray-500">${item.date || "-"}</td>
+          <td class="p-4 text-center text-gray-500 text-xs">${item.date || "-"}</td>
           <td class="p-4 text-right space-x-3">
-            <button onclick="editNews('${d.id}')" class="text-purple-med font-bold hover:underline">Edit</button>
-            <button onclick="deleteNews('${d.id}')" class="text-red-500 font-bold hover:underline">Hapus</button>
+            <button class="edit-btn text-purple-med font-bold hover:underline">Edit</button>
+            <button class="delete-btn text-red-500 font-bold hover:underline">Hapus</button>
           </td>
-        </tr>
       `;
+      
+      row.querySelector('.edit-btn').onclick = () => window.editNews(d.id);
+      row.querySelector('.delete-btn').onclick = () => window.deleteNews(d.id);
+      
+      tableBody.appendChild(row);
     });
   } catch (err) {
     console.error("Load error:", err);
@@ -410,7 +415,7 @@ async function loadNews() {
 }
 
 /* =======================================================
-   EDIT NEWS
+   EDIT NEWS (Global)
 ======================================================= */
 window.editNews = async (id) => {
   try {
@@ -429,7 +434,12 @@ window.editNews = async (id) => {
     quill.root.innerHTML = item.contentBody || "";
 
     if (item.featuredImage) {
-      imageInput.value = item.featuredImage;
+      if (item.featuredImage.startsWith('http')) {
+          imageMode.value = 'url';
+          imageInput.value = item.featuredImage;
+          document.getElementById('url-input-group').classList.remove('hidden');
+          document.getElementById('upload-input-group').classList.add('hidden');
+      }
       imagePreview.src = item.featuredImage;
       imagePreview.classList.remove('hidden');
     }
@@ -439,7 +449,7 @@ window.editNews = async (id) => {
 };
 
 /* =======================================================
-   DELETE NEWS
+   DELETE NEWS (Global)
 ======================================================= */
 window.deleteNews = async (id) => {
   if (!confirm("Hapus berita ini selamanya?")) return;
@@ -454,8 +464,7 @@ window.deleteNews = async (id) => {
 /* =======================================================
    LOGOUT
 ======================================================= */
-document.getElementById('logout-btn')
-.addEventListener('click', () => signOut(auth));
+document.getElementById('logout-btn').onclick = () => signOut(auth);
 
 /* =======================================================
    SAVE (ADD / UPDATE)
@@ -504,10 +513,11 @@ newsForm.addEventListener('submit', async (e) => {
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        const uniqueSlug = slug + '-' + Math.floor(Date.now() / 1000);
-        await setDoc(doc(db, 'news', uniqueSlug), data);
+          // Jika slug sudah ada, tambahkan timestamp unik
+          const uniqueSlug = slug + '-' + Math.floor(Date.now() / 1000);
+          await setDoc(doc(db, 'news', uniqueSlug), data);
       } else {
-        await setDoc(docRef, data);
+          await setDoc(docRef, data);
       }
     }
 
