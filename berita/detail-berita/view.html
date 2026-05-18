@@ -409,14 +409,13 @@
     }
 
     /* =========================================
-   DISPLAY ARTIKEL KE UI
+   DISPLAY ARTIKEL KE UI (FINAL CLEAN)
 ========================================= */
 function displayArticle(data) {
 
     document.title = `${data.title} - BEM FAI UNSIKA`;
 
     const titleParts = data.title.split(' ');
-
     const mainTitle = titleParts.slice(0, 3).join(' ');
     const subTitle = titleParts.slice(3).join(' ');
 
@@ -424,14 +423,13 @@ function displayArticle(data) {
         ${mainTitle}
         ${subTitle ? `
         <span class="italic text-purple-med/70 font-light underline decoration-purple-soft/50 underline-offset-8">
-        ${subTitle}
+            ${subTitle}
         </span>
         ` : ''}
     `;
 
     document.getElementById('article-category').innerText = data.category;
 
-    /* FIX: FORMAT TANGGAL INDONESIA */
     document.getElementById('article-date').innerHTML = `
         <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
         ${formatTanggal(data.date)}
@@ -442,44 +440,58 @@ function displayArticle(data) {
     document.getElementById('article-body').innerHTML = data.contentBody;
 
     const featureImg = document.getElementById('article-feature-image');
-    featureImg.src = data.featuredImage;
-    featureImg.classList.remove('opacity-0');
+    if (featureImg) {
+        featureImg.src = data.featuredImage;
+        featureImg.classList.remove('opacity-0');
+    }
 
     /* =========================================
-   SHARE LINKS (FINAL FIXED VERSION)
-========================================= */
-const url = window.location.href;
-const text = `${data.title} ${url}`;
+       SHARE LINKS (FINAL FIXED)
+    ========================================= */
 
-// WhatsApp (share langsung)
-const waShare = document.getElementById('wa-share');
-if (waShare) {
-    waShare.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
-}
+    const url = window.location.href;
+    const text = `${data.title} ${url}`;
+    const encodedText = encodeURIComponent(text);
 
-// Instagram → ke akun BEM
-const igShare = document.getElementById('ig-share');
-if (igShare) {
-    igShare.href = `https://www.instagram.com/bemfaiunsika`;
-}
+    // WhatsApp
+    document.getElementById('wa-share')?.setAttribute(
+        'href',
+        `https://wa.me/?text=${encodedText}`
+    );
 
-// Messenger → fallback
-const msgShare = document.getElementById('msg-share');
-if (msgShare) {
-    msgShare.href = `https://www.messenger.com/`;
-}
+    // Instagram (ke akun resmi)
+    document.getElementById('ig-share')?.setAttribute(
+        'href',
+        'https://www.instagram.com/bemfaiunsika'
+    );
 
-// TikTok → ke akun BEM
-const tiktokShare = document.getElementById('tiktok-share');
-if (tiktokShare) {
-    tiktokShare.href = `https://www.tiktok.com/@bemfaiunsika`;
-}
+    // Messenger
+    document.getElementById('msg-share')?.setAttribute(
+        'href',
+        'https://www.messenger.com/'
+    );
 
-// X (Twitter) → tweet composer
-const xShare = document.getElementById('x-share');
-if (xShare) {
-    xShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-}
+    // TikTok (ke akun resmi)
+    document.getElementById('tiktok-share')?.setAttribute(
+        'href',
+        'https://www.tiktok.com/@bemfaiunsika'
+    );
+
+    // X (Twitter share intent)
+    document.getElementById('x-share')?.setAttribute(
+        'href',
+        `https://twitter.com/intent/tweet?text=${encodedText}`
+    );
+
+    /* =========================================
+       FIX LUCIDE ICON RENDER (WAJIB)
+    ========================================= */
+    requestAnimationFrame(() => {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+
 
     /* =========================================
        GALERI (kalau ada)
