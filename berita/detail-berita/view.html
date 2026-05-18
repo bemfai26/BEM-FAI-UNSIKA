@@ -417,8 +417,11 @@
         featureImg.src = data.featuredImage;
         featureImg.classList.remove('opacity-0');
 
-        document.getElementById('share-wa').href =
-            `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
+        const waShare = document.getElementById('wa-share');
+if (waShare) {
+    waShare.href =
+        `https://wa.me/?text=${encodeURIComponent(data.title + ' ' + window.location.href)}`;
+}
 
         /* GALERI */
         if (data.gallery && data.gallery.length > 0) {
