@@ -453,20 +453,25 @@ newsForm.addEventListener('submit', async (e) => {
   const btn = document.getElementById('save-btn');
   btn.disabled = true; btn.innerText = "SEDANG MENYIMPAN...";
 
-  try {
+    try {
     let featuredImage = imageInput.value;
+    
+    // 1. Upload Main Image if needed
     if (imageMode.value === 'upload' && fileInput.files[0]) {
       const refImg = ref(storage, `news/${Date.now()}_main`);
       const snapImg = await uploadBytes(refImg, fileInput.files[0]);
       featuredImage = await getDownloadURL(snapImg.ref);
     }
 
-    const galleryUrls = [...existingGalleryUrls];
-    for (const file of selectedGalleryFiles) {
-        const refGal = ref(storage, `news/${Date.now()}_gal_${Math.random()}`);
+    // 2. Upload Gallery Images in Parallel (Much Faster)
+    const galleryUploadPromises = selectedGalleryFiles.map(async (file) => {
+        const refGal = ref(storage, `news/${Date.now()}_gal_${Math.random().toString(36).substring(7)}`);
         const snapGal = await uploadBytes(refGal, file);
-        galleryUrls.push(await getDownloadURL(snapGal.ref));
-    }
+        return await getDownloadURL(snapGal.ref);
+    });
+    
+    const newGalleryUrls = await Promise.all(galleryUploadPromises);
+    const finalGallery = [...existingGalleryUrls, ...newGalleryUrls];
 
     const data = {
       title: document.getElementById('news-title').value,
@@ -476,7 +481,7 @@ newsForm.addEventListener('submit', async (e) => {
       department: document.getElementById('news-department').value,
       contentBody: quill.root.innerHTML,
       featuredImage: featuredImage,
-      gallery: galleryUrls,
+      gallery: finalGallery,
       updatedAt: serverTimestamp()
     };
 
@@ -484,16 +489,19 @@ newsForm.addEventListener('submit', async (e) => {
       await updateDoc(doc(db, "news", editIdInput.value), data);
     } else {
       data.createdAt = serverTimestamp();
-      const slug = data.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-      await setDoc(doc(db, "news", slug + '-' + Date.now().toString().slice(-4)), data);
+      const slugBase = data.title.toLowerCase().trim().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const uniqueSlug = `${slugBase}-${Date.now().toString().slice(-4)}`;
+      await setDoc(doc(db, "news", uniqueSlug), data);
     }
 
     alert("Berita Berhasil Disimpan!");
     showView('list');
   } catch (err) {
-    alert("Error: " + err.message);
+    console.error(err);
+    alert("Gagal menyimpan: " + err.message);
   } finally {
-    btn.disabled = false; btn.innerText = "SIMPAN BERITA";
+    btn.disabled = false; 
+    btn.innerText = "SIMPAN BERITA";
   }
 });
 </script>
