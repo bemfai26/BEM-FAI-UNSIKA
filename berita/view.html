@@ -509,36 +509,57 @@ function displayArticle(data) {
     document.getElementById('article-author').innerText = data.author;
     document.getElementById('article-department').innerText = data.department || "Pengurus BEM FAI";
 
+    // --- HELPER UNTUK DROP CAP (Gambar 1) ---
+    function applyDropCap(html) {
+        if (!html) return '';
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const firstP = temp.querySelector('p');
+        if (firstP && firstP.textContent.trim().length > 0) {
+            const rawText = firstP.textContent.trim();
+            const firstChar = rawText.charAt(0);
+            const restText = rawText.slice(1);
+            // Bungkus huruf pertama dalam span khusus
+            firstP.innerHTML = `<span class="float-left text-6xl md:text-7xl font-bold text-purple-deep mr-3 leading-[0.8] font-display uppercase mt-1 drop-cap-style">${firstChar}</span>` + restText;
+            return temp.innerHTML;
+        }
+        return html;
+    }
+
     // --- STRUKTUR KONTEN BERITA BARU ---
     let fullBodyHtml = '';
     
-    // 1. Konten Berita 1
+    // 1. Konten Berita 1 (With Drop Cap)
     if (data.content1) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed">${data.content1}</div>`;
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${applyDropCap(data.content1)}</div>`;
     }
     
-    // 2. Sub Judul Berita
+    // 2. Sub Judul Berita (Clean Styling - Gambar 2)
     if (data.subTitle && data.subTitle.replace(/<[^>]*>/g, '').trim() !== "") {
+        // Membersihkan tag HTML dari Quill tapi tetap menjaga teksnya
+        const cleanSub = data.subTitle.replace(/<[^>]*>/g, '').trim();
         fullBodyHtml += `
-            <div class="my-10 p-6 bg-purple-pale/20 rounded-2xl border-l-4 border-purple-med font-display font-black text-2xl text-purple-deep italic">
-                ${data.subTitle}
+            <div class="my-14">
+                <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight">
+                    ${cleanSub}
+                </h2>
             </div>
         `;
     }
     
     // 3. Konten Berita 2
     if (data.content2) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed">${data.content2}</div>`;
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content2}</div>`;
     }
     
-    // 4. Kutipan
+    // 4. Kutipan (Italicized - Gambar 3)
     if (data.quotes && data.quotes.trim() !== "") {
         fullBodyHtml += `
-            <div class="my-12 p-10 bg-white rounded-3xl border border-purple-pale shadow-inner relative overflow-hidden group">
-                <div class="absolute -top-4 -left-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="quote" class="w-24 h-24 text-purple-med"></i>
+            <div class="my-16 p-12 bg-white rounded-[40px] border border-purple-pale shadow-2xl shadow-purple-900/5 relative overflow-hidden group">
+                <div class="absolute -top-6 -left-6 opacity-10 group-hover:opacity-20 transition-all duration-700">
+                    <i data-lucide="quote" class="w-32 h-32 text-purple-med rotate-12"></i>
                 </div>
-                <p class="text-2xl italic font-medium text-purple-deep leading-relaxed text-center relative z-10 font-display">
+                <p class="text-2xl md:text-3xl italic font-medium text-purple-deep leading-relaxed text-center relative z-10 font-display px-4">
                     "${data.quotes}"
                 </p>
             </div>
@@ -547,17 +568,19 @@ function displayArticle(data) {
     
     // 5. Konten Berita 3
     if (data.content3) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed">${data.content3}</div>`;
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content3}</div>`;
     }
     
-    // 6. Tagar
+    // 6. Tagar (No Label, Larger Font - Gambar 3)
     if (data.hashtags && data.hashtags.trim() !== "") {
-        const tags = data.hashtags.split(' ').map(tag => 
-            `<span class="inline-block px-3 py-1 bg-purple-pale text-purple-med text-xs font-bold rounded-lg mr-2 mb-2 hover:bg-purple-soft transition-colors cursor-pointer">${tag}</span>`
-        ).join('');
+        const tags = data.hashtags.split(' ').map(tag => {
+            if (!tag.startsWith('#')) tag = '#' + tag;
+            return `<span class="inline-block px-5 py-2.5 bg-purple-pale/60 text-purple-med text-sm font-bold rounded-full mr-3 mb-3 hover:bg-purple-med hover:text-white transition-all duration-300 cursor-pointer border border-purple-pale shadow-sm">
+                ${tag}
+            </span>`;
+        }).join('');
         fullBodyHtml += `
-            <div class="mt-16 pt-8 border-t border-purple-pale/50 flex flex-wrap items-center">
-                <span class="text-xs font-black text-purple-deep uppercase tracking-widest mr-4 mb-2 italic">Tagar:</span>
+            <div class="mt-20 pt-10 border-t border-purple-pale/50 flex flex-wrap items-center">
                 ${tags}
             </div>
         `;
