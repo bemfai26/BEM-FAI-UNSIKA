@@ -107,12 +107,30 @@
     
     .ql-container.ql-snow { border: none !important; }
     .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #f3f4f6 !important; }
+
+    @media (max-width: 768px) {
+  .sidebar {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    border-radius: 0 30px 30px 0;
+    z-index: 60;
+  }
+
+  .main {
+    margin-left: 0;
+    padding-top: 90px;
+  }
+}
+
+
     </style>
 </head>
 <body>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar"class="sidebar -translate-x-full md:translate-x-0 transition-transform duration-300">
   <div class="text-center mb-10">
     <img src="../assets/Logo/logo-bem.png" class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
     <div class="font-black text-purple-900 leading-tight">BEM FAI UNSIKA</div>
@@ -131,6 +149,20 @@
     </button>
   </nav>
 </aside>
+
+<!-- MOBILE TOPBAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-purple-pale px-4 py-3 flex items-center justify-between">
+  <div class="font-black text-purple-deep">
+    BEM FAI UNSIKA
+  </div>
+
+  <button id="menu-btn" class="p-2 rounded-xl bg-purple-pale text-purple-deep">
+    <i data-lucide="menu"></i>
+  </button>
+</div>
+
+<!-- OVERLAY -->
+<div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
 
 <!-- MAIN CONTENT -->
 <main class="main p-8 pb-24">
@@ -610,6 +642,22 @@ newsForm.addEventListener('submit', async (e) => {
     btn.disabled = false; btn.innerText = "SIMPAN BERITA";
   }
 });
+
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menu-btn');
+const overlay = document.getElementById('sidebar-overlay');
+
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('-translate-x-full');
+  overlay.classList.toggle('hidden');
+});
+
+overlay.addEventListener('click', () => {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+});
+
+
 </script>
 </body>
 </html>
