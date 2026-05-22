@@ -117,12 +117,11 @@
 
     @media (max-width: 768px) {
   .sidebar {
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 280px;
-    border-radius: 0 30px 30px 0;
-    z-index: 50;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
   }
 }
 
@@ -131,7 +130,7 @@
 <body>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" class="sidebar fixed -translate-x-full md:translate-x-0 transition-transform duration-300">
+<aside id="sidebar" class="sidebar fixed -translate-x-full md:translate-x-0 transition-transform duration-300">
   <div class="text-center mb-10">
     <img src="../assets/Logo/logo-bem.png" class="w-20 h-20 mx-auto rounded-3xl shadow-lg mb-3">
     <div class="font-black text-purple-900 leading-tight">BEM FAI UNSIKA</div>
@@ -650,12 +649,12 @@ const menuBtn = document.getElementById('menu-btn');
 const overlay = document.getElementById('overlay');
 
 menuBtn.addEventListener('click', () => {
-  sidebar.classList.remove('-translate-x-full');
+  sidebar.classList.add('show');
   overlay.classList.remove('hidden');
 });
 
 overlay.addEventListener('click', () => {
-  sidebar.classList.add('-translate-x-full');
+  sidebar.classList.remove('show');
   overlay.classList.add('hidden');
 });
 
