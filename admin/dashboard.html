@@ -150,17 +150,13 @@
   </nav>
 </aside>
 
-<!-- MOBILE HEADER -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-b border-purple-pale px-4 py-3 flex items-center justify-between">
-  
-  <div class="font-black text-purple-deep">
-    BEM FAI
-  </div>
-
-  <button id="menu-btn" class="p-2 rounded-xl bg-purple-pale text-purple-deep">
-    <i data-lucide="menu"></i>
-  </button>
-</div>
+<!-- FLOATING HAMBURGER -->
+<button 
+  id="menu-btn" 
+  class="md:hidden fixed top-4 left-4 z-50 p-3 rounded-2xl bg-white/20 backdrop-blur-xl text-purple-deep shadow-lg border border-white/20"
+>
+  <i data-lucide="menu"></i>
+</button>
 
 <!-- OVERLAY -->
 <div id="overlay" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
