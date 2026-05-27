@@ -168,12 +168,29 @@
   </div>
 
   <!-- LIST VIEW -->
-  <div id="view-list">
+  <div id="view-list" class="space-y-4">
+    <!-- Quick Bulk Actions & Search Toolbar -->
+    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white rounded-2xl border border-purple-pale/75 p-4 shadow-sm">
+      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <button id="toggle-select-mode-btn" type="button" class="text-xs bg-purple-pale/40 hover:bg-purple-pale/90 text-purple-med px-4 py-3 rounded-xl font-bold uppercase transition-all flex items-center gap-1.5 border border-purple-pale/80 cursor-pointer">
+          <i data-lucide="check-square" class="w-4 h-4"></i> <span id="toggle-select-text">Pilih Berita</span>
+        </button>
+        <button id="delete-selected-btn" type="button" class="hidden text-xs bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-bold uppercase transition-all flex items-center gap-1.5 shadow-md shadow-red-200 cursor-pointer">
+          <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Terpilih (<span id="selected-count">0</span>)
+        </button>
+      </div>
+      <div id="select-all-group" class="hidden flex items-center gap-3 bg-purple-pale/20 py-2.5 px-4 rounded-xl border border-purple-pale/40">
+        <input type="checkbox" id="select-all-checkbox" class="accent-purple-med w-4 h-4 rounded cursor-pointer">
+        <label for="select-all-checkbox" class="text-xs font-bold text-purple-deep cursor-pointer select-none">Pilih Semua</label>
+      </div>
+    </div>
+
     <div class="bg-white rounded-2xl shadow p-4 overflow-hidden border border-purple-pale">
       <div class="overflow-x-auto">
         <table class="w-full text-sm min-w-[600px] md:min-w-0">
           <thead class="text-gray-400 border-b">
             <tr>
+              <th id="th-select" class="hidden text-left p-3 w-12 text-xs font-bold uppercase">Pilih</th>
               <th class="text-left p-3">Judul Berita</th>
               <th class="text-center">Kategori</th>
               <th class="text-center">Tanggal</th>
@@ -242,14 +259,23 @@
 
       <!-- 4. GAMBAR UTAMA -->
       <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-6 bg-purple-pale/5 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-purple-pale/20 pb-3">
-          <p class="font-bold text-purple-deep flex items-center gap-2 text-base">
-            <i data-lucide="image" class="w-5 h-5 text-purple-med"></i> Gambar Utama
-          </p>
-          <select id="image-mode" class="text-xs bg-white border border-purple-pale hover:border-purple-med rounded-xl py-2 px-3 font-semibold uppercase text-purple-med cursor-pointer outline-none transition-all w-full sm:w-auto">
-            <option value="url">Gunakan URL</option>
-            <option value="upload">Upload File</option>
-          </select>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-pale/20 pb-4">
+          <div class="flex items-start gap-3">
+            <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
+            <div class="flex flex-col">
+              <p class="font-bold text-purple-deep text-base leading-tight">Gambar Utama</p>
+              <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1.5 MB - Kualitas Jernih)</span>
+            </div>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <input type="hidden" id="image-mode" value="url">
+            <button type="button" id="btn-mode-url" class="text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer">
+              <i data-lucide="link" class="w-3.5 h-3.5"></i> Gunakan URL
+            </button>
+            <button type="button" id="btn-mode-upload" class="text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload File
+            </button>
+          </div>
         </div>
         <div id="url-input-group">
           <input id="news-image" placeholder="Paste URL Gambar di sini..." class="w-full p-4 bg-white border border-purple-pale rounded-2xl outline-none">
@@ -302,11 +328,12 @@
       <!-- 11. GALERI KEGIATAN -->
       <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-8 bg-gray-50 space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-pale/20 pb-4">
-              <div class="flex flex-col gap-1">
-                  <p class="font-bold text-purple-deep flex items-center gap-2 text-lg">
-                      <i data-lucide="images" class="w-6 h-6 text-purple-med"></i> Galeri Dokumentasi
-                  </p>
-                  <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider">(Maksimal 8 Foto)</span>
+              <div class="flex items-start gap-3">
+                  <i data-lucide="images" class="w-6 h-6 text-purple-med mt-0.5"></i>
+                  <div class="flex flex-col">
+                      <p class="font-bold text-purple-deep text-lg leading-tight">Galeri Dokumentasi</p>
+                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 Foto)</span>
+                  </div>
               </div>
               <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   <button type="button" onclick="addGalleryUrl()" class="text-xs bg-white border border-purple-pale hover:bg-purple-pale text-purple-med px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1">
@@ -350,13 +377,21 @@ import {
 
 lucide.createIcons();
 
-// --- Helper Kompresi Gambar Otomatis (Mengatasi upload lambat) ---
-function compressImage(file, maxWidth = 600, quality = 0.45) {
+// --- Helper Foto Berkualitas Tinggi & Jernih ---
+function compressImage(file, maxWidth = 1600, quality = 0.90) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
       return;
     }
+    
+    // Jika ukuran file asli sudah kecil (di bawah 400 KB), jangan kompres sama sekali agar kualitas 100% jernih dan original
+    if (file.size <= 400000) {
+      resolve(file);
+      return;
+    }
+    
+    // Untuk file di atas 400KB - 1.5MB, lakukan resize berkualitas tinggi agar aman disimpan di Firestore (Limit Dokumen 1MB)
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
@@ -475,6 +510,39 @@ const galleryPreview = document.getElementById('gallery-preview');
 let selectedGalleryFiles = []; // Array of {file, id}
 let galleryUrls = []; // Array of strings
 
+// --- State & Logika Seleksi Berita (Bulk Delete) ---
+let isSelectMode = false;
+let selectedIds = new Set();
+
+const toggleSelectBtn = document.getElementById('toggle-select-mode-btn');
+const toggleSelectText = document.getElementById('toggle-select-text');
+const deleteSelectedBtn = document.getElementById('delete-selected-btn');
+const selectAllCheckbox = document.getElementById('select-all-checkbox');
+const selectAllGroup = document.getElementById('select-all-group');
+const selectedCountEl = document.getElementById('selected-count');
+const thSelect = document.getElementById('th-select');
+
+// --- Gambar Utama Tab Switching ---
+const btnModeUrl = document.getElementById('btn-mode-url');
+const btnModeUpload = document.getElementById('btn-mode-upload');
+
+function setImageMode(mode) {
+  imageMode.value = mode;
+  document.getElementById('url-input-group').classList.toggle('hidden', mode !== 'url');
+  document.getElementById('upload-input-group').classList.toggle('hidden', mode === 'url');
+  
+  if (mode === 'url') {
+    btnModeUrl.className = "text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer";
+    btnModeUpload.className = "text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer";
+  } else {
+    btnModeUrl.className = "text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer";
+    btnModeUpload.className = "text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer";
+  }
+}
+
+btnModeUrl.addEventListener('click', () => setImageMode('url'));
+btnModeUpload.addEventListener('click', () => setImageMode('upload'));
+
 onAuthStateChanged(auth, (user) => {
   if (!user) { location.href = "login.html"; return; }
   loadNews();
@@ -497,6 +565,7 @@ window.showView = (view) => {
     galleryPreview.innerHTML = "";
     selectedGalleryFiles = [];
     galleryUrls = [];
+    setImageMode('url');
     document.getElementById('view-title').innerText = 'Tulis Berita';
   } else {
     document.getElementById('view-title').innerText = 'Kelola Berita';
@@ -513,11 +582,6 @@ window.showView = (view) => {
 
 // --- Gambar Utama ---
 
-imageMode.addEventListener('change', () => {
-  document.getElementById('url-input-group').classList.toggle('hidden', imageMode.value !== 'url');
-  document.getElementById('upload-input-group').classList.toggle('hidden', imageMode.value === 'url');
-});
-
 imageInput.addEventListener('input', () => {
   if (imageInput.value) { imagePreview.src = imageInput.value; imagePreview.classList.remove('hidden'); }
   else { imagePreview.classList.add('hidden'); }
@@ -526,6 +590,12 @@ imageInput.addEventListener('input', () => {
 fileInput.addEventListener('change', () => {
   const file = fileInput.files[0];
   if (file) {
+    if (file.size > 1.5 * 1024 * 1024) { // over 1.5 MB limit
+      alert("⚠️ Ukuran foto utama melebihi batas maksimal 1.5 MB! Harap pilih gambar yang berukuran lebih kecil.");
+      fileInput.value = "";
+      imagePreview.classList.add('hidden');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => { imagePreview.src = e.target.result; imagePreview.classList.remove('hidden'); };
     reader.readAsDataURL(file);
@@ -609,32 +679,156 @@ function createGalleryEl(src, onRemove) {
 
 // --- Operasi Data ---
 
+toggleSelectBtn.addEventListener('click', () => {
+  isSelectMode = !isSelectMode;
+  toggleSelectBtn.classList.toggle('bg-purple-med', isSelectMode);
+  toggleSelectBtn.classList.toggle('text-white', isSelectMode);
+  toggleSelectBtn.classList.toggle('bg-purple-pale/40', !isSelectMode);
+  toggleSelectBtn.classList.toggle('text-purple-med', !isSelectMode);
+  toggleSelectText.innerText = isSelectMode ? "Batal Pilih" : "Pilih Berita";
+  
+  thSelect.classList.toggle('hidden', !isSelectMode);
+  selectAllGroup.classList.toggle('hidden', !isSelectMode);
+  
+  if (!isSelectMode) {
+    selectedIds.clear();
+    selectAllCheckbox.checked = false;
+    deleteSelectedBtn.classList.add('hidden');
+  } else {
+    updateSelectedBtns();
+  }
+  
+  // Refresh table row view for checkboxes without reloading fully
+  document.querySelectorAll('.news-row').forEach(row => {
+    const col = row.querySelector('.select-col');
+    if (col) col.classList.toggle('hidden', !isSelectMode);
+    
+    const checkbox = row.querySelector('.news-select-checkbox');
+    if (checkbox) {
+      checkbox.checked = false;
+    }
+  });
+});
+
+selectAllCheckbox.addEventListener('change', () => {
+  const isChecked = selectAllCheckbox.checked;
+  const checkboxes = document.querySelectorAll('.news-select-checkbox');
+  
+  checkboxes.forEach(cb => {
+    cb.checked = isChecked;
+    if (isChecked) {
+      selectedIds.add(cb.value);
+    } else {
+      selectedIds.delete(cb.value);
+    }
+  });
+  updateSelectedBtns();
+});
+
+function updateSelectedBtns() {
+  const checkboxes = document.querySelectorAll('.news-select-checkbox');
+  let checkedCount = 0;
+  selectedIds.clear();
+  
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      checkedCount++;
+      selectedIds.add(cb.value);
+    }
+  });
+  
+  selectedCountEl.innerText = checkedCount;
+  
+  if (checkedCount > 0 && isSelectMode) {
+    deleteSelectedBtn.classList.remove('hidden');
+  } else {
+    deleteSelectedBtn.classList.add('hidden');
+  }
+}
+
+deleteSelectedBtn.addEventListener('click', async () => {
+  if (selectedIds.size === 0) return;
+  
+  if (confirm(`Apakah Anda yakin ingin menghapus ${selectedIds.size} berita terpilih secara massal?`)) {
+    deleteSelectedBtn.disabled = true;
+    const originalText = deleteSelectedBtn.innerHTML;
+    deleteSelectedBtn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Menghapus...`;
+    lucide.createIcons();
+    
+    try {
+      const deletePromises = Array.from(selectedIds).map(id => deleteDoc(doc(db, "news", id)));
+      await Promise.all(deletePromises);
+      alert(`${selectedIds.size} Berita Berhasil Dihapus!`);
+      
+      // Reset seleksi
+      selectedIds.clear();
+      selectAllCheckbox.checked = false;
+      isSelectMode = false;
+      
+      // Reset button state
+      toggleSelectText.innerText = "Pilih Berita";
+      toggleSelectBtn.classList.remove('bg-purple-med', 'text-white');
+      toggleSelectBtn.classList.add('bg-purple-pale/40', 'text-purple-med');
+      thSelect.classList.add('hidden');
+      selectAllGroup.classList.add('hidden');
+      deleteSelectedBtn.classList.add('hidden');
+      
+      loadNews();
+    } catch (err) {
+      alert("Gagal menghapus berita: " + err.message);
+    } finally {
+      deleteSelectedBtn.disabled = false;
+      deleteSelectedBtn.innerHTML = originalText;
+    }
+  }
+});
+
 async function loadNews() {
-  tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-300 italic'>Memuat Berita...</td></tr>";
+  const isSelectModeActive = isSelectMode;
+  const totalColspan = isSelectModeActive ? 5 : 4;
+  
+  tableBody.innerHTML = `<tr><td colspan='${totalColspan}' class='p-10 text-center text-gray-300 italic'>Memuat Berita...</td></tr>`;
   const q = query(collection(db, "news"), orderBy("date", "desc"));
   const snap = await getDocs(q);
   tableBody.innerHTML = "";
   
   if (snap.empty) { 
-      tableBody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Belum Ada Berita.</td></tr>"; 
+      tableBody.innerHTML = `<tr><td colspan='${totalColspan}' class='p-10 text-center text-gray-400'>Belum Ada Berita.</td></tr>`; 
       return; 
   }
   
   snap.forEach(d => {
     const item = d.data();
     const tr = document.createElement('tr');
-    tr.className = "border-b hover:bg-purple-pale/10 transition-all";
+    tr.className = "border-b hover:bg-purple-pale/10 transition-all news-row";
+    tr.dataset.id = d.id;
+    
     tr.innerHTML = `
+      <td class="p-4 select-col ${isSelectModeActive ? '' : 'hidden'}">
+        <input type="checkbox" class="news-select-checkbox accent-purple-med w-4 h-4 rounded cursor-pointer" value="${d.id}">
+      </td>
       <td class="p-4 font-semibold text-purple-deep text-sm">${item.title}</td>
       <td class="p-4 text-center"><span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-black uppercase italic">${item.category}</span></td>
       <td class="p-4 text-center text-gray-400 text-xs">${item.date}</td>
       <td class="p-4 text-right space-x-3">
-        <button class="edit-btn text-purple-med font-black text-[10px] uppercase hover:underline">Edit</button>
-        <button class="delete-btn text-red-500 font-black text-[10px] uppercase hover:underline">Hapus</button>
+        <button class="edit-btn text-purple-med font-black text-[10px] uppercase hover:underline cursor-pointer">Edit</button>
+        <button class="delete-btn text-red-500 font-black text-[10px] uppercase hover:underline cursor-pointer">Hapus</button>
       </td>
     `;
+    
     tr.querySelector('.edit-btn').onclick = () => editNews(d.id);
     tr.querySelector('.delete-btn').onclick = () => deleteNews(d.id);
+    
+    const checkbox = tr.querySelector('.news-select-checkbox');
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        selectedIds.add(d.id);
+      } else {
+        selectedIds.delete(d.id);
+      }
+      updateSelectedBtns();
+    });
+    
     tableBody.appendChild(tr);
   });
 }
@@ -663,6 +857,12 @@ async function editNews(id) {
   imageInput.value = item.featuredImage || "";
   imagePreview.src = item.featuredImage || "";
   imagePreview.classList.toggle('hidden', !item.featuredImage);
+  
+  if (item.featuredImage && item.featuredImage.startsWith('data:image/')) {
+    setImageMode('upload');
+  } else {
+    setImageMode('url');
+  }
   
   galleryUrls = item.gallery || [];
   renderGallery();
