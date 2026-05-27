@@ -147,22 +147,22 @@
       <i data-lucide="log-out"></i> Keluar
     </button>
   </nav>
-</aside>
 
-<!-- FLOATING HAMBURGER -->
-<button 
-  id="menu-btn" 
-  class="md:hidden fixed top-4 left-4 z-50 p-3 rounded-2xl bg-white/20 backdrop-blur-xl text-purple-deep shadow-lg border border-white/20"
->
-  <i data-lucide="menu"></i>
-</button>
+  <!-- TOGGLE DRAW-ARROWS CONTROLLER FOR MOBILE -->
+  <button 
+    id="menu-btn" 
+    class="md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 p-2 rounded-r-2xl rounded-l-none bg-purple-deep text-white shadow-2xl hover:bg-purple-med transition-all flex items-center justify-center cursor-pointer min-h-[64px] w-[32px] border border-l-0 border-white/20"
+  >
+    <i id="menu-icon" data-lucide="chevron-right" class="w-5 h-5"></i>
+  </button>
+</aside>
 
 <!-- OVERLAY -->
 <div id="overlay" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
 
 <!-- MAIN CONTENT -->
 <main class="main p-8 pb-24">
-  <div class="mb-8 pl-12 md:pl-0">
+  <div class="mb-8 md:pl-0">
     <h1 id="view-title" class="text-2xl font-bold text-purple-900">Kelola Berita</h1>
     <p id="view-subtitle" class="text-gray-500 text-sm">Dashboard administrasi berita</p>
   </div>
@@ -427,6 +427,22 @@ const qSub = new Quill('#editor-sub', { theme: 'snow', placeholder: 'Tulis sub j
 
 // --- Variabel & Elements ---
 
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menu-btn');
+const overlay = document.getElementById('overlay');
+const menuIcon = document.getElementById('menu-icon');
+
+function updateMenuIcon() {
+  if (sidebar && menuIcon) {
+    if (sidebar.classList.contains('show')) {
+      menuIcon.setAttribute('data-lucide', 'chevron-left');
+    } else {
+      menuIcon.setAttribute('data-lucide', 'chevron-right');
+    }
+    lucide.createIcons();
+  }
+}
+
 const viewList = document.getElementById('view-list');
 const viewForm = document.getElementById('view-form');
 const tableBody = document.getElementById('news-table-body');
@@ -471,6 +487,13 @@ window.showView = (view) => {
   } else {
     document.getElementById('view-title').innerText = 'Kelola Berita';
     loadNews();
+  }
+
+  // Auto-close sidebar on mobile view selection
+  if (window.innerWidth <= 768) {
+    sidebar.classList.remove('show');
+    overlay.classList.add('hidden');
+    updateMenuIcon();
   }
 };
 
@@ -708,19 +731,22 @@ newsForm.addEventListener('submit', async (e) => {
   }
 });
 
-const sidebar = document.getElementById('sidebar');
-const menuBtn = document.getElementById('menu-btn');
-const overlay = document.getElementById('overlay');
+// Event Listeners for mobile sidebar toggle
+if (menuBtn) {
+  menuBtn.addEventListener('click', () => {
+    const isShow = sidebar.classList.toggle('show');
+    overlay.classList.toggle('hidden', !isShow);
+    updateMenuIcon();
+  });
+}
 
-menuBtn.addEventListener('click', () => {
-  sidebar.classList.add('show');
-  overlay.classList.remove('hidden');
-});
-
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('show');
-  overlay.classList.add('hidden');
-});
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    overlay.classList.add('hidden');
+    updateMenuIcon();
+  });
+}
 
 </script>
 </body>
