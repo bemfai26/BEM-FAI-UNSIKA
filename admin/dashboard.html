@@ -350,7 +350,7 @@ import {
 lucide.createIcons();
 
 // --- Helper Kompresi Gambar Otomatis (Mengatasi upload lambat) ---
-function compressImage(file, maxWidth = 1200, quality = 0.75) {
+function compressImage(file, maxWidth = 1000, quality = 0.65) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
@@ -670,28 +670,38 @@ newsForm.addEventListener('submit', async (e) => {
     if (imageMode.value === 'upload' && fileInput.files[0]) {
       btn.innerText = "MENGOMPRES GAMBAR UTAMA...";
       const compressedMain = await compressImage(fileInput.files[0]);
-      btn.innerText = "MENGUNGGAH GAMBAR UTAMA...";
-      const refImg = ref(storage, `news/${Date.now()}_main`);
-      const snapImg = await uploadBytes(refImg, compressedMain);
-      featuredImage = await getDownloadURL(snapImg.ref);
+      btn.innerText = "MEMULAI UNGGAH GAMBAR UTAMA...";
+      try {
+        const refImg = ref(storage, `news/${Date.now()}_main`);
+        const snapImg = await uploadBytes(refImg, compressedMain);
+        featuredImage = await getDownloadURL(snapImg.ref);
+      } catch (uploadErr) {
+        console.error("Featured image upload error", uploadErr);
+        throw new Error(`Gagal mengunggah Gambar Utama: ${uploadErr.message}. Harap periksa koneksi internet atau hak akses penyimpanan Firebase Anda.`);
+      }
     }
 
-    // Upload gallery files
+    // Upload galeri dokumentasi secara berurutan (Sequential) agar cepat & tidak hang
     const finalGallery = [...galleryUrls];
-    let galleryCount = 0;
-    const uploadPromises = selectedGalleryFiles.map(async (item) => {
-        galleryCount++;
-        const currentNum = galleryCount;
-        btn.innerText = `KOMPRES GALERI ${currentNum}/${selectedGalleryFiles.length}...`;
+    for (let i = 0; i < selectedGalleryFiles.length; i++) {
+        const item = selectedGalleryFiles[i];
+        const num = i + 1;
+        const total = selectedGalleryFiles.length;
+        
+        btn.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
         const compressedGal = await compressImage(item.file);
-        btn.innerText = `UNGGAH GALERI ${currentNum}/${selectedGalleryFiles.length}...`;
-        const refGal = ref(storage, `news/gal_${Date.now()}_${Math.random().toString(36).substring(7)}`);
-        const snapGal = await uploadBytes(refGal, compressedGal);
-        return await getDownloadURL(snapGal.ref);
-    });
-    
-    const uploadedUrls = await Promise.all(uploadPromises);
-    finalGallery.push(...uploadedUrls);
+        
+        btn.innerText = `UNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
+        try {
+            const refGal = ref(storage, `news/gal_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+            const snapGal = await uploadBytes(refGal, compressedGal);
+            const downloadUrl = await getDownloadURL(snapGal.ref);
+            finalGallery.push(downloadUrl);
+        } catch (uploadErr) {
+            console.error("Gallery upload error at index " + i, uploadErr);
+            throw new Error(`Gagal mengunggah foto dokumentasi ke-${num}: ${uploadErr.message}. Harap periksa koneksi internet Anda.`);
+        }
+    }
 
     // Legacy support for contentBody
     const fullBody = q1.root.innerHTML + qSub.root.innerHTML + q2.root.innerHTML + (document.getElementById('news-quotes').value ? `<blockquote>${document.getElementById('news-quotes').value}</blockquote>` : "") + q3.root.innerHTML;
