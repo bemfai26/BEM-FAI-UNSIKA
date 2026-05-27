@@ -169,28 +169,22 @@
 
   <!-- LIST VIEW -->
   <div id="view-list" class="space-y-4">
-    <!-- Quick Bulk Actions & Search Toolbar -->
-    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between bg-white rounded-2xl border border-purple-pale/75 p-4 shadow-sm">
-      <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-        <button id="toggle-select-mode-btn" type="button" class="text-xs bg-purple-pale/40 hover:bg-purple-pale/90 text-purple-med px-4 py-3 rounded-xl font-bold uppercase transition-all flex items-center gap-1.5 border border-purple-pale/80 cursor-pointer">
-          <i data-lucide="check-square" class="w-4 h-4"></i> <span id="toggle-select-text">Pilih Berita</span>
-        </button>
-        <button id="delete-selected-btn" type="button" class="hidden text-xs bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-bold uppercase transition-all flex items-center gap-1.5 shadow-md shadow-red-200 cursor-pointer">
-          <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Terpilih (<span id="selected-count">0</span>)
-        </button>
-      </div>
-      <div id="select-all-group" class="hidden flex items-center gap-3 bg-purple-pale/20 py-2.5 px-4 rounded-xl border border-purple-pale/40">
-        <input type="checkbox" id="select-all-checkbox" class="accent-purple-med w-4 h-4 rounded cursor-pointer">
-        <label for="select-all-checkbox" class="text-xs font-bold text-purple-deep cursor-pointer select-none">Pilih Semua</label>
-      </div>
-    </div>
-
     <div class="bg-white rounded-2xl shadow p-4 overflow-hidden border border-purple-pale">
       <div class="overflow-x-auto">
         <table class="w-full text-sm min-w-[600px] md:min-w-0">
           <thead class="text-gray-400 border-b">
             <tr>
-              <th id="th-select" class="hidden text-left p-3 w-12 text-xs font-bold uppercase">Pilih</th>
+              <th id="th-select" class="p-3 pl-4 w-36 select-none text-left align-middle">
+                <div class="flex items-center gap-2">
+                  <button id="toggle-select-mode-btn" type="button" class="text-[10px] bg-purple-pale/40 hover:bg-purple-pale/80 text-purple-med px-2.5 py-1.5 rounded-lg font-black uppercase tracking-wider transition-all flex items-center gap-1 border border-purple-pale/60 cursor-pointer shrink-0">
+                    <i data-lucide="check-square" class="w-3.5 h-3.5"></i> <span id="toggle-select-text">Pilih</span>
+                  </button>
+                  <div id="select-all-group" class="hidden flex items-center gap-1.5 bg-purple-pale/20 py-1 px-1.5 rounded-lg border border-purple-pale/40 shrink-0">
+                    <input type="checkbox" id="select-all-checkbox" class="accent-purple-med w-3.5 h-3.5 rounded cursor-pointer">
+                    <label for="select-all-checkbox" class="text-[9px] font-black text-purple-deep uppercase tracking-wide cursor-pointer select-none">Semua</label>
+                  </div>
+                </div>
+              </th>
               <th class="text-left p-3">Judul Berita</th>
               <th class="text-center">Kategori</th>
               <th class="text-center">Tanggal</th>
@@ -264,7 +258,7 @@
             <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
             <div class="flex flex-col">
               <p class="font-bold text-purple-deep text-base leading-tight">Gambar Utama</p>
-              <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1.5 MB - Kualitas Jernih)</span>
+              <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Batas Maksimal 1.5 MB. Kualitas jernih &amp; tanpa kompresi)</span>
             </div>
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
@@ -363,6 +357,20 @@
     </form>
   </div>
 </main>
+
+<!-- Floating Bulk Action Bar -->
+<div id="bulk-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 translate-y-32 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-4 bg-purple-deep/95 backdrop-blur-md text-white px-6 py-4 rounded-2xl border border-white/15 shadow-2xl">
+  <div class="flex items-center gap-2">
+    <div class="w-6 h-6 rounded-full bg-purple-med/30 flex items-center justify-center border border-purple-light/20">
+      <span id="selected-count" class="text-xs font-black text-purple-pale">0</span>
+    </div>
+    <span class="text-xs font-bold text-gray-200">Berita Terpilih</span>
+  </div>
+  <div class="h-4 w-[1px] bg-white/20"></div>
+  <button id="delete-selected-btn" type="button" class="text-xs bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl font-bold uppercase transition-all flex items-center gap-1.5 shadow-md shadow-red-900/40 cursor-pointer">
+    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus Terpilih
+  </button>
+</div>
 
 <script type="module">
 import {
@@ -541,7 +549,10 @@ function setImageMode(mode) {
 }
 
 btnModeUrl.addEventListener('click', () => setImageMode('url'));
-btnModeUpload.addEventListener('click', () => setImageMode('upload'));
+btnModeUpload.addEventListener('click', () => {
+  setImageMode('upload');
+  fileInput.click();
+});
 
 onAuthStateChanged(auth, (user) => {
   if (!user) { location.href = "login.html"; return; }
@@ -685,26 +696,24 @@ toggleSelectBtn.addEventListener('click', () => {
   toggleSelectBtn.classList.toggle('text-white', isSelectMode);
   toggleSelectBtn.classList.toggle('bg-purple-pale/40', !isSelectMode);
   toggleSelectBtn.classList.toggle('text-purple-med', !isSelectMode);
-  toggleSelectText.innerText = isSelectMode ? "Batal Pilih" : "Pilih Berita";
+  toggleSelectText.innerText = isSelectMode ? "Batal" : "Pilih";
   
-  thSelect.classList.toggle('hidden', !isSelectMode);
   selectAllGroup.classList.toggle('hidden', !isSelectMode);
   
   if (!isSelectMode) {
     selectedIds.clear();
     selectAllCheckbox.checked = false;
-    deleteSelectedBtn.classList.add('hidden');
-  } else {
-    updateSelectedBtns();
   }
+  updateSelectedBtns();
   
   // Refresh table row view for checkboxes without reloading fully
   document.querySelectorAll('.news-row').forEach(row => {
-    const col = row.querySelector('.select-col');
-    if (col) col.classList.toggle('hidden', !isSelectMode);
-    
+    const indexNum = row.querySelector('.news-index-num');
     const checkbox = row.querySelector('.news-select-checkbox');
+    
+    if (indexNum) indexNum.classList.toggle('hidden', isSelectMode);
     if (checkbox) {
+      checkbox.classList.toggle('hidden', !isSelectMode);
       checkbox.checked = false;
     }
   });
@@ -739,10 +748,15 @@ function updateSelectedBtns() {
   
   selectedCountEl.innerText = checkedCount;
   
-  if (checkedCount > 0 && isSelectMode) {
-    deleteSelectedBtn.classList.remove('hidden');
-  } else {
-    deleteSelectedBtn.classList.add('hidden');
+  const actionBar = document.getElementById('bulk-action-bar');
+  if (actionBar) {
+    if (checkedCount > 0 && isSelectMode) {
+      actionBar.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+      actionBar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+    } else {
+      actionBar.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+      actionBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+    }
   }
 }
 
@@ -766,12 +780,16 @@ deleteSelectedBtn.addEventListener('click', async () => {
       isSelectMode = false;
       
       // Reset button state
-      toggleSelectText.innerText = "Pilih Berita";
+      toggleSelectText.innerText = "Pilih";
       toggleSelectBtn.classList.remove('bg-purple-med', 'text-white');
       toggleSelectBtn.classList.add('bg-purple-pale/40', 'text-purple-med');
-      thSelect.classList.add('hidden');
       selectAllGroup.classList.add('hidden');
-      deleteSelectedBtn.classList.add('hidden');
+      
+      const actionBar = document.getElementById('bulk-action-bar');
+      if (actionBar) {
+        actionBar.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+        actionBar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      }
       
       loadNews();
     } catch (err) {
@@ -785,7 +803,7 @@ deleteSelectedBtn.addEventListener('click', async () => {
 
 async function loadNews() {
   const isSelectModeActive = isSelectMode;
-  const totalColspan = isSelectModeActive ? 5 : 4;
+  const totalColspan = 5;
   
   tableBody.innerHTML = `<tr><td colspan='${totalColspan}' class='p-10 text-center text-gray-300 italic'>Memuat Berita...</td></tr>`;
   const q = query(collection(db, "news"), orderBy("date", "desc"));
@@ -797,15 +815,22 @@ async function loadNews() {
       return; 
   }
   
+  let i = 0;
   snap.forEach(d => {
     const item = d.data();
     const tr = document.createElement('tr');
     tr.className = "border-b hover:bg-purple-pale/10 transition-all news-row";
     tr.dataset.id = d.id;
     
+    const idx = i + 1;
+    i++;
+    
     tr.innerHTML = `
-      <td class="p-4 select-col ${isSelectModeActive ? '' : 'hidden'}">
-        <input type="checkbox" class="news-select-checkbox accent-purple-med w-4 h-4 rounded cursor-pointer" value="${d.id}">
+      <td class="p-4 pl-4 select-col">
+        <div class="flex items-center min-h-[24px]">
+          <span class="news-index-num text-xs font-bold text-purple-deep/40 ${isSelectModeActive ? 'hidden' : ''}">${idx}</span>
+          <input type="checkbox" class="news-select-checkbox accent-purple-med w-4 h-4 rounded cursor-pointer ${isSelectModeActive ? '' : 'hidden'}" value="${d.id}" ${selectedIds.has(d.id) ? 'checked' : ''}>
+        </div>
       </td>
       <td class="p-4 font-semibold text-purple-deep text-sm">${item.title}</td>
       <td class="p-4 text-center"><span class="px-2 py-1 bg-purple-pale text-purple-med text-[10px] rounded-lg font-black uppercase italic">${item.category}</span></td>
@@ -888,11 +913,9 @@ newsForm.addEventListener('submit', async (e) => {
     let featuredImage = imageInput.value;
 
     if (imageMode.value === 'upload' && fileInput.files[0]) {
-      if (btnText) btnText.innerText = "MENGOMPRES GAMBAR UTAMA...";
-      const compressedMain = await compressImage(fileInput.files[0]);
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
       try {
-        featuredImage = await fileToBase64(compressedMain);
+        featuredImage = await fileToBase64(fileInput.files[0]);
       } catch (uploadErr) {
         console.error("Featured image base64 processing error", uploadErr);
         throw new Error(`Gagal memproses Gambar Utama: ${uploadErr.message}.`);
