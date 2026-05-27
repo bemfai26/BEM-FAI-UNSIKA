@@ -254,28 +254,7 @@
         <div id="url-input-group">
           <input id="news-image" placeholder="Paste URL Gambar di sini..." class="w-full p-4 bg-white border border-purple-pale rounded-2xl outline-none">
         </div>
-        <div id="upload-input-group" class="hidden space-y-4">
-          <!-- Metode Unggah Selection -->
-          <div class="p-4 bg-purple-light/5 rounded-2xl border border-purple-pale/60 space-y-2">
-            <span class="text-xs font-black text-purple-deep block uppercase tracking-wide">Metode Penyimpanan File:</span>
-            <div class="flex flex-col gap-3">
-              <label class="flex items-start gap-2.5 text-xs font-bold text-purple-med cursor-pointer bg-white p-3 rounded-xl border border-purple-pale/50 hover:border-purple-med transition-all shadow-sm">
-                <input type="radio" name="upload-method" value="database" checked class="accent-purple-med mt-0.5">
-                <div>
-                  <span class="text-purple-deep flex items-center gap-1">Database Firestore <span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-[9px] font-black rounded uppercase">100% Gratis & Bebas Setup</span></span>
-                  <p class="text-[10px] text-gray-400 font-normal mt-0.5">Sangat direkomendasikan jika Firebase Storage Anda belum aktif atau meminta kartu kredit. File akan otomatis dikompres sangat optimal agar mengunggah instan.</p>
-                </div>
-              </label>
-              <label class="flex items-start gap-2.5 text-xs font-bold text-gray-400 cursor-pointer bg-gray-50/50 p-3 rounded-xl border border-gray-200 hover:border-gray-300 transition-all">
-                <input type="radio" name="upload-method" value="storage" class="accent-purple-med mt-0.5">
-                <div>
-                  <span class="text-gray-600">Google Firebase Storage (Kredit/Cloud)</span>
-                  <p class="text-[10px] text-gray-400 font-normal mt-0.5">Menggunakan Google Cloud Storage bucket. Membutuhkan verifikasi penyiapan bucket default di Google Console/Firebase Console.</p>
-                </div>
-              </label>
-            </div>
-          </div>
-
+        <div id="upload-input-group" class="hidden">
           <input type="file" id="news-file" accept="image/*" class="hidden">
           <div id="main-drop-area" class="drop-area text-sm text-gray-400 py-10">
             Drag & Drop atau Klik untuk Upload Gambar Utama
@@ -372,7 +351,7 @@ import {
 lucide.createIcons();
 
 // --- Helper Kompresi Gambar Otomatis (Mengatasi upload lambat) ---
-function compressImage(file, maxWidth = 1200, quality = 0.8) {
+function compressImage(file, maxWidth = 600, quality = 0.45) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
@@ -707,72 +686,35 @@ newsForm.addEventListener('submit', async (e) => {
 
   try {
     let featuredImage = imageInput.value;
-    const uploadMethod = document.querySelector('input[name="upload-method"]:checked')?.value || 'database';
 
     if (imageMode.value === 'upload' && fileInput.files[0]) {
-      if (uploadMethod === 'database') {
-        if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA (KE DATABASE - 100% GRATIS)...";
-        const heavyCompressedMain = await compressImage(fileInput.files[0], 650, 0.5);
-        featuredImage = await fileToBase64(heavyCompressedMain);
-      } else {
-        if (btnText) btnText.innerText = "MENGOMPRES GAMBAR UTAMA...";
-        const compressedMain = await compressImage(fileInput.files[0], 1200, 0.8);
-        if (btnText) btnText.innerText = "MENGUNGGAH GAMBAR UTAMA...";
-        try {
-          // Wrap with a rapid 2.5 second timeout to prevent hanging if Storage status is not active/unbilled
-          const uploadPromise = (async () => {
-            const refImg = ref(storage, `news/${Date.now()}_main`);
-            const snapImg = await uploadBytes(refImg, compressedMain);
-            return await getDownloadURL(snapImg.ref);
-          })();
-          featuredImage = await Promise.race([
-            uploadPromise,
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500))
-          ]);
-        } catch (uploadErr) {
-          console.warn("Storage upload error/timeout, falling back to local base64...", uploadErr);
-          if (btnText) btnText.innerText = "STORAGE GOOGLE MEMINTA KARTU/STUCK! BERALIH KE DATABASE...";
-          const heavyCompressedMain = await compressImage(fileInput.files[0], 650, 0.5);
-          featuredImage = await fileToBase64(heavyCompressedMain);
-        }
+      if (btnText) btnText.innerText = "MENGOMPRES GAMBAR UTAMA...";
+      const compressedMain = await compressImage(fileInput.files[0]);
+      if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
+      try {
+        featuredImage = await fileToBase64(compressedMain);
+      } catch (uploadErr) {
+        console.error("Featured image base64 processing error", uploadErr);
+        throw new Error(`Gagal memproses Gambar Utama: ${uploadErr.message}.`);
       }
     }
 
-    // Memproses galeri dokumentasi secara berurutan dengan unggah ke Firebase Storage / fallback Base64
+    // Memproses galeri dokumentasi secara berurutan secara lokal (tidak perlu Firebase Storage!)
     const finalGallery = [...galleryUrls];
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
         const num = i + 1;
         const total = selectedGalleryFiles.length;
+        if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
+        const compressedGal = await compressImage(item.file);
         
-        if (uploadMethod === 'database') {
-            if (btnText) btnText.innerText = `MEMPROSES FOTO DOKUMENTASI (${num}/${total}) KE DATABASE...`;
-            const heavyCompressedGal = await compressImage(item.file, 500, 0.45);
-            const base64Url = await fileToBase64(heavyCompressedGal);
+        if (btnText) btnText.innerText = `MEMPROSES FOTO DOKUMENTASI (${num}/${total})...`;
+        try {
+            const base64Url = await fileToBase64(compressedGal);
             finalGallery.push(base64Url);
-        } else {
-            if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
-            const compressedGal = await compressImage(item.file, 1200, 0.8);
-            
-            if (btnText) btnText.innerText = `MENGUNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
-            try {
-                const uploadPromise = (async () => {
-                    const refGal = ref(storage, `news/gal_${Date.now()}_${Math.random().toString(36).substring(7)}`);
-                    const snapGal = await uploadBytes(refGal, compressedGal);
-                    return await getDownloadURL(snapGal.ref);
-                })();
-                const downloadUrl = await Promise.race([
-                    uploadPromise,
-                    new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500))
-                ]);
-                finalGallery.push(downloadUrl);
-            } catch (uploadErr) {
-                console.warn("Gallery Storage upload error/timeout, falling back to local base64...", uploadErr);
-                if (btnText) btnText.innerText = `STORAGE STUCK, MEMPROSES FOTO CADANGAN (${num}/${total})...`;
-                const heavyCompressedGal = await compressImage(item.file, 500, 0.45);
-                const base64Url = await fileToBase64(heavyCompressedGal);
-                finalGallery.push(base64Url);
-            }
+        } catch (uploadErr) {
+            console.error("Gallery base64 processing error at index " + i, uploadErr);
+            throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${uploadErr.message}.`);
         }
     }
 
