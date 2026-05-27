@@ -351,7 +351,7 @@ import {
 lucide.createIcons();
 
 // --- Helper Kompresi Gambar Otomatis (Mengatasi upload lambat) ---
-function compressImage(file, maxWidth = 800, quality = 0.55) {
+function compressImage(file, maxWidth = 1200, quality = 0.8) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
@@ -689,16 +689,21 @@ newsForm.addEventListener('submit', async (e) => {
     if (imageMode.value === 'upload' && fileInput.files[0]) {
       if (btnText) btnText.innerText = "MENGOMPRES GAMBAR UTAMA...";
       const compressedMain = await compressImage(fileInput.files[0]);
-      if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
+      if (btnText) btnText.innerText = "MENGUNGGAH GAMBAR UTAMA...";
       try {
-        featuredImage = await fileToBase64(compressedMain);
+        const refImg = ref(storage, `news/${Date.now()}_main`);
+        const snapImg = await uploadBytes(refImg, compressedMain);
+        featuredImage = await getDownloadURL(snapImg.ref);
       } catch (uploadErr) {
-        console.error("Featured image base64 processing error", uploadErr);
-        throw new Error(`Gagal memproses Gambar Utama: ${uploadErr.message}.`);
+        console.warn("Storage upload error, falling back to local base64...", uploadErr);
+        if (btnText) btnText.innerText = "STORAGE NONAKTIF, MEMPROSES GAMBAR CADANGAN...";
+        // Compress more strongly for Firestore storage representation
+        const heavyCompressedMain = await compressImage(fileInput.files[0], 550, 0.5);
+        featuredImage = await fileToBase64(heavyCompressedMain);
       }
     }
 
-    // Memproses galeri dokumentasi secara berurutan secara lokal (tidak perlu Firebase Storage!)
+    // Memproses galeri dokumentasi secara berurutan dengan unggah ke Firebase Storage / fallback Base64
     const finalGallery = [...galleryUrls];
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
@@ -708,13 +713,18 @@ newsForm.addEventListener('submit', async (e) => {
         if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
         const compressedGal = await compressImage(item.file);
         
-        if (btnText) btnText.innerText = `MEMPROSES FOTO DOKUMENTASI (${num}/${total})...`;
+        if (btnText) btnText.innerText = `MENGUNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
         try {
-            const base64Url = await fileToBase64(compressedGal);
-            finalGallery.push(base64Url);
+            const refGal = ref(storage, `news/gal_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+            const snapGal = await uploadBytes(refGal, compressedGal);
+            const downloadUrl = await getDownloadURL(snapGal.ref);
+            finalGallery.push(downloadUrl);
         } catch (uploadErr) {
-            console.error("Gallery base64 processing error at index " + i, uploadErr);
-            throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${uploadErr.message}.`);
+            console.warn("Gallery Storage upload error, falling back to local base64...", uploadErr);
+            if (btnText) btnText.innerText = `MEMPROSES FOTO CADANGAN (${num}/${total})...`;
+            const heavyCompressedGal = await compressImage(item.file, 450, 0.45);
+            const base64Url = await fileToBase64(heavyCompressedGal);
+            finalGallery.push(base64Url);
         }
     }
 
