@@ -125,6 +125,18 @@
   }
 }
 
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0 !important;
+  }
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
     </style>
 </head>
 <body>
@@ -184,6 +196,12 @@
       </table>
     </div>
   </div>
+
+  <div class="table-responsive">
+    <table class="tabel-berita">
+        ...
+    </table>
+</div>
 
   <!-- FORM VIEW -->
   <div id="view-form" class="hidden">
