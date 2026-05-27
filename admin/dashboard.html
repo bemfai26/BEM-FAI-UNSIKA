@@ -125,6 +125,15 @@
   }
 }
 
+  /* Bottom bar hidden state */
+  .bottom-bar {
+    transition: transform 0.3s ease-in-out;
+  }
+  .bottom-bar.hide {
+    transform: translateY(100%);
+  }
+
+
     </style>
 </head>
 <body>
@@ -149,6 +158,65 @@
     </button>
   </nav>
 </aside>
+
+<!-- MOBILE BOTTOM BAR -->
+<nav id="mobileBottomBar"
+  class="bottom-bar fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg shadow-lg border-t md:hidden">
+
+  <div class="flex justify-around items-center py-2 text-gray-600 text-xs">
+
+      <!-- Home -->
+      <button class="flex flex-col items-center">
+          <i data-lucide="home"></i>
+          <span>Home</span>
+      </button>
+
+      <!-- Kelola Berita -->
+      <button class="flex flex-col items-center">
+          <i data-lucide="layout-grid"></i>
+          <span>Kelola</span>
+      </button>
+
+      <!-- Tulis Berita (FAB) -->
+      <button class="relative -mt-6 bg-purple-500 text-white p-4 rounded-full shadow-lg">
+          <i data-lucide="plus-circle"></i>
+      </button>
+
+      <!-- Users -->
+      <button class="flex flex-col items-center">
+          <i data-lucide="users"></i>
+          <span>Users</span>
+      </button>
+
+      <!-- Logout -->
+      <button id="logoutBtn" class="flex flex-col items-center text-red-600">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+      </button>
+
+  </div>
+</nav>
+
+<!-- LOGOUT MODAL -->
+<div id="logoutModal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-[60]">
+
+  <div class="bg-white p-5 rounded-xl shadow-xl w-64 text-center">
+      <h2 class="font-semibold text-lg mb-3">Yakin ingin keluar?</h2>
+
+      <div class="flex justify-around mt-4">
+          <button id="cancelLogout"
+            class="px-4 py-2 bg-gray-200 rounded-lg">
+            Batal
+          </button>
+
+          <button id="confirmLogout"
+            class="px-4 py-2 bg-red-500 text-white rounded-lg">
+            Keluar
+          </button>
+      </div>
+  </div>
+</div>
 
 <!-- FLOATING HAMBURGER -->
 <button 
@@ -653,6 +721,36 @@ overlay.addEventListener('click', () => {
   sidebar.classList.remove('show');
   overlay.classList.add('hidden');
 });
+
+
+  // Auto hide bottom bar on scroll
+  let lastScroll = 0;
+  const bar = document.getElementById('mobileBottomBar');
+
+  window.addEventListener('scroll', () => {
+      let current = window.scrollY;
+
+      if (current > lastScroll) {
+          bar.classList.add('hide'); // Scroll bawah → hilang
+      } else {
+          bar.classList.remove('hide'); // Scroll atas → muncul
+      }
+
+      lastScroll = current;
+  });
+
+  // Logout modal logic
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelLogout = document.getElementById("cancelLogout");
+  const confirmLogout = document.getElementById("confirmLogout");
+
+  logoutBtn.onclick = () => logoutModal.classList.remove("hidden");
+  cancelLogout.onclick = () => logoutModal.classList.add("hidden");
+  confirmLogout.onclick = () => {
+      window.location.href = "logout.php"; // ganti sesuai kebutuhan
+  };
+
 
 </script>
 </body>
