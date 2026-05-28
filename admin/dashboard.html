@@ -124,6 +124,22 @@
         transform: translateX(0);
       }
     }
+
+    /* Premium Pulse Animations */
+    @keyframes glassPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(155, 114, 207, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(155, 114, 207, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(155, 114, 207, 0);
+      }
+    }
+    .arrow-glass-pulse {
+      animation: glassPulse 2s infinite ease-in-out;
+    }
     </style>
 </head>
 <body>
@@ -137,13 +153,26 @@
   </div>
 
   <nav class="flex flex-col gap-2 flex-1">
-    <button onclick="showView('list')" class="sidebar-link">
+    <button onclick="showView('list')" class="sidebar-link cursor-pointer">
       <i data-lucide="layout-grid"></i> Kelola Berita
     </button>
-    <button onclick="showView('form')" class="sidebar-link">
+    <button onclick="showView('form')" class="sidebar-link cursor-pointer">
       <i data-lucide="plus-circle"></i> Tulis Berita
     </button>
-    <button id="logout-btn" class="sidebar-link text-red-500 mt-auto">
+    
+    <!-- Pilihan Gaya Tombol Mobile (Modern Mobile Arrow Styles) -->
+    <div class="mt-auto pt-4 border-t border-purple-pale/40 space-y-2">
+      <p class="text-[10px] uppercase tracking-widest text-purple-deep/40 font-black px-3.5 flex items-center gap-1.5">
+        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Gaya Panah
+      </p>
+      <div class="grid grid-cols-3 gap-1 p-1 bg-purple-pale/20 rounded-xl border border-purple-pale/30">
+        <button type="button" onclick="setArrowStyle('glass')" id="btn-arrow-glass" class="text-[10px] font-bold py-1.5 rounded-lg text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Glass</button>
+        <button type="button" onclick="setArrowStyle('neon')" id="btn-arrow-neon" class="text-[10px] font-bold py-1.5 rounded-lg text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Neon</button>
+        <button type="button" onclick="setArrowStyle('clean')" id="btn-arrow-clean" class="text-[10px] font-bold py-1.5 rounded-lg text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Clean</button>
+      </div>
+    </div>
+
+    <button id="logout-btn" class="sidebar-link text-red-500 cursor-pointer">
       <i data-lucide="log-out"></i> Keluar
     </button>
   </nav>
@@ -151,7 +180,7 @@
   <!-- TOGGLE DRAW-ARROWS CONTROLLER FOR MOBILE -->
   <button 
     id="menu-btn" 
-    class="md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 p-2 rounded-r-2xl rounded-l-none bg-purple-deep text-white shadow-2xl hover:bg-purple-med transition-all flex items-center justify-center cursor-pointer min-h-[64px] w-[32px] border border-l-0 border-white/20"
+    class="md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-20px)] z-50 flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md border border-purple-pale/80 text-purple-med hover:bg-white hover:text-purple-deep active:scale-95"
   >
     <i id="menu-icon" data-lucide="chevron-right" class="w-5 h-5"></i>
   </button>
@@ -372,6 +401,25 @@
   </button>
 </div>
 
+<!-- LOGOUT CONFIRMATION MODAL -->
+<div id="logout-modal" class="fixed inset-0 z-[100] bg-purple-deep/40 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-all duration-300">
+  <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-purple-pale transform scale-95 transition-all duration-300 space-y-6">
+    <div class="text-center space-y-4">
+      <div class="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+        <i data-lucide="log-out" class="w-7 h-7"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-black text-purple-deep">Konfirmasi Keluar</h3>
+        <p class="text-sm text-gray-400 mt-1">Apakah Anda yakin ingin keluar dari akun administrator?</p>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <button id="btn-logout-cancel" type="button" class="w-1/2 py-3 bg-gray-50 border border-purple-pale hover:bg-gray-100 text-purple-deep rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer">Batal</button>
+      <button id="btn-logout-confirm" type="button" class="w-1/2 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-red-200 transition-all cursor-pointer">Ya, Keluar</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import {
   auth, db, storage, ref, uploadBytes, getDownloadURL,
@@ -384,6 +432,40 @@ import {
 } from '../js/firebase-init.js';
 
 lucide.createIcons();
+
+// --- Interactive Mobile Sidebar Arrow Styles Options ---
+window.setArrowStyle = (style, save = true) => {
+  const btn = document.getElementById('menu-btn');
+  if (!btn) return;
+  
+  if (save) {
+    localStorage.setItem('arrowStyle', style);
+  }
+  
+  const glassSel = document.getElementById('btn-arrow-glass');
+  const neonSel = document.getElementById('btn-arrow-neon');
+  const cleanSel = document.getElementById('btn-arrow-clean');
+  
+  // Custom styled visual toggle classes
+  const activeClass = "text-[10px] font-bold py-1.5 rounded-lg bg-white text-purple-deep shadow-sm cursor-pointer border border-purple-pale/10";
+  const inactiveClass = "text-[10px] font-bold py-1.5 rounded-lg text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer";
+  
+  if (glassSel) glassSel.className = style === 'glass' ? activeClass : inactiveClass;
+  if (neonSel) neonSel.className = style === 'neon' ? activeClass : inactiveClass;
+  if (cleanSel) cleanSel.className = style === 'clean' ? activeClass : inactiveClass;
+  
+  if (style === 'glass') {
+    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-20px)] z-50 flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300 w-11 h-11 rounded-full bg-white/75 backdrop-blur-md border border-purple-pale/80 text-purple-med hover:bg-white hover:text-purple-deep active:scale-95 arrow-glass-pulse";
+  } else if (style === 'neon') {
+    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer shadow-[0_0_15px_rgba(155,114,207,0.4)] transition-all duration-300 w-[24px] h-[60px] rounded-r-2xl rounded-l-none bg-gradient-to-b from-purple-med to-purple-deep text-white border border-l-0 border-purple-light/25 hover:brightness-110 active:scale-95";
+  } else { // 'clean'
+    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-6px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[22px] h-[64px] rounded-r-xl rounded-l-none bg-purple-pale/95 backdrop-blur-sm border border-l-0 border-purple-med/15 text-purple-med hover:bg-purple-med hover:text-white active:scale-95";
+  }
+};
+
+// Initial load of the arrow style on boots
+const savedArrowStyle = localStorage.getItem('arrowStyle') || 'glass';
+window.setArrowStyle(savedArrowStyle, false);
 
 // --- Helper Foto Berkualitas Tinggi & Jernih ---
 function compressImage(file, maxWidth = 1600, quality = 0.90) {
@@ -897,7 +979,60 @@ async function deleteNews(id) {
   if (confirm("Hapus berita ini?")) { await deleteDoc(doc(db, "news", id)); loadNews(); }
 }
 
-document.getElementById('logout-btn').onclick = () => signOut(auth);
+// --- Modern Logout dialog handler with beautiful transition ---
+const logoutBtn = document.getElementById('logout-btn');
+const logoutModal = document.getElementById('logout-modal');
+const logoutCancel = document.getElementById('btn-logout-cancel');
+const logoutConfirm = document.getElementById('btn-logout-confirm');
+
+function openLogoutModal() {
+  if (logoutModal) {
+    logoutModal.classList.remove('hidden');
+    // Force a paint reflow so that tailwind transition runs of the actual start values
+    void logoutModal.offsetHeight;
+    logoutModal.classList.add('opacity-100');
+    const box = logoutModal.querySelector('.transform');
+    if (box) {
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    }
+  }
+}
+
+function closeLogoutModal() {
+  if (logoutModal) {
+    logoutModal.classList.remove('opacity-100');
+    const box = logoutModal.querySelector('.transform');
+    if (box) {
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+    }
+    setTimeout(() => {
+      logoutModal.classList.add('hidden');
+    }, 300);
+  }
+}
+
+if (logoutBtn) {
+  logoutBtn.onclick = (e) => {
+    e.preventDefault();
+    openLogoutModal();
+  };
+}
+
+if (logoutCancel) {
+  logoutCancel.onclick = closeLogoutModal;
+}
+
+if (logoutConfirm) {
+  logoutConfirm.onclick = () => {
+    signOut(auth).then(() => {
+      location.href = "login.html";
+    }).catch(err => {
+      alert("Gagal keluar: " + err.message);
+    });
+  };
+}
 
 newsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
