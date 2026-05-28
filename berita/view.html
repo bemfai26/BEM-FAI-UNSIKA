@@ -75,7 +75,7 @@
 
         /* Content Styling */
         .article-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #4B5563; }
-        .article-content h2 { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.875rem; color: #2D1B4E; margin-top: 2.5rem; margin-bottom: 1.5rem; }
+        .article-content h2 { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.875rem; color: #2D1B4E; margin-top: 2.5rem; margin-bottom: 1rem; }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
@@ -539,7 +539,7 @@ function displayArticle(data) {
         // Membersihkan tag HTML dari Quill tapi tetap menjaga teksnya
         const cleanSub = data.subTitle.replace(/<[^>]*>/g, '').trim();
         fullBodyHtml += `
-            <div class="mt-4 mb-4">
+            <div class="mt-2 mb-4">
                 <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight !mt-0 !mb-0">
                     ${cleanSub}
                 </h2>
