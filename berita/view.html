@@ -567,11 +567,8 @@ function displayArticle(data) {
     // 4. Kutipan (Italicized - Gambar 3)
     if (data.quotes && data.quotes.trim() !== "") {
         fullBodyHtml += `
-            <div class="my-16 p-12 bg-white rounded-[40px] border border-purple-pale shadow-2xl shadow-purple-900/5 relative overflow-hidden group">
-                <div class="absolute -top-6 -left-6 opacity-10 group-hover:opacity-20 transition-all duration-700">
-                    <i data-lucide="quote" class="w-32 h-32 text-purple-med rotate-12"></i>
-                </div>
-                <p class="text-2xl md:text-3xl italic font-medium text-purple-deep leading-relaxed text-center relative z-10 font-display px-4">
+            <div class="my-10 py-7 pl-8 pr-10 bg-purple-pale/30 border-l-[5px] border-purple-med rounded-r-3xl relative">
+                <p class="text-[17px] md:text-xl italic font-alice text-purple-deep leading-relaxed">
                     "${data.quotes}"
                 </p>
             </div>
