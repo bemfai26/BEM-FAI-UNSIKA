@@ -196,7 +196,7 @@
       <div class="grid grid-cols-2 gap-1.5 p-1 bg-purple-pale/20 rounded-2xl border border-purple-pale/30">
         <button type="button" onclick="setArrowStyle('glass')" id="btn-arrow-glass" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Glass</button>
         <button type="button" onclick="setArrowStyle('neon')" id="btn-arrow-neon" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Neon</button>
-        <button type="button" onclick="setArrowStyle('notch')" id="btn-arrow-notch" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Notch</button>
+        <button type="button" onclick="setArrowStyle('seamless')" id="btn-arrow-seamless" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Seamless</button>
         <button type="button" onclick="setArrowStyle('cyber')" id="btn-arrow-cyber" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Cyber</button>
       </div>
     </div>
@@ -467,13 +467,16 @@ window.setArrowStyle = (style, save = true) => {
   const btn = document.getElementById('menu-btn');
   if (!btn) return;
   
+  // Backward compatibility check
+  if (style === 'notch') style = 'seamless';
+  
   if (save) {
     localStorage.setItem('arrowStyle', style);
   }
   
   const glassSel = document.getElementById('btn-arrow-glass');
   const neonSel = document.getElementById('btn-arrow-neon');
-  const notchSel = document.getElementById('btn-arrow-notch');
+  const seamlessSel = document.getElementById('btn-arrow-seamless');
   const cyberSel = document.getElementById('btn-arrow-cyber');
   
   // Custom styled visual toggle classes
@@ -482,22 +485,23 @@ window.setArrowStyle = (style, save = true) => {
   
   if (glassSel) glassSel.className = style === 'glass' ? activeClass : inactiveClass;
   if (neonSel) neonSel.className = style === 'neon' ? activeClass : inactiveClass;
-  if (notchSel) notchSel.className = style === 'notch' ? activeClass : inactiveClass;
+  if (seamlessSel) seamlessSel.className = style === 'seamless' ? activeClass : inactiveClass;
   if (cyberSel) cyberSel.className = style === 'cyber' ? activeClass : inactiveClass;
   
   if (style === 'glass') {
     btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-20px)] z-50 flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300 w-11 h-11 rounded-full bg-white/75 backdrop-blur-md border border-purple-pale/80 text-purple-med hover:bg-white hover:text-purple-deep active:scale-95 arrow-glass-pulse";
   } else if (style === 'neon') {
     btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[64px] rounded-r-2xl rounded-l-none bg-gradient-to-b from-purple-med to-purple-deep text-white border border-l-0 border-purple-light/25 hover:brightness-110 active:scale-95 arrow-neon-glow";
-  } else if (style === 'notch') {
-    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-6px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[18px] h-[72px] rounded-r-2xl rounded-l-none bg-purple-deep border border-l-0 border-purple-med/40 text-purple-pale/80 hover:bg-purple-med hover:text-white active:scale-95 shadow-sm";
+  } else if (style === 'seamless') {
+    // Perfectly integrates with the sidebar glass backdrop and white solid borders, sticking out minimally as a natural handle
+    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[72px] rounded-r-2xl rounded-l-none bg-white/40 backdrop-blur-xl border border-l-0 border-white/30 text-purple-deep/70 hover:bg-white/60 hover:text-purple-deep active:scale-95 shadow-[8px_0_24px_rgba(45,27,78,0.06)]";
   } else { // 'cyber'
     btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-2px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[28px] h-[58px] rounded-r-lg rounded-l-none bg-slate-950 border border-l-0 text-purple-light hover:brightness-125 active:scale-95 arrow-cyber-glow";
   }
 };
 
 // Initial load of the arrow style on boots
-const savedArrowStyle = localStorage.getItem('arrowStyle') || 'glass';
+const savedArrowStyle = localStorage.getItem('arrowStyle') || 'seamless';
 window.setArrowStyle(savedArrowStyle, false);
 
 // --- Helper Foto Berkualitas Tinggi & Jernih ---
