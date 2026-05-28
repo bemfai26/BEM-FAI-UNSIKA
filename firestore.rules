@@ -29,7 +29,7 @@ service cloud.firestore {
              data.author is string &&
              data.contentBody is string &&
              data.featuredImage is string &&
-             data.gallery is list && data.gallery.size() <= 10;
+             data.gallery is list && data.gallery.size() <= 8;
     }
 
     // Match News
