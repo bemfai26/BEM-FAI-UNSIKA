@@ -482,21 +482,16 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
               return;
             }
             
-            // JIKA masih di atas target max file size, kurangi resolusi bertahap sampai batas minimal 640px.
-            // Jika resolusi sudah mencapai 640px dan masih terlalu besar, kurangi kualitas secara halus (minimal 0.85).
-            // Ini menjamin kualitas gambar tetap super tajam (jernih) namun ukurannya dijamin muat di penyimpanan!
+            // JIKA masih di atas target max file size, kurangi resolusi bertahap sampai batas minimal 240px.
+            // Kita pertahankan kualitas ketajaman strictly sesuai input (initialQuality)
+            // agar gambar tetap super jernih, tajam, dan bebas efek buram/pecah (tanpa gangguan kompresi rendah),
+            // namun ukurannya dijamin muat dalam limit penyimpanan Firestore!
             if (blob.size > targetMaxSizeBytes) {
-              if (maxRes > 640) {
-                maxRes = Math.round(maxRes * 0.80);
-                tryRenderAndCompress();
-              } else if (quality > 0.85) {
-                quality = Math.max(0.85, quality - 0.03);
-                tryRenderAndCompress();
-              } else if (maxRes > 320) {
-                maxRes = Math.round(maxRes * 0.80);
+              if (maxRes > 240) {
+                maxRes = Math.round(maxRes * 0.85); // Kurangi resolusi bertahap 15%
                 tryRenderAndCompress();
               } else {
-                // Batas akhir tercapai, gunakan hasil terbaik
+                // Batas akhir resolusi tercapai, gunakan hasil terbaik
                 const compressedFile = new File([blob], file.name || "image.jpg", {
                   type: 'image/jpeg',
                   lastModified: Date.now()
@@ -1044,22 +1039,22 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
-    // 1. Memproses Gambar Utama (100% Base64 - Cepat & Mandiri)
+    // 1. Memproses Gambar Utama (100% Base64 - Cepat & Jernih Maksimal)
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
-      // Kompres ke target max 180 KB dengan resolusi 1440px dan kualitas super jernih 0.88.
-      // Kualitas 0.88 pada resolusi 1440px menghasilkan kecerahan/ketajaman yang sangat prima secara instan.
-      const finalMainFile = await compressImage(fileInput.files[0], 180 * 1024, 1440, 0.88);
+      // Kompres ke target max 200 KB dengan resolusi UltraHD 1600px dan kualitas super jernih strictly 0.95.
+      // Jika ukuran melebihi 200 KB, resolusi diturunkan bertahap melompati batas, memelihara kejernihan 0.95 aslinya!
+      const finalMainFile = await compressImage(fileInput.files[0], 200 * 1024, 1600, 0.95);
       featuredImage = await fileToBase64(finalMainFile);
     }
 
-    // 2. Memproses galeri dokumentasi (100% Base64 - Cepat & Mandiri)
+    // 2. Memproses galeri dokumentasi (100% Base64 - Cepat & Jernih Maksimal)
     const finalGallery = [...galleryUrls];
     const totalGal = selectedGalleryFiles.length;
     
-    // Alokasikan memori sisa dokumen Firestore secara dinamis agar total berkas stabil di bawah 1MB.
-    // Seluruh dokumentasi dialokasikan maksimal 400 KB total.
-    const optGalleryTargetSize = totalGal > 0 ? Math.floor((400 * 1024) / totalGal) : 50 * 1024;
+    // Alokasikan memori dokumen Firestore secara dinamis agar total gabungan seluruh foto dijamin aman di bawah 1MB.
+    // Seluruh dokumentasi dialokasikan maksimal 520 KB total.
+    const optGalleryTargetSize = totalGal > 0 ? Math.min(200 * 1024, Math.floor((520 * 1024) / totalGal)) : 50 * 1024;
     
     for (let i = 0; i < totalGal; i++) {
       const item = selectedGalleryFiles[i];
@@ -1067,8 +1062,8 @@ newsForm.addEventListener('submit', async (e) => {
       
       if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${totalGal})...`;
       
-      // Kompres foto galeri dengan resolusi 1024px, kualitas sangat tajam 0.88, dan target ukuran sesuai jumlah berkas
-      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.88);
+      // Kompres foto galeri dengan resolusi tinggi 1200px, kualitas jernih premium strictly 0.95, dan target ukuran sisa memori dinamis
+      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1200, 0.95);
       
       try {
         const base64Url = await fileToBase64(finalGalFile);
