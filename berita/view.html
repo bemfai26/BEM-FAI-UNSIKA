@@ -567,8 +567,11 @@ function displayArticle(data) {
     // 4. Kutipan (Italicized - Gambar 3)
     if (data.quotes && data.quotes.trim() !== "") {
         fullBodyHtml += `
-            <div class="my-12 p-8 bg-purple-pale/30 border-l-4 border-purple-med rounded-r-3xl italic text-purple-deep/80 text-xl font-alice">
-                "${data.quotes}"
+            <div class="my-12 p-8 pl-14 bg-purple-pale/30 border-l-4 border-purple-med rounded-r-3xl italic text-purple-deep/80 text-xl font-alice relative overflow-hidden">
+                <div class="absolute top-3 left-4 opacity-25 pointer-events-none col-purple-med">
+                    <i data-lucide="quote" class="w-8 h-8 text-purple-med/70"></i>
+                </div>
+                <span class="relative z-10">"${data.quotes}"</span>
             </div>
         `;
     }
