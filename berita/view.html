@@ -539,8 +539,8 @@ function displayArticle(data) {
         // Membersihkan tag HTML dari Quill tapi tetap menjaga teksnya
         const cleanSub = data.subTitle.replace(/<[^>]*>/g, '').trim();
         fullBodyHtml += `
-            <div class="my-14">
-                <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight">
+            <div class="mt-8 mb-4">
+                <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight !mt-0 !mb-0">
                     ${cleanSub}
                 </h2>
             </div>
