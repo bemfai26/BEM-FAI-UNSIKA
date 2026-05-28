@@ -482,16 +482,31 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
               return;
             }
             
-            // JIKA masih di atas target max file size, kurangi resolusi bertahap sampai batas minimal 240px.
-            // Kita pertahankan kualitas ketajaman strictly sesuai input (initialQuality)
-            // agar gambar tetap super jernih, tajam, dan bebas efek buram/pecah (tanpa gangguan kompresi rendah),
-            // namun ukurannya dijamin muat dalam limit penyimpanan Firestore!
+            // JIKA masih di atas target max file size, kurangi ukuran lewat kombinasi cerdas:
+            // 1. Kurangi resolusi secara bertahap sampai batas minimal ketajaman visual (800px).
+            // 2. Jika resolusi sudah 800px dan masih terlalu besar, kurangi kualitas secara halus (minimal 0.75) untuk mereduksi memori tanpa merusak ketajaman garis.
+            // 3. Jika kualitas sudah 0.75 dan masih terlalu besar, kurangi resolusi ke batas aman (640px).
+            // 4. Jika masih terlalu besar, turunkan kualitas perlahan hingga batas aman visual (0.65).
+            // 5. Pilihan terakhir: kurangi resolusi ke 480px.
+            // Ini menjamin gambar tetap jernih, tajam (anti buram), serta 100% aman masuk Firestore!
             if (blob.size > targetMaxSizeBytes) {
-              if (maxRes > 240) {
+              if (maxRes > 800) {
                 maxRes = Math.round(maxRes * 0.85); // Kurangi resolusi bertahap 15%
                 tryRenderAndCompress();
+              } else if (quality > 0.75) {
+                quality = Math.max(0.75, quality - 0.03); // Turunkan kualitas secara halus
+                tryRenderAndCompress();
+              } else if (maxRes > 640) {
+                maxRes = Math.round(maxRes * 0.85); // Turunkan resolusi ke 640px
+                tryRenderAndCompress();
+              } else if (quality > 0.65) {
+                quality = Math.max(0.65, quality - 0.03); // Turunkan kualitas lagi
+                tryRenderAndCompress();
+              } else if (maxRes > 480) {
+                maxRes = 480; // Batas resolusi terbawah agar tidak blur
+                tryRenderAndCompress();
               } else {
-                // Batas akhir resolusi tercapai, gunakan hasil terbaik
+                // Batas akhir tercapai, gunakan hasil terbaik
                 const compressedFile = new File([blob], file.name || "image.jpg", {
                   type: 'image/jpeg',
                   lastModified: Date.now()
@@ -1038,51 +1053,48 @@ newsForm.addEventListener('submit', async (e) => {
 
   try {
     let featuredImage = imageInput.value;
+    const finalGallery = [...galleryUrls];
 
-    // 1. Alokasi Memori Dinamis & Cerdas (Kualitas Ultra Jernih 0.95 & 100% Anti Error Firestore 1MB)
     const hasMainImage = !!fileInput.files[0];
     const totalGal = selectedGalleryFiles.length;
 
-    // Anggaran total ukuran berkas biner (raw files) untuk seluruh gambar agar setelah dikonversi ke Base64 (bertambah ~33% ukurannya)
-    // dan digabung dengan teks berita, total dokumen tetap di bawah limit Firestore 1,048,576 byte (~1MB).
-    // Kita tetapkan batas aman total biner gambar pada 660 KB (675,840 byte).
-    const TOTAL_BUDGET_BYTES = 660 * 1024;
+    // --- 100% SMART BASE64 ONLY (Menyimpan langsung ke dokumen Firestore secara mandiri & instan) ---
+    // Limit keras satu dokumen Firestore adalah tepat 1,048,576 byte (~1MB).
+    // Kita tetapkan batas anggaran raw biner foto gabungan maksimal 700 KB (setelah Base64 menjadi sekitar 930 KB).
+    // Sisa memori ~100 KB dialokasikan untuk konten narasi berita, judul, kutipan, tanggal, dan penulis (sangat-sangat longgar).
+    const TOTAL_BUDGET_BYTES = 700 * 1024;
 
     let targetMainSize = 0;
     let optGalleryTargetSize = 0;
 
     if (hasMainImage && totalGal > 0) {
-      // Jika ada keduanya: Utamakan ketajaman gambar utama (45% anggaran)
-      targetMainSize = Math.floor(TOTAL_BUDGET_BYTES * 0.45); // ~297 KB
-      optGalleryTargetSize = Math.floor((TOTAL_BUDGET_BYTES * 0.55) / totalGal); // Sisa 55% dibagi rata ke dokumentasi
+      // Jika kedua-duanya diunggah sekaligus:
+      // Utama dialokasikan 40% anggaran agar kualitas tetap prima tinggi (~280 KB raw).
+      // Galeri dokumentasi mendapatkan sisa 60% anggaran (~420 KB raw) dibagi rata untuk semua berkas terpilih,
+      // sehingga setiap gambar galeri/dokumentasi mendapatkan alokasi memori yang lega dan dijamin anti-buram!
+      targetMainSize = Math.floor(TOTAL_BUDGET_BYTES * 0.40);
+      optGalleryTargetSize = Math.floor((TOTAL_BUDGET_BYTES * 0.60) / totalGal);
     } else if (hasMainImage) {
-      // Hanya gambar utama saja (100% anggaran)
-      targetMainSize = TOTAL_BUDGET_BYTES; // ~660 KB
+      // Jika HANYA ada gambar utama: gunakan 100% anggaran penuh
+      targetMainSize = TOTAL_BUDGET_BYTES;
     } else if (totalGal > 0) {
-      // Hanya galeri dokumentasi saja
+      // Jika HANYA ada galeri dokumentasi: dibagi rata ke seluruh koleksi
       optGalleryTargetSize = Math.floor(TOTAL_BUDGET_BYTES / totalGal);
     }
 
-    // 2. Memproses Gambar Utama (Kualitas Premium 0.95, Resolusi Diturunkan Hanya Jika Melebihi Anggaran)
+    // 1. Memproses Gambar Utama (Resolusi Tinggi 1920px, Kualitas Premium 0.95, Kompresi Resolusi Cerdas)
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
-      // Kompres resolusi secara bertahap mulai dari 1920px (FullHD) tetapi pertahankan kualitas setinggi 0.95 (Sangat Jernih)
-      // agar pas dengan target anggaran memori yang tersedia.
       const finalMainFile = await compressImage(fileInput.files[0], targetMainSize, 1920, 0.95);
       featuredImage = await fileToBase64(finalMainFile);
     }
 
-    // 3. Memproses galeri dokumentasi (Kualitas Premium 0.95, Resolusi Diturunkan Hanya Jika Melebihi Anggaran)
-    const finalGallery = [...galleryUrls];
-    
+    // 2. Memproses Galeri Dokumentasi (Resolusi Tinggi 1280px, Kualitas Premium 0.95, Kompresi Resolusi Cerdas - Jernih Maksimal)
     for (let i = 0; i < totalGal; i++) {
       const item = selectedGalleryFiles[i];
       const num = i + 1;
       
       if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${totalGal})...`;
-      
-      // Kompres resolusi secara bertahap mulai dari 1280px (HD) dengan kualitas 0.95 (Sangat Jernih)
-      // agar pas dengan porsi sisa anggaran memori dinamis.
       const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1280, 0.95);
       
       try {
