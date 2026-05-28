@@ -519,8 +519,8 @@ function displayArticle(data) {
             const rawText = firstP.textContent.trim();
             const firstChar = rawText.charAt(0);
             const restText = rawText.slice(1);
-            // Bungkus huruf pertama dalam span khusus dengan ukuran lebih besar dan warna text-purple-deep (text-4xl md:text-5xl)
-            firstP.innerHTML = `<span class="float-left text-4xl md:text-5xl font-bold text-purple-deep mr-3 leading-[0.85] font-display uppercase mt-1 drop-cap-style">${firstChar}</span>` + restText;
+            // Bungkus huruf pertama dalam span khusus dengan ukuran lebih besar di mobile dan warna text-purple-deep (text-[2.75rem] md:text-5xl)
+            firstP.innerHTML = `<span class="float-left text-[2.75rem] md:text-5xl font-bold text-purple-deep mr-3 leading-[0.85] font-display uppercase mt-1 drop-cap-style">${firstChar}</span>` + restText;
             return temp.innerHTML;
         }
         return html;
