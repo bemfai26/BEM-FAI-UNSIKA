@@ -327,10 +327,30 @@
             </div>
 
             <!-- Gallery -->
-            <div id="gallery-container" class="mt-24 pt-16 border-t border-purple-pale/50 section-fade visible hidden">
-                <h3 class="font-display font-black text-3xl text-purple-deep mb-12 text-center">Galeri Kegiatan</h3>
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <!-- Gallery items injected -->
+            <div id="gallery-container" class="mt-24 pt-16 border-t border-purple-pale/50 section-fade visible hidden relative max-w-full">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10">
+                    <h3 class="font-display font-black text-2xl md:text-3xl text-purple-deep text-center sm:text-left">Dokumentasi Kegiatan</h3>
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center gap-3">
+                        <button id="gallery-prev" class="w-11 h-11 rounded-full border border-purple-pale bg-white text-purple-med hover:bg-purple-med hover:text-white transition flex items-center justify-center shadow-md active:scale-95 duration-300">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button id="gallery-next" class="w-11 h-11 rounded-full border border-purple-pale bg-white text-purple-med hover:bg-purple-med hover:text-white transition flex items-center justify-center shadow-md active:scale-95 duration-300">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carousel Wrapper -->
+                <div class="relative overflow-hidden p-1">
+                    <div id="gallery-track" class="flex flex-row gap-6 transition-transform duration-700 ease-out" style="transform: translateX(0px);">
+                        <!-- Gallery items injected here -->
+                    </div>
+                </div>
+
+                <!-- Dots Indicators -->
+                <div id="gallery-dots-container" class="flex items-center justify-center gap-1.5 mt-8">
+                    <!-- Dots injected dynamically -->
                 </div>
             </div>
         </main>
@@ -654,32 +674,30 @@ function displayArticle(data) {
 
 
     /* =========================================
-       GALERI
+       GALERI (DOKUMENTASI CAROUSEL-SLIDER)
     ========================================= */
     if (data.gallery && data.gallery.length > 0) {
 
         const galleryContainer =
             document.getElementById('gallery-container');
 
-        const grid =
-            document.getElementById('gallery-grid');
+        const track =
+            document.getElementById('gallery-track');
 
         galleryContainer.classList.remove('hidden');
 
-        grid.innerHTML = data.gallery.map((url, i) => `
-
+        track.innerHTML = data.gallery.map((url, i) => `
             <div
-                class="rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56"
+                class="w-[85vw] sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl border border-purple-pale/50 cursor-pointer gallery-item relative group h-48 md:h-56 select-none"
                 onclick="openLightbox(${i})">
 
                 <img
                     src="${url}"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
+                    alt="Dokumentasi ${i + 1}">
 
-                <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
+                <div class="absolute inset-0 bg-purple-med/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
             </div>
-
         `).join('');
 
         // simpan gallery global
@@ -687,6 +705,9 @@ function displayArticle(data) {
 
         // init lightbox
         initLightbox();
+
+        // init horizontal autoplay carousel
+        initGalleryCarousel();
     }
 
 
@@ -965,6 +986,194 @@ function initLightbox() {
 
             document.body.style.overflow = 'auto';
         }
+    });
+}
+
+
+/* =========================================
+   CAROUSEL GALERI DOKUMENTASI UNTUK 1 BARIS
+========================================= */
+function initGalleryCarousel() {
+    const track = document.getElementById('gallery-track');
+    const prevBtn = document.getElementById('gallery-prev');
+    const nextBtn = document.getElementById('gallery-next');
+    const dotsContainer = document.getElementById('gallery-dots-container');
+
+    if (!track) return;
+
+    const items = track.children;
+    const totalItems = items.length;
+    if (totalItems === 0) return;
+
+    let currentIndex = 0;
+    let autoSlideInterval = null;
+
+    // Menentukan jumlah item yang tampil per baris berdasarkan lebar layar
+    function getVisibleItems() {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 768) return 3;
+        if (window.innerWidth >= 640) return 2;
+        return 1;
+    }
+
+    function getMaxScrollIndex() {
+        return Math.max(0, totalItems - getVisibleItems());
+    }
+
+    function updateSlider() {
+        const visibleCount = getVisibleItems();
+        const maxIdx = getMaxScrollIndex();
+
+        // Clamp index agar tidak out of bounds
+        if (currentIndex > maxIdx) {
+            currentIndex = 0;
+        }
+        if (currentIndex < 0) {
+            currentIndex = maxIdx;
+        }
+
+        // Hitung pergeseran pixel secara dinamis
+        if (items[0]) {
+            const itemWidth = items[0].getBoundingClientRect().width;
+            const gap = 24; // Gap antar item sesuai Tailwind "gap-6" adalah 24px
+            const translateX = currentIndex * (itemWidth + gap);
+            track.style.transform = `translateX(-${translateX}px)`;
+        }
+
+        // Render indikator titik (dots)
+        renderDots();
+    }
+
+    function renderDots() {
+        if (!dotsContainer) return;
+        const visibleCount = getVisibleItems();
+        const numStates = Math.max(1, totalItems - visibleCount + 1);
+
+        let dotsHtml = '';
+        for (let i = 0; i < numStates; i++) {
+            const activeClass = i === currentIndex 
+                ? 'bg-purple-med w-5' 
+                : 'bg-purple-soft/60 hover:bg-purple-med/60 w-2';
+            dotsHtml += `
+                <button type="button" class="h-2 rounded-full transition-all duration-300 ${activeClass}" onclick="window.goToGallerySlide(${i})"></button>
+            `;
+        }
+        dotsContainer.innerHTML = dotsHtml;
+    }
+
+    // Fungsi navigasi eksternal
+    window.goToGallerySlide = (index) => {
+        currentIndex = index;
+        updateSlider();
+        resetAutoSlide();
+    };
+
+    function slideNext() {
+        const maxIdx = getMaxScrollIndex();
+        if (currentIndex >= maxIdx) {
+            currentIndex = 0; // Wrap back to first item
+        } else {
+            currentIndex++;
+        }
+        updateSlider();
+    }
+
+    function slidePrev() {
+        const maxIdx = getMaxScrollIndex();
+        if (currentIndex <= 0) {
+            currentIndex = maxIdx; // Wrap to end
+        } else {
+            currentIndex--;
+        }
+        updateSlider();
+    }
+
+    // Event listener tombol navigasi
+    if (prevBtn) prevBtn.addEventListener('click', () => { slidePrev(); resetAutoSlide(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { slideNext(); resetAutoSlide(); });
+
+    // Dukungan drag/geser mouse & layar sentuh mobile
+    let startX = 0;
+    let isDragging = false;
+
+    track.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX;
+        track.style.transition = 'none';
+        resetAutoSlide();
+    });
+
+    track.addEventListener('mouseleave', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.transition = 'transform 0.7s cubic-bezier(0.23, 1, 0.32, 1)';
+        updateSlider();
+    });
+
+    track.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.transition = 'transform 0.7s cubic-bezier(0.23, 1, 0.32, 1)';
+        const endX = e.pageX;
+        const diffX = endX - startX;
+        if (diffX < -50) {
+            slideNext();
+        } else if (diffX > 50) {
+            slidePrev();
+        } else {
+            updateSlider();
+        }
+    });
+
+    // Touch support untuk handphone
+    track.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startX = e.touches[0].pageX;
+        track.style.transition = 'none';
+        resetAutoSlide();
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.transition = 'transform 0.7s cubic-bezier(0.23, 1, 0.32, 1)';
+        const endX = e.changedTouches[0].pageX;
+        const diffX = endX - startX;
+        if (diffX < -50) {
+            slideNext();
+        } else if (diffX > 50) {
+            slidePrev();
+        } else {
+            updateSlider();
+        }
+    }, { passive: true });
+
+    // Mulai auto slide interval (geser otomatis 4 detik sekali)
+    function startAutoSlide() {
+        if (totalItems <= getVisibleItems()) return;
+        autoSlideInterval = setInterval(() => {
+            slideNext();
+        }, 4000);
+    }
+
+    function resetAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+    }
+
+    // Inisialisasi awal
+    startAutoSlide();
+    updateSlider();
+
+    // Adaptif saat ukuran window berubah
+    window.addEventListener('resize', () => {
+        track.style.transition = 'none';
+        updateSlider();
+        setTimeout(() => {
+            track.style.transition = 'transform 0.7s cubic-bezier(0.23, 1, 0.32, 1)';
+        }, 50);
     });
 }
 
