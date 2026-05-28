@@ -448,6 +448,7 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
       img.src = event.target.result;
       img.onload = () => {
         let maxRes = maxResolution;
+        let quality = initialQuality;
         
         function tryRenderAndCompress() {
           const canvas = document.createElement('canvas');
@@ -474,18 +475,34 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
           ctx.fillRect(0, 0, width, height);
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Simpan dengan kualitas sangat tinggi (0.95) dalam bentuk JPEG
+          // Simpan dengan kualitas sangat tinggi dalam bentuk JPEG
           canvas.toBlob((blob) => {
             if (!blob) {
               resolve(file);
               return;
             }
             
-            // JIKA masih di atas target max file size, turunkan resolusi sedikit demi sedikit (maksimum 4 kali percobaan)
-            // Ini menghemat kualitas gambar tetap super tajam 0.95 namun ukuran menyusut drastis & instan!
-            if (blob.size > targetMaxSizeBytes && maxRes > 480) {
-              maxRes = Math.round(maxRes * 0.82);
-              tryRenderAndCompress();
+            // JIKA masih di atas target max file size, kurangi resolusi bertahap sampai batas minimal 640px.
+            // Jika resolusi sudah mencapai 640px dan masih terlalu besar, kurangi kualitas secara halus (minimal 0.85).
+            // Ini menjamin kualitas gambar tetap super tajam (jernih) namun ukurannya dijamin muat di penyimpanan!
+            if (blob.size > targetMaxSizeBytes) {
+              if (maxRes > 640) {
+                maxRes = Math.round(maxRes * 0.80);
+                tryRenderAndCompress();
+              } else if (quality > 0.85) {
+                quality = Math.max(0.85, quality - 0.03);
+                tryRenderAndCompress();
+              } else if (maxRes > 320) {
+                maxRes = Math.round(maxRes * 0.80);
+                tryRenderAndCompress();
+              } else {
+                // Batas akhir tercapai, gunakan hasil terbaik
+                const compressedFile = new File([blob], file.name || "image.jpg", {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              }
             } else {
               const compressedFile = new File([blob], file.name || "image.jpg", {
                 type: 'image/jpeg',
@@ -493,7 +510,7 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
               });
               resolve(compressedFile);
             }
-          }, 'image/jpeg', initialQuality);
+          }, 'image/jpeg', quality);
         }
 
         tryRenderAndCompress();
@@ -1027,40 +1044,63 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
+    // Helper untuk mengunggah file langsung ke Firebase Storage bucket
+    async function uploadToFirebaseStorage(file, folder) {
+      if (!storage) throw new Error("Storage is not configured");
+      const cleanedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanedName}`;
+      const storageRef = ref(storage, `news/${folder}/${fileName}`);
+      await uploadBytes(storageRef, file);
+      return await getDownloadURL(storageRef);
+    }
+
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "PROSES GAMBAR UTAMA...";
       let finalFile = fileInput.files[0];
-      // Jaga keaslian gambar utama jika di bawah 350 KB. 
-      // Jika di atas 350 KB, agar aman dari error Firestore (limit 1MB), kita kompres halus ke resolusi 2048px UltraHD dengan kualitas maksimal (0.95).
-      if (finalFile.size > 350 * 1024) {
-        finalFile = await compressImage(fileInput.files[0], 350 * 1024, 2048, 0.95);
+      
+      try {
+        // Coba unggah dalam resolusi UltraHD super jernih (2048px, 0.95 Quality) ke Storage
+        const ultraFile = await compressImage(fileInput.files[0], 1.5 * 1024 * 1024, 2048, 0.95);
+        if (btnText) btnText.innerText = "MENGUNGGAH GAMBAR UTAMA...";
+        featuredImage = await uploadToFirebaseStorage(ultraFile, "featured");
+      } catch (storageErr) {
+        console.warn("Storage upload failed, falling back to secure Base64:", storageErr);
+        if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA (BASE64)...";
+        // Fallback: Kompres super halus ke ukuran aman Firestore (target 180 KB, resolusi 1600px, kualitas 0.95)
+        const safeBase64File = await compressImage(fileInput.files[0], 180 * 1024, 1600, 0.95);
+        featuredImage = await fileToBase64(safeBase64File);
       }
-      featuredImage = await fileToBase64(finalFile);
     }
 
     // Memproses galeri dokumentasi
     const finalGallery = [...galleryUrls];
     
-    // Batas aman per foto dokumentasi agar total seluruh dokumen (Featured Image + 8 Dokumentasi) tidak melebihi 1MB limit Firestore.
-    // Rekomendasi terbaik: maksimal 50KB per foto dengan resolusi 1024px dan kualitas maksimal 0.95 (Sangat tajam, bersih & super cepat diproses).
-    const optGalleryTargetSize = 50 * 1024; 
-
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
         const num = i + 1;
         const total = selectedGalleryFiles.length;
-        if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${total})...`;
-        
-        // Selalu optimalkan lewat compressImage agar berukuran maks 50KB, resolusi 1024px HD, dan kualitas super jernih 0.95
-        let finalGalFile = item.file;
-        finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.95);
         
         try {
-            const base64Url = await fileToBase64(finalGalFile);
-            finalGallery.push(base64Url);
-        } catch (err) {
-            console.error("Gallery base64 processing error at index " + i, err);
-            throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
+            if (btnText) btnText.innerText = `MENGUNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
+            // Versi Storage: Kualitas maksimal 0.95, resolusi 1600px, target longgar 1 MB
+            const ultraGalFile = await compressImage(item.file, 1024 * 1024, 1600, 0.95);
+            const storageUrl = await uploadToFirebaseStorage(ultraGalFile, "gallery");
+            finalGallery.push(storageUrl);
+        } catch (storageErr) {
+            console.warn(`Storage upload failed for gallery item ${num}, falling back to Base64:`, storageErr);
+            if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${total})...`;
+            
+            // Fallback: Selalu optimalkan lewat compressImage agar berukuran maks 40KB (aman dari batas 1MB Firestore), resolusi 1024px, dan kualitas super jernih 0.95
+            const optGalleryTargetSize = 40 * 1024;
+            const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.95);
+            
+            try {
+                const base64Url = await fileToBase64(finalGalFile);
+                finalGallery.push(base64Url);
+            } catch (err) {
+                console.error("Gallery base64 processing error at index " + i, err);
+                throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
+            }
         }
     }
 
