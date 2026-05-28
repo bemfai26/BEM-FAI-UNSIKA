@@ -516,14 +516,10 @@ function displayArticle(data) {
         temp.innerHTML = html;
         const firstP = temp.querySelector('p');
         if (firstP && firstP.textContent.trim().length > 0) {
-            const rawText = firstP.textContent.trim();
-            const firstChar = rawText.charAt(0);
-            const restText = rawText.slice(1);
-            // Bungkus huruf pertama dalam span khusus
-            firstP.innerHTML = `<span class="float-left text-6xl md:text-7xl font-bold text-purple-deep mr-3 leading-[0.8] font-display uppercase mt-1 drop-cap-style">${firstChar}</span>` + restText;
+            firstP.className = "first-letter:text-5xl first-letter:font-bold first-letter:text-purple-med first-letter:mr-3 first-letter:float-left " + (firstP.className || "");
             return temp.innerHTML;
         }
-        return html;
+        return `<p class="first-letter:text-5xl first-letter:font-bold first-letter:text-purple-med first-letter:mr-3 first-letter:float-left">${html}</p>`;
     }
 
     // --- STRUKTUR KONTEN BERITA BARU ---
