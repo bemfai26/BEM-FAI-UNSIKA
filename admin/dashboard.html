@@ -428,14 +428,14 @@ window.setArrowStyle = (style, save = true) => {
 window.setArrowStyle('neon', false);
 
 // --- Helper Foto Berkualitas Tinggi & Jernih dengan Target Ukuran ---
-function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1920, initialQuality = 0.85) {
+function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1920, initialQuality = 0.95) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
       return;
     }
     
-    // Jika ukuran file asli sudah kecil (di bawah batas target), tidak perlu dikompres kembali demi kualitas 100% original
+    // Jika ukuran file asli sudah kecil (di bawah batas target), kita tetap lewati kompresi jika sudah di bawah batas aman
     if (file.size <= targetMaxSizeBytes) {
       resolve(file);
       return;
@@ -447,42 +447,56 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
       const img = new Image();
       img.src = event.target.result;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
+        let maxRes = maxResolution;
+        
+        function tryRenderAndCompress() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
 
-        // Resize dimensi jika melebihi batas resolusi maksimal (misalnya FullHD 1920px atau 2048px)
-        if (width > height) {
-          if (width > maxResolution) {
-            height *= maxResolution / width;
-            width = maxResolution;
+          // Resize dimensi sesuai resolusi maksimal saat ini
+          if (width > height) {
+            if (width > maxRes) {
+              height *= maxRes / width;
+              width = maxRes;
+            }
+          } else {
+            if (height > maxRes) {
+              width *= maxRes / height;
+              height = maxRes;
+            }
           }
-        } else {
-          if (height > maxResolution) {
-            width *= maxResolution / height;
-            height = maxResolution;
-          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Simpan dengan kualitas sangat tinggi (0.95) dalam bentuk JPEG
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            
+            // JIKA masih di atas target max file size, turunkan resolusi sedikit demi sedikit (maksimum 4 kali percobaan)
+            // Ini menghemat kualitas gambar tetap super tajam 0.95 namun ukuran menyusut drastis & instan!
+            if (blob.size > targetMaxSizeBytes && maxRes > 480) {
+              maxRes = Math.round(maxRes * 0.82);
+              tryRenderAndCompress();
+            } else {
+              const compressedFile = new File([blob], file.name || "image.jpg", {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+              resolve(compressedFile);
+            }
+          }, 'image/jpeg', initialQuality);
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Langsung simpan dengan kualitas tinggi (0.85 - 0.90) dalam format JPEG (Sangat cepat & tajam)
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            resolve(file);
-            return;
-          }
-          const compressedFile = new File([blob], file.name || "image.jpg", {
-            type: 'image/jpeg',
-            lastModified: Date.now()
-          });
-          resolve(compressedFile);
-        }, 'image/jpeg', initialQuality);
+        tryRenderAndCompress();
       };
       img.onerror = () => resolve(file);
     };
@@ -1016,10 +1030,10 @@ newsForm.addEventListener('submit', async (e) => {
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "PROSES GAMBAR UTAMA...";
       let finalFile = fileInput.files[0];
-      // Gambar utama tetap 100% original aslinya tanpa kompresi jika di bawah batas aman (650 KB)
-      // Jika di atas 650 KB, agar aman dari batasan 1MB Firestore, kompres halus ke kualitas super jernih 0.95 dan resolusi UltraHD 2KB (2048px)
-      if (finalFile.size > 650 * 1024) {
-        finalFile = await compressImage(fileInput.files[0], 650 * 1024, 2048, 0.95);
+      // Jaga keaslian gambar utama jika di bawah 350 KB. 
+      // Jika di atas 350 KB, agar aman dari error Firestore (limit 1MB), kita kompres halus ke resolusi 2048px UltraHD dengan kualitas maksimal (0.95).
+      if (finalFile.size > 350 * 1024) {
+        finalFile = await compressImage(fileInput.files[0], 350 * 1024, 2048, 0.95);
       }
       featuredImage = await fileToBase64(finalFile);
     }
@@ -1027,9 +1041,9 @@ newsForm.addEventListener('submit', async (e) => {
     // Memproses galeri dokumentasi
     const finalGallery = [...galleryUrls];
     
-    // Batas ideal per gambar dokumentasi agar total ukuran dokumen Firestore tetap aman di bawah limit 1MB
-    // Dengan resolusi 800px dan kualitas super jernih 0.95, gambar sangat tajam tapi ukuran file kecil (~40KB - 60KB per foto)
-    const optGalleryTargetSize = 65 * 1024; 
+    // Batas aman per foto dokumentasi agar total seluruh dokumen (Featured Image + 8 Dokumentasi) tidak melebihi 1MB limit Firestore.
+    // Rekomendasi terbaik: maksimal 50KB per foto dengan resolusi 1024px dan kualitas maksimal 0.95 (Sangat tajam, bersih & super cepat diproses).
+    const optGalleryTargetSize = 50 * 1024; 
 
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
@@ -1037,11 +1051,9 @@ newsForm.addEventListener('submit', async (e) => {
         const total = selectedGalleryFiles.length;
         if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${total})...`;
         
-        // Kompres secara lokal dengan cepat ke resolusi grid 800px, kualitas super jernih 0.95
+        // Selalu optimalkan lewat compressImage agar berukuran maks 50KB, resolusi 1024px HD, dan kualitas super jernih 0.95
         let finalGalFile = item.file;
-        if (finalGalFile.size > optGalleryTargetSize) {
-            finalGalFile = await compressImage(item.file, optGalleryTargetSize, 800, 0.95);
-        }
+        finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.95);
         
         try {
             const base64Url = await fileToBase64(finalGalFile);
