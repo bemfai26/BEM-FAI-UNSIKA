@@ -126,21 +126,6 @@
     }
 
     /* Premium Pulse Animations */
-    @keyframes glassPulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(155, 114, 207, 0.4);
-      }
-      70% {
-        box-shadow: 0 0 0 10px rgba(155, 114, 207, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(155, 114, 207, 0);
-      }
-    }
-    .arrow-glass-pulse {
-      animation: glassPulse 2.2s infinite ease-in-out;
-    }
-
     @keyframes neonGlow {
       0%, 100% {
         box-shadow: 0 0 12px rgba(155, 114, 207, 0.4), 0 0 24px rgba(155, 114, 207, 0.15);
@@ -151,22 +136,6 @@
     }
     .arrow-neon-glow {
       animation: neonGlow 2.5s infinite ease-in-out;
-    }
-
-    @keyframes cyberBeacon {
-      0%, 100% {
-        border-color: rgba(168, 85, 247, 0.3);
-        box-shadow: 0  0 8px rgba(168, 85, 247, 0.15);
-        color: #d8b4fe;
-      }
-      50% {
-        border-color: rgba(236, 72, 153, 0.85);
-        box-shadow: 0 0 18px rgba(236, 72, 153, 0.5), inset 0 0 6px rgba(236, 72, 153, 0.2);
-        color: #fbcfe8;
-      }
-    }
-    .arrow-cyber-glow {
-      animation: cyberBeacon 1.8s infinite ease-in-out;
     }
     </style>
 </head>
@@ -188,20 +157,7 @@
       <i data-lucide="plus-circle"></i> Tulis Berita
     </button>
     
-    <!-- Pilihan Gaya Tombol Mobile (Modern Mobile Arrow Styles) -->
-    <div class="mt-auto pt-4 border-t border-purple-pale/40 space-y-2">
-      <p class="text-[10px] uppercase tracking-widest text-purple-deep/40 font-black px-3.5 flex items-center gap-1.5">
-        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Gaya Panah
-      </p>
-      <div class="grid grid-cols-2 gap-1.5 p-1 bg-purple-pale/20 rounded-2xl border border-purple-pale/30">
-        <button type="button" onclick="setArrowStyle('glass')" id="btn-arrow-glass" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Glass</button>
-        <button type="button" onclick="setArrowStyle('neon')" id="btn-arrow-neon" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Neon</button>
-        <button type="button" onclick="setArrowStyle('seamless')" id="btn-arrow-seamless" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Seamless</button>
-        <button type="button" onclick="setArrowStyle('cyber')" id="btn-arrow-cyber" class="text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer">Cyber</button>
-      </div>
-    </div>
-
-    <button id="logout-btn" class="sidebar-link text-red-500 cursor-pointer">
+    <button id="logout-btn" class="sidebar-link text-red-500 cursor-pointer mt-auto">
       <i data-lucide="log-out"></i> Keluar
     </button>
   </nav>
@@ -209,9 +165,9 @@
   <!-- TOGGLE DRAW-ARROWS CONTROLLER FOR MOBILE -->
   <button 
     id="menu-btn" 
-    class="md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-20px)] z-50 flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md border border-purple-pale/80 text-purple-med hover:bg-white hover:text-purple-deep active:scale-95"
+    class="md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[64px] rounded-r-2xl rounded-l-none bg-gradient-to-b from-purple-med to-purple-deep text-white border border-l-0 border-purple-light/25 hover:brightness-110 active:scale-95 arrow-neon-glow"
   >
-    <i id="menu-icon" data-lucide="chevron-right" class="w-5 h-5"></i>
+    <i id="menu-icon" data-lucide="chevron-right" class="w-4 h-4"></i>
   </button>
 </aside>
 
@@ -311,34 +267,33 @@
 
       <!-- 4. GAMBAR UTAMA -->
       <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-6 bg-purple-pale/5 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-pale/20 pb-4">
-          <div class="flex items-start gap-3">
-            <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
-            <div class="flex flex-col">
-              <p class="font-bold text-purple-deep text-base leading-tight">Gambar Utama</p>
-              <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Batas Maksimal 1.5 MB. Kualitas jernih &amp; tanpa kompresi)</span>
-            </div>
-          </div>
-          <div class="flex gap-2 w-full sm:w-auto">
-            <input type="hidden" id="image-mode" value="url">
-            <button type="button" id="btn-mode-url" class="text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer">
-              <i data-lucide="link" class="w-3.5 h-3.5"></i> Gunakan URL
-            </button>
-            <button type="button" id="btn-mode-upload" class="text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer">
-              <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload File
-            </button>
+        <div class="flex items-start gap-3 border-b border-purple-pale/20 pb-4">
+          <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
+          <div class="flex flex-col">
+            <p class="font-bold text-purple-deep text-base leading-tight">Gambar Utama</p>
+            <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Batas Maksimal 1.5 MB. Kualitas jernih &amp; tanpa kompresi)</span>
           </div>
         </div>
-        <div id="url-input-group">
-          <input id="news-image" placeholder="Paste URL Gambar di sini..." class="w-full p-4 bg-white border border-purple-pale rounded-2xl outline-none">
-        </div>
-        <div id="upload-input-group" class="hidden">
+        
+        <!-- Hidden control states legacy compatibility -->
+        <input type="hidden" id="image-mode" value="upload">
+        <input type="hidden" id="news-image">
+
+        <div id="upload-input-group">
           <input type="file" id="news-file" accept="image/*" class="hidden">
-          <div id="main-drop-area" class="drop-area text-sm text-gray-400 py-10">
-            Drag & Drop atau Klik untuk Upload Gambar Utama
+          <div id="main-drop-area" class="drop-area border-2 border-dashed border-purple-pale rounded-2xl p-8 text-center cursor-pointer hover:bg-purple-pale/15 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
+            <i data-lucide="cloud-upload" class="w-8 h-8 text-purple-med animate-pulse mb-1"></i>
+            <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Utama</span>
+            <span class="text-xs text-purple-med/70">Mendukung format JPG, PNG, WEBP hingga 1.5 MB</span>
           </div>
         </div>
-        <img id="image-preview" class="hidden w-full border border-purple-pale bg-white image-preview-box">
+
+        <div class="relative group mt-3">
+          <img id="image-preview" class="hidden w-full border border-purple-pale bg-white image-preview-box rounded-xl">
+          <button type="button" id="btn-remove-preview" class="absolute top-4 right-4 bg-red-500 text-white p-2 md:p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-xl cursor-pointer hidden flex items-center gap-1 text-xs font-black uppercase tracking-wider">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+          </button>
+        </div>
       </div>
 
       <!-- 5. KONTEN BERITA 1 -->
@@ -387,19 +342,18 @@
                       <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 Foto)</span>
                   </div>
               </div>
-              <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                  <button type="button" onclick="addGalleryUrl()" class="text-xs bg-white border border-purple-pale hover:bg-purple-pale text-purple-med px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1">
-                      <i data-lucide="link" class="w-3.5 h-3.5"></i> Tambah via URL
-                  </button>
-                  <button type="button" onclick="document.getElementById('gallery-files').click()" class="text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm">
-                      <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload File
-                  </button>
-              </div>
           </div>
           
           <input type="file" id="gallery-files" accept="image/*" multiple class="hidden">
           
-          <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[100px] border-2 border-dashed border-purple-pale/20 rounded-2xl p-4">
+          <!-- Modern Gallery Drag & Drop Dropzone -->
+          <div id="gallery-drop-area" class="border-2 border-dashed border-purple-pale rounded-2xl p-8 bg-white text-center cursor-pointer hover:bg-purple-pale/10 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
+            <i data-lucide="images" class="w-10 h-10 text-purple-med animate-pulse mb-1"></i>
+            <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Dokumentasi</span>
+            <span class="text-xs text-purple-med/70">Mendukung banyak gambar sekaligus hingga batas maksimal 8 foto</span>
+          </div>
+
+          <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[100px] border border-purple-pale/30 rounded-2xl p-4 bg-white/40">
               <!-- Grid Galeri -->
           </div>
       </div>
@@ -649,30 +603,6 @@ const selectAllGroup = document.getElementById('select-all-group');
 const selectedCountEl = document.getElementById('selected-count');
 const thSelect = document.getElementById('th-select');
 
-// --- Gambar Utama Tab Switching ---
-const btnModeUrl = document.getElementById('btn-mode-url');
-const btnModeUpload = document.getElementById('btn-mode-upload');
-
-function setImageMode(mode) {
-  imageMode.value = mode;
-  document.getElementById('url-input-group').classList.toggle('hidden', mode !== 'url');
-  document.getElementById('upload-input-group').classList.toggle('hidden', mode === 'url');
-  
-  if (mode === 'url') {
-    btnModeUrl.className = "text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer";
-    btnModeUpload.className = "text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer";
-  } else {
-    btnModeUrl.className = "text-xs bg-white border border-purple-pale text-purple-med hover:bg-purple-pale px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 w-1/2 sm:w-auto cursor-pointer";
-    btnModeUpload.className = "text-xs bg-purple-med hover:bg-purple-deep text-white px-4 py-3 sm:py-2.5 rounded-xl font-bold uppercase transition-all flex items-center justify-center gap-1 shadow-sm w-1/2 sm:w-auto cursor-pointer";
-  }
-}
-
-btnModeUrl.addEventListener('click', () => setImageMode('url'));
-btnModeUpload.addEventListener('click', () => {
-  setImageMode('upload');
-  fileInput.click();
-});
-
 onAuthStateChanged(auth, (user) => {
   if (!user) { location.href = "login.html"; return; }
   loadNews();
@@ -691,11 +621,12 @@ window.showView = (view) => {
     q2.root.innerHTML = "";
     q3.root.innerHTML = "";
     qSub.root.innerHTML = "";
-    imagePreview.classList.add('hidden');
+    updateImagePreviewVisibility(false);
+    fileInput.value = "";
+    imageInput.value = "";
     galleryPreview.innerHTML = "";
     selectedGalleryFiles = [];
     galleryUrls = [];
-    setImageMode('url');
     document.getElementById('view-title').innerText = 'Tulis Berita';
   } else {
     document.getElementById('view-title').innerText = 'Kelola Berita';
@@ -712,10 +643,17 @@ window.showView = (view) => {
 
 // --- Gambar Utama ---
 
-imageInput.addEventListener('input', () => {
-  if (imageInput.value) { imagePreview.src = imageInput.value; imagePreview.classList.remove('hidden'); }
-  else { imagePreview.classList.add('hidden'); }
-});
+const btnRemovePreview = document.getElementById('btn-remove-preview');
+
+function updateImagePreviewVisibility(show) {
+  if (show) {
+    imagePreview.classList.remove('hidden');
+    if (btnRemovePreview) btnRemovePreview.classList.remove('hidden');
+  } else {
+    imagePreview.classList.add('hidden');
+    if (btnRemovePreview) btnRemovePreview.classList.add('hidden');
+  }
+}
 
 fileInput.addEventListener('change', () => {
   const file = fileInput.files[0];
@@ -723,47 +661,77 @@ fileInput.addEventListener('change', () => {
     if (file.size > 1.5 * 1024 * 1024) { // over 1.5 MB limit
       alert("⚠️ Ukuran foto utama melebihi batas maksimal 1.5 MB! Harap pilih gambar yang berukuran lebih kecil.");
       fileInput.value = "";
-      imagePreview.classList.add('hidden');
+      updateImagePreviewVisibility(false);
       return;
     }
     const reader = new FileReader();
-    reader.onload = (e) => { imagePreview.src = e.target.result; imagePreview.classList.remove('hidden'); };
+    reader.onload = (e) => { 
+      imagePreview.src = e.target.result; 
+      updateImagePreviewVisibility(true); 
+    };
     reader.readAsDataURL(file);
   }
 });
 
+if (btnRemovePreview) {
+  btnRemovePreview.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.value = "";
+    imageInput.value = "";
+    updateImagePreviewVisibility(false);
+  });
+}
+
 mainDropArea.addEventListener('click', () => fileInput.click());
-mainDropArea.addEventListener('dragover', (e) => { e.preventDefault(); mainDropArea.classList.add('bg-purple-pale/20'); });
-mainDropArea.addEventListener('dragleave', () => mainDropArea.classList.remove('bg-purple-pale/20'));
+mainDropArea.addEventListener('dragover', (e) => { e.preventDefault(); mainDropArea.classList.add('bg-purple-pale/25'); });
+mainDropArea.addEventListener('dragleave', () => mainDropArea.classList.remove('bg-purple-pale/25'));
 mainDropArea.addEventListener('drop', (e) => {
   e.preventDefault();
-  mainDropArea.classList.remove('bg-purple-pale/20');
-  fileInput.files = e.dataTransfer.files;
-  fileInput.dispatchEvent(new Event('change'));
+  mainDropArea.classList.remove('bg-purple-pale/25');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    fileInput.files = e.dataTransfer.files;
+    fileInput.dispatchEvent(new Event('change'));
+  }
 });
 
 // --- Galeri (Maksimal 8) ---
 
-window.addGalleryUrl = () => {
-    const url = prompt("Masukkan URL Gambar Dokumentasi:");
-    if (url && (galleryUrls.length + selectedGalleryFiles.length) < 8) {
-        galleryUrls.push(url);
-        renderGallery();
-    } else if (url) {
-        alert("Batas Maksimal 8 Foto!");
-    }
-};
+const galleryDropArea = document.getElementById('gallery-drop-area');
+
+if (galleryDropArea) {
+  galleryDropArea.addEventListener('click', () => galleryFiles.click());
+  galleryDropArea.addEventListener('dragover', (e) => { 
+    e.preventDefault(); 
+    galleryDropArea.classList.add('bg-purple-pale/20'); 
+  });
+  galleryDropArea.addEventListener('dragleave', () => galleryDropArea.classList.remove('bg-purple-pale/20'));
+  galleryDropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    galleryDropArea.classList.remove('bg-purple-pale/20');
+    
+    const files = Array.from(e.dataTransfer.files);
+    addGalleryFiles(files);
+  });
+}
 
 galleryFiles.addEventListener('change', () => {
-    const files = Array.from(galleryFiles.files);
-    files.forEach(file => {
-        if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
-            selectedGalleryFiles.push({ file, id: Date.now() + Math.random() });
-        }
-    });
-    renderGallery();
-    galleryFiles.value = ""; // reset
+  const files = Array.from(galleryFiles.files);
+  addGalleryFiles(files);
+  galleryFiles.value = ""; // reset
 });
+
+function addGalleryFiles(files) {
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
+        selectedGalleryFiles.push({ file, id: Date.now() + Math.random() });
+      } else {
+        alert("Batas Maksimal 8 Foto!");
+      }
+    }
+  });
+  renderGallery();
+}
 
 async function renderGallery() {
     galleryPreview.innerHTML = "";
@@ -799,7 +767,7 @@ function createGalleryEl(src, onRemove) {
     div.className = "relative group aspect-square rounded-xl overflow-hidden border border-purple-pale shadow-sm";
     div.innerHTML = `
         <img src="${src}" class="w-full h-full object-cover">
-        <button type="button" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+        <button type="button" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
             <i data-lucide="x" class="w-3 h-3"></i>
         </button>
     `;
@@ -1000,13 +968,7 @@ async function editNews(id) {
   
   imageInput.value = item.featuredImage || "";
   imagePreview.src = item.featuredImage || "";
-  imagePreview.classList.toggle('hidden', !item.featuredImage);
-  
-  if (item.featuredImage && item.featuredImage.startsWith('data:image/')) {
-    setImageMode('upload');
-  } else {
-    setImageMode('url');
-  }
+  updateImagePreviewVisibility(!!item.featuredImage);
   
   galleryUrls = item.gallery || [];
   renderGallery();
@@ -1084,10 +1046,11 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
-    if (imageMode.value === 'upload' && fileInput.files[0]) {
+    if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
       try {
-        featuredImage = await fileToBase64(fileInput.files[0]);
+        const compressedMain = await compressImage(fileInput.files[0]);
+        featuredImage = await fileToBase64(compressedMain);
       } catch (uploadErr) {
         console.error("Featured image base64 processing error", uploadErr);
         throw new Error(`Gagal memproses Gambar Utama: ${uploadErr.message}.`);
