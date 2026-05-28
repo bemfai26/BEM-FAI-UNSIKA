@@ -1039,22 +1039,41 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
-    // 1. Memproses Gambar Utama (100% Base64 - Cepat & Jernih Maksimal)
+    // 1. Alokasi Memori Dinamis & Cerdas (Kualitas Ultra Jernih 0.95 & 100% Anti Error Firestore 1MB)
+    const hasMainImage = !!fileInput.files[0];
+    const totalGal = selectedGalleryFiles.length;
+
+    // Anggaran total ukuran berkas biner (raw files) untuk seluruh gambar agar setelah dikonversi ke Base64 (bertambah ~33% ukurannya)
+    // dan digabung dengan teks berita, total dokumen tetap di bawah limit Firestore 1,048,576 byte (~1MB).
+    // Kita tetapkan batas aman total biner gambar pada 660 KB (675,840 byte).
+    const TOTAL_BUDGET_BYTES = 660 * 1024;
+
+    let targetMainSize = 0;
+    let optGalleryTargetSize = 0;
+
+    if (hasMainImage && totalGal > 0) {
+      // Jika ada keduanya: Utamakan ketajaman gambar utama (45% anggaran)
+      targetMainSize = Math.floor(TOTAL_BUDGET_BYTES * 0.45); // ~297 KB
+      optGalleryTargetSize = Math.floor((TOTAL_BUDGET_BYTES * 0.55) / totalGal); // Sisa 55% dibagi rata ke dokumentasi
+    } else if (hasMainImage) {
+      // Hanya gambar utama saja (100% anggaran)
+      targetMainSize = TOTAL_BUDGET_BYTES; // ~660 KB
+    } else if (totalGal > 0) {
+      // Hanya galeri dokumentasi saja
+      optGalleryTargetSize = Math.floor(TOTAL_BUDGET_BYTES / totalGal);
+    }
+
+    // 2. Memproses Gambar Utama (Kualitas Premium 0.95, Resolusi Diturunkan Hanya Jika Melebihi Anggaran)
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
-      // Kompres ke target max 200 KB dengan resolusi UltraHD 1600px dan kualitas super jernih strictly 0.95.
-      // Jika ukuran melebihi 200 KB, resolusi diturunkan bertahap melompati batas, memelihara kejernihan 0.95 aslinya!
-      const finalMainFile = await compressImage(fileInput.files[0], 200 * 1024, 1600, 0.95);
+      // Kompres resolusi secara bertahap mulai dari 1920px (FullHD) tetapi pertahankan kualitas setinggi 0.95 (Sangat Jernih)
+      // agar pas dengan target anggaran memori yang tersedia.
+      const finalMainFile = await compressImage(fileInput.files[0], targetMainSize, 1920, 0.95);
       featuredImage = await fileToBase64(finalMainFile);
     }
 
-    // 2. Memproses galeri dokumentasi (100% Base64 - Cepat & Jernih Maksimal)
+    // 3. Memproses galeri dokumentasi (Kualitas Premium 0.95, Resolusi Diturunkan Hanya Jika Melebihi Anggaran)
     const finalGallery = [...galleryUrls];
-    const totalGal = selectedGalleryFiles.length;
-    
-    // Alokasikan memori dokumen Firestore secara dinamis agar total gabungan seluruh foto dijamin aman di bawah 1MB.
-    // Seluruh dokumentasi dialokasikan maksimal 520 KB total.
-    const optGalleryTargetSize = totalGal > 0 ? Math.min(200 * 1024, Math.floor((520 * 1024) / totalGal)) : 50 * 1024;
     
     for (let i = 0; i < totalGal; i++) {
       const item = selectedGalleryFiles[i];
@@ -1062,8 +1081,9 @@ newsForm.addEventListener('submit', async (e) => {
       
       if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${totalGal})...`;
       
-      // Kompres foto galeri dengan resolusi tinggi 1200px, kualitas jernih premium strictly 0.95, dan target ukuran sisa memori dinamis
-      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1200, 0.95);
+      // Kompres resolusi secara bertahap mulai dari 1280px (HD) dengan kualitas 0.95 (Sangat Jernih)
+      // agar pas dengan porsi sisa anggaran memori dinamis.
+      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1280, 0.95);
       
       try {
         const base64Url = await fileToBase64(finalGalFile);
