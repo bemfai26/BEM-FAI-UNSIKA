@@ -339,7 +339,7 @@
                   <i data-lucide="images" class="w-6 h-6 text-purple-med mt-0.5"></i>
                   <div class="flex flex-col">
                       <p class="font-bold text-purple-deep text-lg leading-tight">Galeri Dokumentasi</p>
-                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 foto, total maksimal 5 MB, per foto maksimal 500 KB)</span>
+                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 12 foto, per foto maksimal 1 MB)</span>
                   </div>
               </div>
           </div>
@@ -350,7 +350,7 @@
           <div id="gallery-drop-area" class="border-2 border-dashed border-purple-pale rounded-2xl p-8 bg-white text-center cursor-pointer hover:bg-purple-pale/10 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
             <i data-lucide="images" class="w-10 h-10 text-purple-med animate-pulse mb-1"></i>
             <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Dokumentasi</span>
-            <span class="text-xs text-purple-med/70">Maksimal 8 foto, total ukuran maksimal 5 MB, ukuran per foto maksimal 500 KB (Otomatis dikompres jika melebihi batas dengan kualitas tetap jernih)</span>
+            <span class="text-xs text-purple-med/70">Maksimal 12 foto, ukuran per foto maksimal 1 MB (Otomatis dikompres ke kualitas super jernih jika melebihi batas)</span>
           </div>
 
           <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[100px] border border-purple-pale/30 rounded-2xl p-4 bg-white/40">
@@ -655,7 +655,7 @@ fileInput.addEventListener('change', async () => {
   let file = fileInput.files[0];
   if (file) {
     if (file.size > 1024 * 1024) {
-      file = await compressImage(file, 1024 * 1024, 1600);
+      file = await compressImage(file, 1024 * 1024, 2048, 0.95);
       try {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
@@ -694,7 +694,7 @@ mainDropArea.addEventListener('drop', (e) => {
   }
 });
 
-// --- Galeri (Maksimal 8) ---
+// --- Galeri (Maksimal 12) ---
 
 const galleryDropArea = document.getElementById('gallery-drop-area');
 
@@ -723,14 +723,14 @@ galleryFiles.addEventListener('change', () => {
 async function addGalleryFiles(files) {
   for (const file of files) {
     if (file.type.startsWith('image/')) {
-      if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
+      if ((galleryUrls.length + selectedGalleryFiles.length) < 12) {
         let finalFile = file;
-        if (file.size > 500 * 1024) {
-          finalFile = await compressImage(file, 500 * 1024, 1024);
+        if (file.size > 1024 * 1024) {
+          finalFile = await compressImage(file, 1024 * 1024, 2048, 0.95);
         }
         selectedGalleryFiles.push({ file: finalFile, id: Date.now() + Math.random() });
       } else {
-        alert("⚠️ Batas Maksimal 8 Foto!");
+        alert("⚠️ Batas Maksimal 12 Foto!");
         break;
       }
     }
@@ -1051,22 +1051,34 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
+    // Helper to upload a file directly to Firebase Storage bucket
+    async function uploadToFirebaseStorage(file, folder) {
+      if (!storage) throw new Error("Storage is not configured");
+      const cleanedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanedName}`;
+      const storageRef = ref(storage, `news/${folder}/${fileName}`);
+      await uploadBytes(storageRef, file);
+      return await getDownloadURL(storageRef);
+    }
+
     if (fileInput.files[0]) {
-      if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
+      if (btnText) btnText.innerText = "MENGUNGGAH GAMBAR UTAMA...";
       try {
-        // Enforce max 220 KB for main image in database to secure Firestore limits while preserving high-clarity
-        const compressedMain = await compressImage(fileInput.files[0], 220 * 1024, 1400);
-        featuredImage = await fileToBase64(compressedMain);
+        // Try uploading to Storage first to guarantee maximum pristine quality without heavy compressions
+        featuredImage = await uploadToFirebaseStorage(fileInput.files[0], "featured");
       } catch (uploadErr) {
-        console.error("Featured image base64 processing error", uploadErr);
-        throw new Error(`Gagal memproses Gambar Utama: ${uploadErr.message}.`);
+        console.warn("Storage upload failed for main image, falling back to Base64:", uploadErr);
+        if (btnText) btnText.innerText = "KOMPRES & PROSES GAMBAR UTAMA...";
+        // Fallback: Enforce max 250 KB for main image in database to secure Firestore limits while preserving clarity
+        const compressedMain = await compressImage(fileInput.files[0], 250 * 1024, 1600, 0.85);
+        featuredImage = await fileToBase64(compressedMain);
       }
     }
 
-    // Memproses galeri dokumentasi secara berurutan secara lokal (tidak perlu Firebase Storage!)
+    // Memproses galeri dokumentasi
     const finalGallery = [...galleryUrls];
     
-    // Allocate dynamic target sizes among new gallery files to guarantee safe storage under 1MB total doc size
+    // Allocate dynamic target sizes among new gallery files to guarantee safe storage under 1MB total doc size in case of Base64 fallback
     const totalNewGallery = selectedGalleryFiles.length;
     const optGalleryTargetSize = Math.max(45 * 1024, Math.round((550 * 1024) / Math.max(1, totalNewGallery)));
 
@@ -1074,16 +1086,23 @@ newsForm.addEventListener('submit', async (e) => {
         const item = selectedGalleryFiles[i];
         const num = i + 1;
         const total = selectedGalleryFiles.length;
-        if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
-        const compressedGal = await compressImage(item.file, optGalleryTargetSize, 800);
+        if (btnText) btnText.innerText = `MENGUNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
         
-        if (btnText) btnText.innerText = `MEMPROSES FOTO DOKUMENTASI (${num}/${total})...`;
         try {
-            const base64Url = await fileToBase64(compressedGal);
-            finalGallery.push(base64Url);
+            // Upload to storage to keep image super crisp (up to 1MB size)
+            const storageUrl = await uploadToFirebaseStorage(item.file, "gallery");
+            finalGallery.push(storageUrl);
         } catch (uploadErr) {
-            console.error("Gallery base64 processing error at index " + i, uploadErr);
-            throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${uploadErr.message}.`);
+            console.warn(`Storage upload failed for gallery item ${num}, falling back to Base64:`, uploadErr);
+            if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
+            const compressedGal = await compressImage(item.file, optGalleryTargetSize, 1024, 0.82);
+            try {
+                const base64Url = await fileToBase64(compressedGal);
+                finalGallery.push(base64Url);
+            } catch (err) {
+                console.error("Gallery base64 processing error at index " + i, err);
+                throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
+            }
         }
     }
 
