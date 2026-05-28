@@ -690,11 +690,7 @@ async function addGalleryFiles(files) {
   for (const file of files) {
     if (file.type.startsWith('image/')) {
       if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
-        let finalFile = file;
-        if (file.size > 1024 * 1024) {
-          finalFile = await compressImage(file, 1024 * 1024, 1920, 0.85);
-        }
-        selectedGalleryFiles.push({ file: finalFile, id: Date.now() + Math.random() });
+        selectedGalleryFiles.push({ file: file, id: Date.now() + Math.random() });
       } else {
         alert("⚠️ Batas Maksimal 8 Foto!");
         break;
@@ -1019,11 +1015,11 @@ newsForm.addEventListener('submit', async (e) => {
 
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "PROSES GAMBAR UTAMA...";
-      // Gambar utama: jika original di bawah 400KB, simpan utuh demi kualitas 100% original. 
-      // Jika di atas 400KB, kita kompres dengan sangat halus ke kualitas sangat tinggi (2048px UltraHD, 0.90 Quality)
       let finalFile = fileInput.files[0];
-      if (finalFile.size > 400 * 1024) {
-        finalFile = await compressImage(fileInput.files[0], 400 * 1024, 2048, 0.90);
+      // Gambar utama tetap 100% original aslinya tanpa kompresi jika di bawah batas aman (650 KB)
+      // Jika di atas 650 KB, agar aman dari batasan 1MB Firestore, kompres halus ke kualitas super jernih 0.95 dan resolusi UltraHD 2KB (2048px)
+      if (finalFile.size > 650 * 1024) {
+        finalFile = await compressImage(fileInput.files[0], 650 * 1024, 2048, 0.95);
       }
       featuredImage = await fileToBase64(finalFile);
     }
@@ -1031,9 +1027,9 @@ newsForm.addEventListener('submit', async (e) => {
     // Memproses galeri dokumentasi
     const finalGallery = [...galleryUrls];
     
-    // Alokasikan batas ideal agar ukuran total dokumen tetap aman di bawah limit Firestore 1MB
-    // Rekomendasi terbaik: maksimal 120KB per gambar untuk resolusi tajam (1600px width, 0.82 Quality)
-    const optGalleryTargetSize = 120 * 1024; 
+    // Batas ideal per gambar dokumentasi agar total ukuran dokumen Firestore tetap aman di bawah limit 1MB
+    // Dengan resolusi 800px dan kualitas super jernih 0.95, gambar sangat tajam tapi ukuran file kecil (~40KB - 60KB per foto)
+    const optGalleryTargetSize = 65 * 1024; 
 
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
@@ -1041,10 +1037,10 @@ newsForm.addEventListener('submit', async (e) => {
         const total = selectedGalleryFiles.length;
         if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${total})...`;
         
-        // Kompres secara lokal dengan cepat ke resolusi prima 1600px, 0.82 quality
+        // Kompres secara lokal dengan cepat ke resolusi grid 800px, kualitas super jernih 0.95
         let finalGalFile = item.file;
         if (finalGalFile.size > optGalleryTargetSize) {
-            finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1600, 0.82);
+            finalGalFile = await compressImage(item.file, optGalleryTargetSize, 800, 0.95);
         }
         
         try {
