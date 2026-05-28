@@ -75,6 +75,7 @@
 
         /* Content Styling */
         .article-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #4B5563; }
+        .content-before-subtitle p:last-of-type { margin-bottom: 0.25rem !important; }
         .article-content h2 { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.875rem; color: #2D1B4E; margin-top: 2.5rem; margin-bottom: 1rem; }
         
         /* Custom Scrollbar */
@@ -532,7 +533,7 @@ function displayArticle(data) {
     // 1. Konten Berita 1 (With Drop Cap)
     if (data.content1) {
         const hasSubTitle = data.subTitle && data.subTitle.replace(/<[^>]*>/g, '').trim() !== "";
-        const content1Margin = hasSubTitle ? "mb-0" : "mb-10";
+        const content1Margin = hasSubTitle ? "mb-0 content-before-subtitle" : "mb-10";
         fullBodyHtml += `<div class="${content1Margin} text-gray-700 leading-relaxed text-lg">${applyDropCap(data.content1)}</div>`;
     }
     
@@ -541,7 +542,7 @@ function displayArticle(data) {
         // Membersihkan tag HTML dari Quill tapi tetap menjaga teksnya
         const cleanSub = data.subTitle.replace(/<[^>]*>/g, '').trim();
         fullBodyHtml += `
-            <div class="-mt-3 mb-14">
+            <div class="-mt-4 mb-4">
                 <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight !mt-0 !mb-0">
                     ${cleanSub}
                 </h2>
