@@ -271,7 +271,7 @@
           <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
           <div class="flex flex-col">
             <p class="font-bold text-purple-deep text-base leading-tight">Gambar Utama</p>
-            <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Batas Maksimal 1.5 MB. Kualitas jernih &amp; tanpa kompresi)</span>
+            <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1 MB. Jika melebihi batas, akan otomatis dikompres dengan kualitas tetap super jernih)</span>
           </div>
         </div>
         
@@ -284,7 +284,7 @@
           <div id="main-drop-area" class="drop-area border-2 border-dashed border-purple-pale rounded-2xl p-8 text-center cursor-pointer hover:bg-purple-pale/15 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
             <i data-lucide="cloud-upload" class="w-8 h-8 text-purple-med animate-pulse mb-1"></i>
             <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Utama</span>
-            <span class="text-xs text-purple-med/70">Mendukung format JPG, PNG, WEBP hingga 1.5 MB</span>
+            <span class="text-xs text-purple-med/70">Mendukung format JPG, PNG, WEBP (Maksimal 1 MB. Otomatis kompres jika melebihi batas)</span>
           </div>
         </div>
 
@@ -339,7 +339,7 @@
                   <i data-lucide="images" class="w-6 h-6 text-purple-med mt-0.5"></i>
                   <div class="flex flex-col">
                       <p class="font-bold text-purple-deep text-lg leading-tight">Galeri Dokumentasi</p>
-                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 Foto)</span>
+                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 foto, total maksimal 5 MB, per foto maksimal 500 KB)</span>
                   </div>
               </div>
           </div>
@@ -350,7 +350,7 @@
           <div id="gallery-drop-area" class="border-2 border-dashed border-purple-pale rounded-2xl p-8 bg-white text-center cursor-pointer hover:bg-purple-pale/10 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
             <i data-lucide="images" class="w-10 h-10 text-purple-med animate-pulse mb-1"></i>
             <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Dokumentasi</span>
-            <span class="text-xs text-purple-med/70">Mendukung banyak gambar sekaligus hingga batas maksimal 8 foto</span>
+            <span class="text-xs text-purple-med/70">Maksimal 8 foto, total ukuran maksimal 5 MB, ukuran per foto maksimal 500 KB (Otomatis dikompres jika melebihi batas dengan kualitas tetap jernih)</span>
           </div>
 
           <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[100px] border border-purple-pale/30 rounded-2xl p-4 bg-white/40">
@@ -416,63 +416,31 @@ import {
 
 lucide.createIcons();
 
-// --- Interactive Mobile Sidebar Arrow Styles Options ---
+// --- Interactive Mobile Sidebar Arrow Styles Options (Locked to Neon) ---
 window.setArrowStyle = (style, save = true) => {
   const btn = document.getElementById('menu-btn');
   if (!btn) return;
-  
-  // Backward compatibility check
-  if (style === 'notch') style = 'seamless';
-  
-  if (save) {
-    localStorage.setItem('arrowStyle', style);
-  }
-  
-  const glassSel = document.getElementById('btn-arrow-glass');
-  const neonSel = document.getElementById('btn-arrow-neon');
-  const seamlessSel = document.getElementById('btn-arrow-seamless');
-  const cyberSel = document.getElementById('btn-arrow-cyber');
-  
-  // Custom styled visual toggle classes
-  const activeClass = "text-[10px] font-bold py-2 rounded-xl bg-white text-purple-deep shadow-sm cursor-pointer border border-purple-pale/10";
-  const inactiveClass = "text-[10px] font-bold py-2 rounded-xl text-purple-med/70 hover:bg-white/50 transition-all cursor-pointer";
-  
-  if (glassSel) glassSel.className = style === 'glass' ? activeClass : inactiveClass;
-  if (neonSel) neonSel.className = style === 'neon' ? activeClass : inactiveClass;
-  if (seamlessSel) seamlessSel.className = style === 'seamless' ? activeClass : inactiveClass;
-  if (cyberSel) cyberSel.className = style === 'cyber' ? activeClass : inactiveClass;
-  
-  if (style === 'glass') {
-    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-20px)] z-50 flex items-center justify-center cursor-pointer shadow-lg transition-all duration-300 w-11 h-11 rounded-full bg-white/75 backdrop-blur-md border border-purple-pale/80 text-purple-med hover:bg-white hover:text-purple-deep active:scale-95 arrow-glass-pulse";
-  } else if (style === 'neon') {
-    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[64px] rounded-r-2xl rounded-l-none bg-gradient-to-b from-purple-med to-purple-deep text-white border border-l-0 border-purple-light/25 hover:brightness-110 active:scale-95 arrow-neon-glow";
-  } else if (style === 'seamless') {
-    // Perfectly integrates with the sidebar glass backdrop and white solid borders, sticking out minimally as a natural handle
-    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[72px] rounded-r-2xl rounded-l-none bg-white/40 backdrop-blur-xl border border-l-0 border-white/30 text-purple-deep/70 hover:bg-white/60 hover:text-purple-deep active:scale-95 shadow-[8px_0_24px_rgba(45,27,78,0.06)]";
-  } else { // 'cyber'
-    btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-2px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[28px] h-[58px] rounded-r-lg rounded-l-none bg-slate-950 border border-l-0 text-purple-light hover:brightness-125 active:scale-95 arrow-cyber-glow";
-  }
+  // Always lock mobile drawer arrow button to the neon glow design
+  btn.className = "md:hidden absolute top-1/2 -translate-y-1/2 left-[calc(100%-1px)] z-50 flex items-center justify-center cursor-pointer transition-all duration-300 w-[24px] h-[64px] rounded-r-2xl rounded-l-none bg-gradient-to-b from-purple-med to-purple-deep text-white border border-l-0 border-purple-light/25 hover:brightness-110 active:scale-95 arrow-neon-glow";
 };
 
-// Initial load of the arrow style on boots
-const savedArrowStyle = localStorage.getItem('arrowStyle') || 'seamless';
-window.setArrowStyle(savedArrowStyle, false);
+// Initial load of the arrow style on boots (Locked to Neon style)
+window.setArrowStyle('neon', false);
 
-// --- Helper Foto Berkualitas Tinggi & Jernih ---
-function compressImage(file, maxWidth = 1600, quality = 0.90) {
+// --- Helper Foto Berkualitas Tinggi & Jernih dengan Target Ukuran ---
+function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1600, initialQuality = 0.90) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
       return;
     }
     
-    // Jika ukuran file asli sudah kecil (di bawah 400 KB), jangan kompres sama sekali agar kualitas 100% jernih dan original
-    if (file.size <= 400000) {
+    // Jika ukuran file asli sudah kecil (di bawah batas target), tidak perlu dikompres kembali demi kualitas 100% original
+    if (file.size <= targetMaxSizeBytes) {
       resolve(file);
       return;
     }
     
-    // Untuk file di atas 400KB - 1.5MB, lakukan resize berkualitas tinggi agar aman disimpan di Firestore (Limit Dokumen 1MB)
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
@@ -483,34 +451,62 @@ function compressImage(file, maxWidth = 1600, quality = 0.90) {
         let width = img.width;
         let height = img.height;
 
+        // Resize dimensi jika melebihi batas resolusi maksimal
         if (width > height) {
-          if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
+          if (width > maxResolution) {
+            height *= maxResolution / width;
+            width = maxResolution;
           }
         } else {
-          if (height > maxWidth) {
-            width *= maxWidth / height;
-            height = maxWidth;
+          if (height > maxResolution) {
+            width *= maxResolution / height;
+            height = maxResolution;
           }
         }
 
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
 
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            resolve(file);
-            return;
-          }
-          const compressedFile = new File([blob], file.name || "image.jpg", {
-            type: 'image/jpeg',
-            lastModified: Date.now()
-          });
-          resolve(compressedFile);
-        }, 'image/jpeg', quality);
+        let q = initialQuality;
+        let scale = 1.0;
+
+        function attemptCompress() {
+          const attemptWidth = Math.round(width * scale);
+          const attemptHeight = Math.round(height * scale);
+          
+          canvas.width = attemptWidth;
+          canvas.height = attemptHeight;
+          const ctxAttempt = canvas.getContext('2d');
+          ctxAttempt.fillStyle = "#ffffff";
+          ctxAttempt.fillRect(0, 0, attemptWidth, attemptHeight);
+          ctxAttempt.drawImage(img, 0, 0, attemptWidth, attemptHeight);
+
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            
+            // Masih melebihi batas target? Lakukan pengecilan skala & penurunan kualitas secara bertahap (maksimal 4 kali)
+            if (blob.size > targetMaxSizeBytes && scale > 0.4) {
+              scale *= 0.8;
+              q = Math.max(0.65, q - 0.05);
+              attemptCompress();
+            } else {
+              const compressedFile = new File([blob], file.name || "image.jpg", {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+              resolve(compressedFile);
+            }
+          }, 'image/jpeg', q);
+        }
+
+        attemptCompress();
       };
       img.onerror = () => resolve(file);
     };
@@ -655,14 +651,18 @@ function updateImagePreviewVisibility(show) {
   }
 }
 
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files[0];
+fileInput.addEventListener('change', async () => {
+  let file = fileInput.files[0];
   if (file) {
-    if (file.size > 1.5 * 1024 * 1024) { // over 1.5 MB limit
-      alert("⚠️ Ukuran foto utama melebihi batas maksimal 1.5 MB! Harap pilih gambar yang berukuran lebih kecil.");
-      fileInput.value = "";
-      updateImagePreviewVisibility(false);
-      return;
+    if (file.size > 1024 * 1024) {
+      file = await compressImage(file, 1024 * 1024, 1600);
+      try {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+      } catch (e) {
+        console.warn("Cant update fileInput.files manually:", e);
+      }
     }
     const reader = new FileReader();
     reader.onload = (e) => { 
@@ -720,16 +720,21 @@ galleryFiles.addEventListener('change', () => {
   galleryFiles.value = ""; // reset
 });
 
-function addGalleryFiles(files) {
-  files.forEach(file => {
+async function addGalleryFiles(files) {
+  for (const file of files) {
     if (file.type.startsWith('image/')) {
       if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
-        selectedGalleryFiles.push({ file, id: Date.now() + Math.random() });
+        let finalFile = file;
+        if (file.size > 500 * 1024) {
+          finalFile = await compressImage(file, 500 * 1024, 1024);
+        }
+        selectedGalleryFiles.push({ file: finalFile, id: Date.now() + Math.random() });
       } else {
-        alert("Batas Maksimal 8 Foto!");
+        alert("⚠️ Batas Maksimal 8 Foto!");
+        break;
       }
     }
-  });
+  }
   renderGallery();
 }
 
@@ -1049,7 +1054,8 @@ newsForm.addEventListener('submit', async (e) => {
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
       try {
-        const compressedMain = await compressImage(fileInput.files[0]);
+        // Enforce max 220 KB for main image in database to secure Firestore limits while preserving high-clarity
+        const compressedMain = await compressImage(fileInput.files[0], 220 * 1024, 1400);
         featuredImage = await fileToBase64(compressedMain);
       } catch (uploadErr) {
         console.error("Featured image base64 processing error", uploadErr);
@@ -1059,12 +1065,17 @@ newsForm.addEventListener('submit', async (e) => {
 
     // Memproses galeri dokumentasi secara berurutan secara lokal (tidak perlu Firebase Storage!)
     const finalGallery = [...galleryUrls];
+    
+    // Allocate dynamic target sizes among new gallery files to guarantee safe storage under 1MB total doc size
+    const totalNewGallery = selectedGalleryFiles.length;
+    const optGalleryTargetSize = Math.max(45 * 1024, Math.round((550 * 1024) / Math.max(1, totalNewGallery)));
+
     for (let i = 0; i < selectedGalleryFiles.length; i++) {
         const item = selectedGalleryFiles[i];
         const num = i + 1;
         const total = selectedGalleryFiles.length;
         if (btnText) btnText.innerText = `KOMPRES FOTO DOKUMENTASI (${num}/${total})...`;
-        const compressedGal = await compressImage(item.file);
+        const compressedGal = await compressImage(item.file, optGalleryTargetSize, 800);
         
         if (btnText) btnText.innerText = `MEMPROSES FOTO DOKUMENTASI (${num}/${total})...`;
         try {
