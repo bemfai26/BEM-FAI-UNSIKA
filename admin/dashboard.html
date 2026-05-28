@@ -1044,64 +1044,39 @@ newsForm.addEventListener('submit', async (e) => {
   try {
     let featuredImage = imageInput.value;
 
-    // Helper untuk mengunggah file langsung ke Firebase Storage bucket
-    async function uploadToFirebaseStorage(file, folder) {
-      if (!storage) throw new Error("Storage is not configured");
-      const cleanedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanedName}`;
-      const storageRef = ref(storage, `news/${folder}/${fileName}`);
-      await uploadBytes(storageRef, file);
-      return await getDownloadURL(storageRef);
+    // 1. Memproses Gambar Utama (100% Base64 - Cepat & Mandiri)
+    if (fileInput.files[0]) {
+      if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
+      // Kompres ke target max 180 KB dengan resolusi 1440px dan kualitas super jernih 0.88.
+      // Kualitas 0.88 pada resolusi 1440px menghasilkan kecerahan/ketajaman yang sangat prima secara instan.
+      const finalMainFile = await compressImage(fileInput.files[0], 180 * 1024, 1440, 0.88);
+      featuredImage = await fileToBase64(finalMainFile);
     }
 
-    if (fileInput.files[0]) {
-      if (btnText) btnText.innerText = "PROSES GAMBAR UTAMA...";
-      let finalFile = fileInput.files[0];
+    // 2. Memproses galeri dokumentasi (100% Base64 - Cepat & Mandiri)
+    const finalGallery = [...galleryUrls];
+    const totalGal = selectedGalleryFiles.length;
+    
+    // Alokasikan memori sisa dokumen Firestore secara dinamis agar total berkas stabil di bawah 1MB.
+    // Seluruh dokumentasi dialokasikan maksimal 400 KB total.
+    const optGalleryTargetSize = totalGal > 0 ? Math.floor((400 * 1024) / totalGal) : 50 * 1024;
+    
+    for (let i = 0; i < totalGal; i++) {
+      const item = selectedGalleryFiles[i];
+      const num = i + 1;
+      
+      if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${totalGal})...`;
+      
+      // Kompres foto galeri dengan resolusi 1024px, kualitas sangat tajam 0.88, dan target ukuran sesuai jumlah berkas
+      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.88);
       
       try {
-        // Coba unggah dalam resolusi UltraHD super jernih (2048px, 0.95 Quality) ke Storage
-        const ultraFile = await compressImage(fileInput.files[0], 1.5 * 1024 * 1024, 2048, 0.95);
-        if (btnText) btnText.innerText = "MENGUNGGAH GAMBAR UTAMA...";
-        featuredImage = await uploadToFirebaseStorage(ultraFile, "featured");
-      } catch (storageErr) {
-        console.warn("Storage upload failed, falling back to secure Base64:", storageErr);
-        if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA (BASE64)...";
-        // Fallback: Kompres super halus ke ukuran aman Firestore (target 180 KB, resolusi 1600px, kualitas 0.95)
-        const safeBase64File = await compressImage(fileInput.files[0], 180 * 1024, 1600, 0.95);
-        featuredImage = await fileToBase64(safeBase64File);
+        const base64Url = await fileToBase64(finalGalFile);
+        finalGallery.push(base64Url);
+      } catch (err) {
+        console.error("Gallery base64 processing error at index " + i, err);
+        throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
       }
-    }
-
-    // Memproses galeri dokumentasi
-    const finalGallery = [...galleryUrls];
-    
-    for (let i = 0; i < selectedGalleryFiles.length; i++) {
-        const item = selectedGalleryFiles[i];
-        const num = i + 1;
-        const total = selectedGalleryFiles.length;
-        
-        try {
-            if (btnText) btnText.innerText = `MENGUNGGAH FOTO DOKUMENTASI (${num}/${total})...`;
-            // Versi Storage: Kualitas maksimal 0.95, resolusi 1600px, target longgar 1 MB
-            const ultraGalFile = await compressImage(item.file, 1024 * 1024, 1600, 0.95);
-            const storageUrl = await uploadToFirebaseStorage(ultraGalFile, "gallery");
-            finalGallery.push(storageUrl);
-        } catch (storageErr) {
-            console.warn(`Storage upload failed for gallery item ${num}, falling back to Base64:`, storageErr);
-            if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${total})...`;
-            
-            // Fallback: Selalu optimalkan lewat compressImage agar berukuran maks 40KB (aman dari batas 1MB Firestore), resolusi 1024px, dan kualitas super jernih 0.95
-            const optGalleryTargetSize = 40 * 1024;
-            const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1024, 0.95);
-            
-            try {
-                const base64Url = await fileToBase64(finalGalFile);
-                finalGallery.push(base64Url);
-            } catch (err) {
-                console.error("Gallery base64 processing error at index " + i, err);
-                throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
-            }
-        }
     }
 
     // Legacy support for contentBody
