@@ -536,6 +536,20 @@ function displayArticle(data) {
     // --- STRUKTUR KONTEN BERITA BARU ---
     let fullBodyHtml = '';
     
+    // Helper function to render featured image 2 (Supporting Image)
+    const renderSupportingImage = () => {
+        if (data.featuredImage2) {
+            return `
+                <div class="rounded-3xl overflow-hidden shadow-2xl my-12 relative bg-purple-pale/20">
+                    <img src="${data.featuredImage2}" class="w-full h-auto max-h-[350px] sm:max-h-[420px] md:max-h-[500px] object-cover animate-fade-in" alt="Gambar Pendukung">
+                </div>
+            `;
+        }
+        return '';
+    };
+
+    const placement = data.featuredImage2Placement || "after_content2";
+    
     // 1. Konten Berita 1 (With Drop Cap)
     if (data.content1) {
         const hasSubTitle = data.subTitle && data.subTitle.replace(/<[^>]*>/g, '').trim() !== "";
@@ -560,17 +574,21 @@ function displayArticle(data) {
     if (data.content2) {
         fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content2}</div>`;
     }
-    
-    // GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) - Seukuran dengan gambar utama, rasionya sama, jernih & tajam
-    if (data.featuredImage2) {
-        fullBodyHtml += `
-            <div class="rounded-3xl overflow-hidden shadow-2xl my-12 relative bg-purple-pale/20">
-                <img src="${data.featuredImage2}" class="w-full h-auto max-h-[350px] sm:max-h-[420px] md:max-h-[500px] object-cover animate-fade-in" alt="Gambar Pendukung">
-            </div>
-        `;
+
+    if (placement === 'after_content2') {
+        fullBodyHtml += renderSupportingImage();
     }
     
-    // 4. Kutipan (Italicized - Gambar 3)
+    // 4. Konten Berita 3
+    if (data.content3) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content3}</div>`;
+    }
+
+    if (placement === 'after_content3') {
+        fullBodyHtml += renderSupportingImage();
+    }
+    
+    // 5. Kutipan (Italicized - Gambar 3)
     if (data.quotes && data.quotes.trim() !== "") {
         fullBodyHtml += `
             <div class="my-12 p-8 pl-14 bg-purple-pale/30 border-l-4 border-purple-med rounded-r-3xl italic text-purple-deep/80 text-xl font-alice relative overflow-hidden">
@@ -581,13 +599,26 @@ function displayArticle(data) {
             </div>
         `;
     }
-    
-    // 5. Konten Berita 3
-    if (data.content3) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content3}</div>`;
+
+    // 6. Konten Berita 4
+    if (data.content4) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content4}</div>`;
+    }
+
+    if (placement === 'after_content4') {
+        fullBodyHtml += renderSupportingImage();
+    }
+
+    // 7. Konten Berita 5
+    if (data.content5) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content5}</div>`;
+    }
+
+    if (placement === 'after_content5') {
+        fullBodyHtml += renderSupportingImage();
     }
     
-    // 6. Tagar (No Label, Larger Font - Gambar 3)
+    // 8. Tagar (No Label, Larger Font - Gambar 3)
     if (data.hashtags && data.hashtags.trim() !== "") {
         const tags = data.hashtags.split(' ').map(tag => {
             if (!tag.startsWith('#')) tag = '#' + tag;
