@@ -332,30 +332,33 @@
           <input id="news-hashtags" placeholder="#BEMFAI #UNSIKA #POROSKATALIST" class="w-full p-4 bg-gray-50 border border-purple-pale rounded-2xl outline-none">
       </div>
 
-      <!-- 11. GALERI KEGIATAN -->
-      <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-8 bg-gray-50 space-y-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-pale/20 pb-4">
-              <div class="flex items-start gap-3">
-                  <i data-lucide="images" class="w-6 h-6 text-purple-med mt-0.5"></i>
-                  <div class="flex flex-col">
-                      <p class="font-bold text-purple-deep text-lg leading-tight">Galeri Dokumentasi</p>
-                      <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 8 foto, per foto maksimal 1 MB)</span>
-                  </div>
-              </div>
+      <!-- 11. GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) -->
+      <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-6 bg-purple-pale/5 space-y-4">
+        <div class="flex items-start gap-3 border-b border-purple-pale/20 pb-4">
+          <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
+          <div class="flex flex-col">
+            <p class="font-bold text-purple-deep text-base leading-tight">Gambar Pendukung (Setelah Konten 2)</p>
+            <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1 MB. Jika melebihi batas, akan otomatis dikompres dengan kualitas tetap super jernih)</span>
           </div>
-          
-          <input type="file" id="gallery-files" accept="image/*" multiple class="hidden">
-          
-          <!-- Modern Gallery Drag & Drop Dropzone -->
-          <div id="gallery-drop-area" class="border-2 border-dashed border-purple-pale rounded-2xl p-8 bg-white text-center cursor-pointer hover:bg-purple-pale/10 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
-            <i data-lucide="images" class="w-10 h-10 text-purple-med animate-pulse mb-1"></i>
-            <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Dokumentasi</span>
-            <span class="text-xs text-purple-med/70">Maksimal 8 foto, ukuran per foto maksimal 1 MB (Otomatis dikompres ke kualitas FullHD super jernih jika melebihi batas)</span>
-          </div>
+        </div>
+        
+        <input type="hidden" id="news-image-2">
 
-          <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[100px] border border-purple-pale/30 rounded-2xl p-4 bg-white/40">
-              <!-- Grid Galeri -->
+        <div id="upload-input-group-2">
+          <input type="file" id="news-file-2" accept="image/*" class="hidden">
+          <div id="second-drop-area" class="drop-area border-2 border-dashed border-purple-pale rounded-2xl p-8 text-center cursor-pointer hover:bg-purple-pale/15 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
+            <i data-lucide="cloud-upload" class="w-8 h-8 text-purple-med animate-pulse mb-1"></i>
+            <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Pendukung</span>
+            <span class="text-xs text-purple-med/70">Mendukung format JPG, PNG, WEBP (Maksimal 1 MB. Otomatis kompres jika melebihi batas)</span>
           </div>
+        </div>
+
+        <div class="relative group mt-3">
+          <img id="image-preview-2" class="hidden w-full border border-purple-pale bg-white image-preview-box rounded-xl">
+          <button type="button" id="btn-remove-preview-2" class="absolute top-4 right-4 bg-red-500 text-white p-2 md:p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-xl cursor-pointer hidden flex items-center gap-1 text-xs font-black uppercase tracking-wider">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+          </button>
+        </div>
       </div>
 
       <!-- BUTTONS -->
@@ -428,7 +431,7 @@ window.setArrowStyle = (style, save = true) => {
 window.setArrowStyle('neon', false);
 
 // --- Helper Foto Berkualitas Tinggi & Jernih dengan Target Ukuran ---
-function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1920, initialQuality = 0.95) {
+function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1920, initialQuality = 0.95, minLimitResolution = 960, minLimitQuality = 0.82) {
   return new Promise((resolve) => {
     if (!file || !file.type.startsWith('image/')) {
       resolve(file);
@@ -483,30 +486,18 @@ function compressImage(file, targetMaxSizeBytes = 1024 * 1024, maxResolution = 1
             }
             
             // JIKA masih di atas target max file size, kurangi ukuran lewat kombinasi cerdas:
-            // 1. Kurangi resolusi secara bertahap sampai batas minimal ketajaman visual (800px).
-            // 2. Jika resolusi sudah 800px dan masih terlalu besar, kurangi kualitas secara halus (minimal 0.75) untuk mereduksi memori tanpa merusak ketajaman garis.
-            // 3. Jika kualitas sudah 0.75 dan masih terlalu besar, kurangi resolusi ke batas aman (640px).
-            // 4. Jika masih terlalu besar, turunkan kualitas perlahan hingga batas aman visual (0.65).
-            // 5. Pilihan terakhir: kurangi resolusi ke 480px.
-            // Ini menjamin gambar tetap jernih, tajam (anti buram), serta 100% aman masuk Firestore!
+            // 1. Kurangi resolusi secara bertahap sampai batas minimal ketajaman visual (minLimitResolution).
+            // 2. Jika resolusi sudah minimal dan masih terlalu besar, kurangi kualitas secara halus (minimal minLimitQuality) untuk mereduksi memori tanpa merusak ketajaman garis.
+            // 3. Jika batas akhir kenyamanan visual tercapai, gunakan hasil terbaik tersebut guna menjamin gambar bebas buram/blur, tetap jernih, dan aman masuk Firestore!
             if (blob.size > targetMaxSizeBytes) {
-              if (maxRes > 800) {
-                maxRes = Math.round(maxRes * 0.85); // Kurangi resolusi bertahap 15%
+              if (maxRes > minLimitResolution) {
+                maxRes = Math.max(minLimitResolution, Math.round(maxRes * 0.85)); // Kurangi resolusi bertahap 15%
                 tryRenderAndCompress();
-              } else if (quality > 0.75) {
-                quality = Math.max(0.75, quality - 0.03); // Turunkan kualitas secara halus
-                tryRenderAndCompress();
-              } else if (maxRes > 640) {
-                maxRes = Math.round(maxRes * 0.85); // Turunkan resolusi ke 640px
-                tryRenderAndCompress();
-              } else if (quality > 0.65) {
-                quality = Math.max(0.65, quality - 0.03); // Turunkan kualitas lagi
-                tryRenderAndCompress();
-              } else if (maxRes > 480) {
-                maxRes = 480; // Batas resolusi terbawah agar tidak blur
+              } else if (quality > minLimitQuality) {
+                quality = Math.max(minLimitQuality, quality - 0.03); // Turunkan kualitas secara halus
                 tryRenderAndCompress();
               } else {
-                // Batas akhir tercapai, gunakan hasil terbaik
+                // Batas akhir kenyamanan visual tercapai, gunakan hasil terbaik
                 const compressedFile = new File([blob], file.name || "image.jpg", {
                   type: 'image/jpeg',
                   lastModified: Date.now()
@@ -598,11 +589,10 @@ const fileInput = document.getElementById('news-file');
 const imagePreview = document.getElementById('image-preview');
 const mainDropArea = document.getElementById('main-drop-area');
 
-const galleryFiles = document.getElementById('gallery-files');
-const galleryPreview = document.getElementById('gallery-preview');
-
-let selectedGalleryFiles = []; // Array of {file, id}
-let galleryUrls = []; // Array of strings
+const fileInput2 = document.getElementById('news-file-2');
+const imageInput2 = document.getElementById('news-image-2');
+const imagePreview2 = document.getElementById('image-preview-2');
+const secondDropArea = document.getElementById('second-drop-area');
 
 // --- State & Logika Seleksi Berita (Bulk Delete) ---
 let isSelectMode = false;
@@ -635,11 +625,11 @@ window.showView = (view) => {
     q3.root.innerHTML = "";
     qSub.root.innerHTML = "";
     updateImagePreviewVisibility(false);
+    updateImagePreviewVisibility2(false);
     fileInput.value = "";
     imageInput.value = "";
-    galleryPreview.innerHTML = "";
-    selectedGalleryFiles = [];
-    galleryUrls = [];
+    fileInput2.value = "";
+    imageInput2.value = "";
     document.getElementById('view-title').innerText = 'Tulis Berita';
   } else {
     document.getElementById('view-title').innerText = 'Kelola Berita';
@@ -701,87 +691,52 @@ mainDropArea.addEventListener('drop', (e) => {
   }
 });
 
-// --- Galeri (Maksimal 8) ---
+// --- Gambar Pendukung ---
 
-const galleryDropArea = document.getElementById('gallery-drop-area');
+const btnRemovePreview2 = document.getElementById('btn-remove-preview-2');
 
-if (galleryDropArea) {
-  galleryDropArea.addEventListener('click', () => galleryFiles.click());
-  galleryDropArea.addEventListener('dragover', (e) => { 
-    e.preventDefault(); 
-    galleryDropArea.classList.add('bg-purple-pale/20'); 
-  });
-  galleryDropArea.addEventListener('dragleave', () => galleryDropArea.classList.remove('bg-purple-pale/20'));
-  galleryDropArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    galleryDropArea.classList.remove('bg-purple-pale/20');
-    
-    const files = Array.from(e.dataTransfer.files);
-    addGalleryFiles(files);
-  });
+function updateImagePreviewVisibility2(show) {
+  if (show) {
+    imagePreview2.classList.remove('hidden');
+    if (btnRemovePreview2) btnRemovePreview2.classList.remove('hidden');
+  } else {
+    imagePreview2.classList.add('hidden');
+    if (btnRemovePreview2) btnRemovePreview2.classList.add('hidden');
+  }
 }
 
-galleryFiles.addEventListener('change', () => {
-  const files = Array.from(galleryFiles.files);
-  addGalleryFiles(files);
-  galleryFiles.value = ""; // reset
+fileInput2.addEventListener('change', () => {
+  const file = fileInput2.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => { 
+      imagePreview2.src = e.target.result; 
+      updateImagePreviewVisibility2(true); 
+    };
+    reader.readAsDataURL(file);
+  }
 });
 
-async function addGalleryFiles(files) {
-  for (const file of files) {
-    if (file.type.startsWith('image/')) {
-      if ((galleryUrls.length + selectedGalleryFiles.length) < 8) {
-        selectedGalleryFiles.push({ file: file, id: Date.now() + Math.random() });
-      } else {
-        alert("⚠️ Batas Maksimal 8 Foto!");
-        break;
-      }
-    }
+if (btnRemovePreview2) {
+  btnRemovePreview2.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput2.value = "";
+    imageInput2.value = "";
+    updateImagePreviewVisibility2(false);
+  });
+}
+
+secondDropArea.addEventListener('click', () => fileInput2.click());
+secondDropArea.addEventListener('dragover', (e) => { e.preventDefault(); secondDropArea.classList.add('bg-purple-pale/25'); });
+secondDropArea.addEventListener('dragleave', () => secondDropArea.classList.remove('bg-purple-pale/25'));
+secondDropArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  secondDropArea.classList.remove('bg-purple-pale/25');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    fileInput2.files = e.dataTransfer.files;
+    fileInput2.dispatchEvent(new Event('change'));
   }
-  renderGallery();
-}
-
-async function renderGallery() {
-    galleryPreview.innerHTML = "";
-    
-    // Render existing URLs
-    galleryUrls.forEach((url, index) => {
-        const item = createGalleryEl(url, () => {
-            galleryUrls.splice(index, 1);
-            renderGallery();
-        });
-        galleryPreview.appendChild(item);
-    });
-
-    // Render new local files
-    for (const itemObj of selectedGalleryFiles) {
-        const reader = new FileReader();
-        const item = createGalleryEl("", () => {
-            selectedGalleryFiles = selectedGalleryFiles.filter(i => i.id !== itemObj.id);
-            renderGallery();
-        });
-        galleryPreview.appendChild(item);
-        
-        reader.onload = (e) => { 
-            item.querySelector('img').src = e.target.result;
-        };
-        reader.readAsDataURL(itemObj.file);
-    }
-    lucide.createIcons();
-}
-
-function createGalleryEl(src, onRemove) {
-    const div = document.createElement('div');
-    div.className = "relative group aspect-square rounded-xl overflow-hidden border border-purple-pale shadow-sm";
-    div.innerHTML = `
-        <img src="${src}" class="w-full h-full object-cover">
-        <button type="button" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-            <i data-lucide="x" class="w-3 h-3"></i>
-        </button>
-    `;
-    div.querySelector('button').onclick = onRemove;
-    return div;
-}
+});
 
 // --- Operasi Data ---
 
@@ -978,8 +933,9 @@ async function editNews(id) {
   imagePreview.src = item.featuredImage || "";
   updateImagePreviewVisibility(!!item.featuredImage);
   
-  galleryUrls = item.gallery || [];
-  renderGallery();
+  imageInput2.value = item.featuredImage2 || "";
+  imagePreview2.src = item.featuredImage2 || "";
+  updateImagePreviewVisibility2(!!item.featuredImage2);
 }
 
 async function deleteNews(id) {
@@ -1053,57 +1009,39 @@ newsForm.addEventListener('submit', async (e) => {
 
   try {
     let featuredImage = imageInput.value;
-    const finalGallery = [...galleryUrls];
+    let featuredImage2 = imageInput2.value;
 
     const hasMainImage = !!fileInput.files[0];
-    const totalGal = selectedGalleryFiles.length;
+    const hasSecondImage = !!fileInput2.files[0];
 
     // --- 100% SMART BASE64 ONLY (Menyimpan langsung ke dokumen Firestore secara mandiri & instan) ---
     // Limit keras satu dokumen Firestore adalah tepat 1,048,576 byte (~1MB).
     // Kita tetapkan batas anggaran raw biner foto gabungan maksimal 700 KB (setelah Base64 menjadi sekitar 930 KB).
-    // Sisa memori ~100 KB dialokasikan untuk konten narasi berita, judul, kutipan, tanggal, dan penulis (sangat-sangat longgar).
+    // Karena sekarang hanya ada 2 foto utama (Gambar Utama dan Gambar Pendukung) dan galeri dihilangkan,
+    // kita bagi anggarannya secara proporsional (50% untuk Gambar Utama, 50% untuk Gambar Pendukung jika ada keduanya).
+    // Hal ini memberikan alokasi memori yang sangat besar (~350 KB per foto), sehingga kualitas gambarnya dijamin jernih dan tajam (0.95)!
     const TOTAL_BUDGET_BYTES = 700 * 1024;
 
-    let targetMainSize = 0;
-    let optGalleryTargetSize = 0;
+    let targetMainSize = TOTAL_BUDGET_BYTES;
+    let targetSecondSize = TOTAL_BUDGET_BYTES;
 
-    if (hasMainImage && totalGal > 0) {
-      // Jika kedua-duanya diunggah sekaligus:
-      // Utama dialokasikan 40% anggaran agar kualitas tetap prima tinggi (~280 KB raw).
-      // Galeri dokumentasi mendapatkan sisa 60% anggaran (~420 KB raw) dibagi rata untuk semua berkas terpilih,
-      // sehingga setiap gambar galeri/dokumentasi mendapatkan alokasi memori yang lega dan dijamin anti-buram!
-      targetMainSize = Math.floor(TOTAL_BUDGET_BYTES * 0.40);
-      optGalleryTargetSize = Math.floor((TOTAL_BUDGET_BYTES * 0.60) / totalGal);
-    } else if (hasMainImage) {
-      // Jika HANYA ada gambar utama: gunakan 100% anggaran penuh
-      targetMainSize = TOTAL_BUDGET_BYTES;
-    } else if (totalGal > 0) {
-      // Jika HANYA ada galeri dokumentasi: dibagi rata ke seluruh koleksi
-      optGalleryTargetSize = Math.floor(TOTAL_BUDGET_BYTES / totalGal);
+    if (hasMainImage && hasSecondImage) {
+      targetMainSize = Math.floor(TOTAL_BUDGET_BYTES * 0.50);
+      targetSecondSize = Math.floor(TOTAL_BUDGET_BYTES * 0.50);
     }
 
-    // 1. Memproses Gambar Utama (Resolusi Tinggi 1920px, Kualitas Premium 0.95, Kompresi Resolusi Cerdas)
+    // 1. Memproses Gambar Utama (Resolusi Tinggi 1920px, Kualitas Premium 0.95, Batas Ketajaman Visual Sangat Tinggi)
     if (fileInput.files[0]) {
       if (btnText) btnText.innerText = "MEMPROSES GAMBAR UTAMA...";
-      const finalMainFile = await compressImage(fileInput.files[0], targetMainSize, 1920, 0.95);
+      const finalMainFile = await compressImage(fileInput.files[0], targetMainSize, 1920, 0.95, 1200, 0.90);
       featuredImage = await fileToBase64(finalMainFile);
     }
 
-    // 2. Memproses Galeri Dokumentasi (Resolusi Tinggi 1280px, Kualitas Premium 0.95, Kompresi Resolusi Cerdas - Jernih Maksimal)
-    for (let i = 0; i < totalGal; i++) {
-      const item = selectedGalleryFiles[i];
-      const num = i + 1;
-      
-      if (btnText) btnText.innerText = `PROSES FOTO DOKUMENTASI (${num}/${totalGal})...`;
-      const finalGalFile = await compressImage(item.file, optGalleryTargetSize, 1280, 0.95);
-      
-      try {
-        const base64Url = await fileToBase64(finalGalFile);
-        finalGallery.push(base64Url);
-      } catch (err) {
-        console.error("Gallery base64 processing error at index " + i, err);
-        throw new Error(`Gagal memproses foto dokumentasi ke-${num}: ${err.message}.`);
-      }
+    // 2. Memproses Gambar Pendukung (Resolusi Tinggi 1920px, Kualitas Premium 0.95, Batas Ketajaman Visual Sangat Tinggi)
+    if (fileInput2.files[0]) {
+      if (btnText) btnText.innerText = "MEMPROSES GAMBAR PENDUKUNG...";
+      const finalSecondFile = await compressImage(fileInput2.files[0], targetSecondSize, 1920, 0.95, 1200, 0.90);
+      featuredImage2 = await fileToBase64(finalSecondFile);
     }
 
     // Legacy support for contentBody
@@ -1123,7 +1061,7 @@ newsForm.addEventListener('submit', async (e) => {
       hashtags: document.getElementById('news-hashtags').value,
       contentBody: fullBody, // keeping body for homepage compatibility
       featuredImage: featuredImage,
-      gallery: finalGallery,
+      featuredImage2: featuredImage2,
       updatedAt: serverTimestamp()
     };
 
