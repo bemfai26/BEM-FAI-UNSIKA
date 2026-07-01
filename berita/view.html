@@ -326,35 +326,7 @@
                 </aside>
             </div>
 
-            <!-- Gallery -->
-            <div id="gallery-container" class="mt-12 pt-8 border-t border-purple-pale/50 section-fade visible hidden relative max-w-full">
-                <div class="mb-8 text-center">
-                    <h3 class="font-display font-black text-2xl md:text-3xl text-purple-deep">Galeri</h3>
-                </div>
 
-                <!-- Carousel Wrapper with Left & Right Floating Buttons -->
-                <div class="relative px-2 sm:px-4">
-                    <!-- Navigation Buttons positioned on overlay edges and styled original -->
-                    <button id="gallery-prev" class="absolute -left-2 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-purple-pale bg-white text-purple-med hover:bg-purple-med hover:text-white shadow-lg hover:scale-105 active:scale-90 transition-all flex items-center justify-center cursor-pointer duration-300">
-                        <i data-lucide="chevron-left" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]"></i>
-                    </button>
-                    <button id="gallery-next" class="absolute -right-2 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-purple-pale bg-white text-purple-med hover:bg-purple-med hover:text-white shadow-lg hover:scale-105 active:scale-90 transition-all flex items-center justify-center cursor-pointer duration-300">
-                        <i data-lucide="chevron-right" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]"></i>
-                    </button>
-
-                    <!-- Carousel Track Wrapper -->
-                    <div class="overflow-hidden p-1">
-                        <div id="gallery-track" class="flex flex-row gap-6 transition-transform duration-700 ease-out" style="transform: translateX(0px);">
-                            <!-- Gallery items injected here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dots Indicators -->
-                <div id="gallery-dots-container" class="flex items-center justify-center gap-1.5 mt-8">
-                    <!-- Dots injected dynamically -->
-                </div>
-            </div>
         </main>
 
         <!-- FOOTER -->
@@ -508,6 +480,9 @@ async function loadArticle(id) {
 ========================================= */
 function displayArticle(data) {
 
+    // Nonaktifkan galeri agar tidak merender carousel lama
+    data.gallery = [];
+
     // title browser
     document.title = `${data.title} - BEM FAI UNSIKA`;
 
@@ -584,6 +559,15 @@ function displayArticle(data) {
     // 3. Konten Berita 2
     if (data.content2) {
         fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content2}</div>`;
+    }
+    
+    // GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) - Seukuran dengan gambar utama, rasionya sama, jernih & tajam
+    if (data.featuredImage2) {
+        fullBodyHtml += `
+            <div class="rounded-3xl overflow-hidden shadow-2xl my-12 relative bg-purple-pale/20">
+                <img src="${data.featuredImage2}" class="w-full h-auto max-h-[350px] sm:max-h-[420px] md:max-h-[500px] object-cover animate-fade-in" alt="Gambar Pendukung">
+            </div>
+        `;
     }
     
     // 4. Kutipan (Italicized - Gambar 3)
