@@ -536,20 +536,38 @@ function displayArticle(data) {
     // --- STRUKTUR KONTEN BERITA BARU ---
     let fullBodyHtml = '';
     
+    // Helper to check if a content block is empty (to avoid empty space gaps)
+    const isContentEmpty = (html) => {
+        if (!html) return true;
+        const clean = html.replace(/<[^>]*>/g, '').trim();
+        return clean === "";
+    };
+
+    // Helper to render image blocks with perfectly uniform mb-10 spacing
+    const renderSupportingImage = () => {
+        if (data.featuredImage2) {
+            return `
+                <div class="rounded-3xl overflow-hidden shadow-2xl mb-10 relative bg-purple-pale/20">
+                    <img src="${data.featuredImage2}" class="w-full h-auto max-h-[350px] sm:max-h-[420px] md:max-h-[500px] object-cover animate-fade-in" alt="Gambar Pendukung">
+                </div>
+            `;
+        }
+        return '';
+    };
+
+    const placement = data.featuredImage2Placement || "after_content2";
+
     // 1. Konten Berita 1 (With Drop Cap)
-    if (data.content1) {
-        const hasSubTitle = data.subTitle && data.subTitle.replace(/<[^>]*>/g, '').trim() !== "";
-        const content1Margin = hasSubTitle ? "mb-0 content-before-subtitle" : "mb-10";
-        fullBodyHtml += `<div class="${content1Margin} text-gray-700 leading-relaxed text-lg">${applyDropCap(data.content1)}</div>`;
+    if (!isContentEmpty(data.content1)) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg font-alice">${applyDropCap(data.content1)}</div>`;
     }
     
-    // 2. Sub Judul Berita (Clean Styling - Gambar 2)
-    if (data.subTitle && data.subTitle.replace(/<[^>]*>/g, '').trim() !== "") {
-        // Membersihkan tag HTML dari Quill tapi tetap menjaga teksnya
+    // 2. Sub Judul Berita (Clean Styling)
+    if (!isContentEmpty(data.subTitle)) {
         const cleanSub = data.subTitle.replace(/<[^>]*>/g, '').trim();
         fullBodyHtml += `
-            <div class="-mt-4 mb-4">
-                <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight !mt-0 !mb-0">
+            <div class="mb-10">
+                <h2 class="font-display font-black text-4xl md:text-5xl text-purple-deep leading-tight">
                     ${cleanSub}
                 </h2>
             </div>
@@ -557,23 +575,25 @@ function displayArticle(data) {
     }
     
     // 3. Konten Berita 2
-    if (data.content2) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content2}</div>`;
+    if (!isContentEmpty(data.content2)) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg font-alice">${data.content2}</div>`;
+    }
+    if (placement === 'after_content2') {
+        fullBodyHtml += renderSupportingImage();
     }
     
-    // GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) - Seukuran dengan gambar utama, rasionya sama, jernih & tajam
-    if (data.featuredImage2) {
-        fullBodyHtml += `
-            <div class="rounded-3xl overflow-hidden shadow-2xl my-12 relative bg-purple-pale/20">
-                <img src="${data.featuredImage2}" class="w-full h-auto max-h-[350px] sm:max-h-[420px] md:max-h-[500px] object-cover animate-fade-in" alt="Gambar Pendukung">
-            </div>
-        `;
+    // 4. Konten Berita 3
+    if (!isContentEmpty(data.content3)) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg font-alice">${data.content3}</div>`;
+    }
+    if (placement === 'after_content3') {
+        fullBodyHtml += renderSupportingImage();
     }
     
-    // 4. Kutipan (Italicized - Gambar 3)
+    // 5. Kutipan (Italicized)
     if (data.quotes && data.quotes.trim() !== "") {
         fullBodyHtml += `
-            <div class="my-12 p-8 pl-14 bg-purple-pale/30 border-l-4 border-purple-med rounded-r-3xl italic text-purple-deep/80 text-xl font-alice relative overflow-hidden">
+            <div class="mb-10 p-8 pl-14 bg-purple-pale/30 border-l-4 border-purple-med rounded-r-3xl italic text-purple-deep/80 text-xl font-alice relative overflow-hidden">
                 <div class="absolute top-3 left-4 opacity-25 pointer-events-none col-purple-med">
                     <i data-lucide="quote" class="w-8 h-8 text-purple-med/70"></i>
                 </div>
@@ -582,12 +602,23 @@ function displayArticle(data) {
         `;
     }
     
-    // 5. Konten Berita 3
-    if (data.content3) {
-        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg">${data.content3}</div>`;
+    // 6. Konten Berita 4
+    if (!isContentEmpty(data.content4)) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg font-alice">${data.content4}</div>`;
+    }
+    if (placement === 'after_content4') {
+        fullBodyHtml += renderSupportingImage();
+    }
+
+    // 7. Konten Berita 5 (Konten Berita Terakhir)
+    if (!isContentEmpty(data.content5)) {
+        fullBodyHtml += `<div class="mb-10 text-gray-700 leading-relaxed text-lg font-alice">${data.content5}</div>`;
+    }
+    if (placement === 'after_content5') {
+        fullBodyHtml += renderSupportingImage();
     }
     
-    // 6. Tagar (No Label, Larger Font - Gambar 3)
+    // 8. Tagar
     if (data.hashtags && data.hashtags.trim() !== "") {
         const tags = data.hashtags.split(' ').map(tag => {
             if (!tag.startsWith('#')) tag = '#' + tag;
@@ -603,24 +634,27 @@ function displayArticle(data) {
     }
 
     // Fallback untuk data lama
-    if (!fullBodyHtml && data.contentBody) {
-        fullBodyHtml = `<div class="text-gray-700 leading-relaxed">${data.contentBody}</div>`;
+    const hasNewBlocks = !!(data.content1 || data.content2 || data.content3 || data.content4 || data.content5);
+    if (!hasNewBlocks && data.contentBody) {
+        fullBodyHtml = `<div class="text-gray-700 leading-relaxed font-alice text-lg">${data.contentBody}</div>`;
     }
 
     // Inject konten
     document.getElementById('article-body').innerHTML = fullBodyHtml;
 
-    // featured image
-    const featureImg =
-        document.getElementById('article-feature-image');
-
-    if (featureImg && data.featuredImage) {
-
-        featureImg.src = data.featuredImage;
-
-        featureImg.onload = () => {
-            featureImg.classList.remove('opacity-0');
-        };
+    // featured image at the top (shown for all articles)
+    const featureImg = document.getElementById('article-feature-image');
+    if (featureImg) {
+        if (data.featuredImage) {
+            featureImg.src = data.featuredImage;
+            featureImg.onload = () => {
+                featureImg.classList.remove('opacity-0');
+            };
+            featureImg.parentElement.classList.remove('hidden');
+        } else {
+            featureImg.classList.add('opacity-0');
+            featureImg.parentElement.classList.add('hidden');
+        }
     }
 
 
