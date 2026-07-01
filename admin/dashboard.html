@@ -314,14 +314,25 @@
           <div id="editor-2" class="bg-gray-50 border border-purple-pale rounded-2xl overflow-hidden"></div>
       </div>
 
-      <!-- 11. GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) -->
+      <!-- 8. GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) -->
       <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-6 bg-purple-pale/5 space-y-4">
         <div class="flex items-start gap-3 border-b border-purple-pale/20 pb-4">
           <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
           <div class="flex flex-col">
-            <p class="font-bold text-purple-deep text-base leading-tight">Gambar Pendukung (Setelah Konten 2)</p>
+            <p class="font-bold text-purple-deep text-base leading-tight">Gambar Pendukung (Gambar Kedua Utama)</p>
             <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1 MB. Jika melebihi batas, akan otomatis dikompres dengan kualitas tetap super jernih)</span>
           </div>
+        </div>
+
+        <!-- Pilihan Penempatan Gambar -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-purple-deep uppercase tracking-wider block">Pilih Lokasi Penempatan Gambar Pendukung:</label>
+          <select id="news-image-2-placement" class="w-full p-4 bg-white border border-purple-pale rounded-2xl outline-none focus:ring-2 focus:ring-purple-light/20 text-sm font-medium text-gray-700">
+            <option value="after_content2">Setelah Konten Berita 2</option>
+            <option value="after_content3">Setelah Konten Berita 3</option>
+            <option value="after_content4">Setelah Konten Berita 4</option>
+            <option value="after_content5">Setelah Konten Berita 5</option>
+          </select>
         </div>
         
         <input type="hidden" id="news-image-2">
@@ -341,11 +352,6 @@
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
           </button>
         </div>
-
-      <!-- 8. KUTIPAN -->
-      <div class="space-y-2 bg-gray-50 p-6 rounded-2xl border border-purple-pale italic">
-          <label class="text-sm font-bold text-purple-deep not-italic">Kutipan</label>
-          <textarea id="news-quotes" rows="3" placeholder="Masukkan kutipan atau kata-kata bijak..." class="w-full p-4 bg-white border border-purple-pale rounded-xl outline-none"></textarea>
       </div>
 
       <!-- 9. KONTEN BERITA 3 -->
@@ -354,39 +360,28 @@
           <div id="editor-3" class="bg-gray-50 border border-purple-pale rounded-2xl overflow-hidden"></div>
       </div>
 
-      <!-- 10. TAGAR -->
+      <!-- 10. KUTIPAN -->
+      <div class="space-y-2 bg-gray-50 p-6 rounded-2xl border border-purple-pale italic">
+          <label class="text-sm font-bold text-purple-deep not-italic">Kutipan</label>
+          <textarea id="news-quotes" rows="3" placeholder="Masukkan kutipan atau kata-kata bijak..." class="w-full p-4 bg-white border border-purple-pale rounded-xl outline-none"></textarea>
+      </div>
+
+      <!-- 11. KONTEN BERITA 4 -->
+      <div class="space-y-2">
+          <label class="text-sm font-bold text-purple-deep">Konten Berita 4</label>
+          <div id="editor-4" class="bg-gray-50 border border-purple-pale rounded-2xl overflow-hidden"></div>
+      </div>
+
+      <!-- 12. KONTEN BERITA 5 -->
+      <div class="space-y-2">
+          <label class="text-sm font-bold text-purple-deep">Konten Berita 5</label>
+          <div id="editor-5" class="bg-gray-50 border border-purple-pale rounded-2xl overflow-hidden"></div>
+      </div>
+
+      <!-- 13. TAGAR -->
       <div class="space-y-2">
           <label class="text-sm font-bold text-purple-deep">Tagar (Hashtags)</label>
           <input id="news-hashtags" placeholder="#BEMFAI #UNSIKA #POROSKATALIST" class="w-full p-4 bg-gray-50 border border-purple-pale rounded-2xl outline-none">
-      </div>
-
-      <!-- 11. GAMBAR PENDUKUNG (GAMBAR KEDUA UTAMA) -->
-      <div class="border-2 border-purple-pale rounded-[24px] p-4 sm:p-6 bg-purple-pale/5 space-y-4">
-        <div class="flex items-start gap-3 border-b border-purple-pale/20 pb-4">
-          <i data-lucide="image" class="w-5 h-5 text-purple-med mt-0.5"></i>
-          <div class="flex flex-col">
-            <p class="font-bold text-purple-deep text-base leading-tight">Gambar Pendukung (Setelah Konten 2)</p>
-            <span class="text-[10px] text-purple-light font-bold uppercase tracking-wider mt-1">(Maksimal 1 MB. Jika melebihi batas, akan otomatis dikompres dengan kualitas tetap super jernih)</span>
-          </div>
-        </div>
-        
-        <input type="hidden" id="news-image-2">
-
-        <div id="upload-input-group-2">
-          <input type="file" id="news-file-2" accept="image/*" class="hidden">
-          <div id="second-drop-area" class="drop-area border-2 border-dashed border-purple-pale rounded-2xl p-8 text-center cursor-pointer hover:bg-purple-pale/15 transition-all text-purple-med flex flex-col items-center justify-center gap-2">
-            <i data-lucide="cloud-upload" class="w-8 h-8 text-purple-med animate-pulse mb-1"></i>
-            <span class="text-sm font-bold text-purple-deep">Drag &amp; Drop atau Klik untuk Upload Gambar Pendukung</span>
-            <span class="text-xs text-purple-med/70">Mendukung format JPG, PNG, WEBP (Maksimal 1 MB. Otomatis kompres jika melebihi batas)</span>
-          </div>
-        </div>
-
-        <div class="relative group mt-3">
-          <img id="image-preview-2" class="hidden w-full border border-purple-pale bg-white image-preview-box rounded-xl">
-          <button type="button" id="btn-remove-preview-2" class="absolute top-4 right-4 bg-red-500 text-white p-2 md:p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-xl cursor-pointer hidden flex items-center gap-1 text-xs font-black uppercase tracking-wider">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
-          </button>
-        </div>
       </div>
 
       <!-- BUTTONS -->
@@ -585,6 +580,8 @@ const subToolbar = [
 const q1 = new Quill('#editor-1', { theme: 'snow', placeholder: 'Isi bagian 1...', modules: { toolbar: limitedToolbar } });
 const q2 = new Quill('#editor-2', { theme: 'snow', placeholder: 'Isi bagian 2...', modules: { toolbar: limitedToolbar } });
 const q3 = new Quill('#editor-3', { theme: 'snow', placeholder: 'Isi bagian 3...', modules: { toolbar: limitedToolbar } });
+const q4 = new Quill('#editor-4', { theme: 'snow', placeholder: 'Isi bagian 4...', modules: { toolbar: limitedToolbar } });
+const q5 = new Quill('#editor-5', { theme: 'snow', placeholder: 'Isi bagian 5...', modules: { toolbar: limitedToolbar } });
 const qSub = new Quill('#editor-sub', { theme: 'snow', placeholder: 'Tulis sub judul...', modules: { toolbar: subToolbar } });
 
 // --- Variabel & Elements ---
@@ -651,7 +648,11 @@ window.showView = (view) => {
     q1.root.innerHTML = "";
     q2.root.innerHTML = "";
     q3.root.innerHTML = "";
+    q4.root.innerHTML = "";
+    q5.root.innerHTML = "";
     qSub.root.innerHTML = "";
+    const placementSelect = document.getElementById('news-image-2-placement');
+    if (placementSelect) placementSelect.value = "after_content2";
     updateImagePreviewVisibility(false);
     updateImagePreviewVisibility2(false);
     fileInput.value = "";
@@ -955,7 +956,14 @@ async function editNews(id) {
   q1.root.innerHTML = item.content1 || "";
   q2.root.innerHTML = item.content2 || "";
   q3.root.innerHTML = item.content3 || "";
+  q4.root.innerHTML = item.content4 || "";
+  q5.root.innerHTML = item.content5 || "";
   qSub.root.innerHTML = item.subTitle || "";
+  
+  const placementSelect = document.getElementById('news-image-2-placement');
+  if (placementSelect) {
+    placementSelect.value = item.featuredImage2Placement || "after_content2";
+  }
   
   imageInput.value = item.featuredImage || "";
   imagePreview.src = item.featuredImage || "";
@@ -1073,7 +1081,7 @@ newsForm.addEventListener('submit', async (e) => {
     }
 
     // Legacy support for contentBody
-    const fullBody = q1.root.innerHTML + qSub.root.innerHTML + q2.root.innerHTML + (document.getElementById('news-quotes').value ? `<blockquote>${document.getElementById('news-quotes').value}</blockquote>` : "") + q3.root.innerHTML;
+    const fullBody = q1.root.innerHTML + qSub.root.innerHTML + q2.root.innerHTML + (document.getElementById('news-quotes').value ? `<blockquote>${document.getElementById('news-quotes').value}</blockquote>` : "") + q3.root.innerHTML + q4.root.innerHTML + q5.root.innerHTML;
 
     const data = {
       title: document.getElementById('news-title').value,
@@ -1084,12 +1092,15 @@ newsForm.addEventListener('submit', async (e) => {
       content1: q1.root.innerHTML,
       subTitle: qSub.root.innerHTML,
       content2: q2.root.innerHTML,
-      quotes: document.getElementById('news-quotes').value,
       content3: q3.root.innerHTML,
+      content4: q4.root.innerHTML,
+      content5: q5.root.innerHTML,
+      quotes: document.getElementById('news-quotes').value,
       hashtags: document.getElementById('news-hashtags').value,
       contentBody: fullBody, // keeping body for homepage compatibility
       featuredImage: featuredImage,
       featuredImage2: featuredImage2,
+      featuredImage2Placement: document.getElementById('news-image-2-placement').value || "after_content2",
       updatedAt: serverTimestamp()
     };
 
