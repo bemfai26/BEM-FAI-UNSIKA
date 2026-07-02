@@ -330,88 +330,134 @@
         </main>
 
         <!-- FOOTER -->
+        <!-- FOOTER -->
         <footer class="py-16 border-t border-purple-pale/30 text-white relative overflow-hidden" style="background: linear-gradient(160deg, #2D1B4E 0%, #5B3A8C 100%);">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <!-- Main Grid: Left (Brand) and Right (Info, Sosmed, Kontak) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-12 border-b border-white/10 items-start">
                     
-                    <!-- Left Side: Brand Section -->
-                    <div class="lg:col-span-5 space-y-6">
+                    <!-- Left Side: Brand Section (Logo + Title + Desc) -->
+                    <div class="lg:col-span-5 space-y-6 lg:pr-8 lg:border-r lg:border-white/10">
                         <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-md p-1.5 border border-white/20">
+                            <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-lg bg-white/10 backdrop-blur-md p-1.5 border border-white/20 shrink-0">
                                 <img src="../assets/Logo/logo-bem.png" alt="Logo BEM" class="w-full h-full object-contain">
                             </div>
                             <div>
-                                <h3 class="text-2xl font-bold tracking-wide text-white leading-tight">BEM FAI UNSIKA 2026</h3>
-                                <p class="text-xs text-purple-soft font-bold uppercase tracking-wider">Kabinet Poros Katalist</p>
+                                <h3 class="text-xl sm:text-2xl font-bold tracking-wide text-white leading-tight">BEM FAI UNSIKA 2026</h3>
+                                <p class="text-sm text-purple-soft font-medium tracking-wide">Kabinet Poros Katalist</p>
                             </div>
                         </div>
-                        <p class="text-sm text-white/70 leading-relaxed max-w-md">
-                            Portal resmi BEM FAI 2026 sebagai media informasi, publikasi kegiatan, dokumentasi, dan layanan digital bagi seluruh mahasiswa Fakultas Agama Islam.
+                        <p class="text-sm text-white/70 leading-relaxed max-w-md font-medium">
+                            Portal resmi BEM FAI UNSIKA 2026 yang menyajikan informasi, publikasi kegiatan, dokumentasi, serta layanan digital untuk mendukung aktivitas organisasi dan kemahasiswaan.
                         </p>
                     </div>
 
-                    <!-- Right Side: Info, Sosmed & Kontak -->
-                    <div class="lg:col-span-7 space-y-10">
-                        <!-- Row 1: Informasi & Sosial Media -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                            <!-- Column 1: Informasi -->
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold tracking-widest uppercase text-white border-b border-white/20 pb-2">INFORMASI</h4>
-                                <ul class="space-y-2.5 text-sm text-white/80 font-medium">
-                                    <li><a href="../profil.html" class="hover:text-purple-soft transition-colors">Tentang Kami</a></li>
-                                    <li><a href="../index.html#proker" class="hover:text-purple-soft transition-colors">Program Kerja</a></li>
-                                    <li><a href="home-berita.html" class="hover:text-purple-soft transition-colors">Berita & Kegiatan</a></li>
-                                    <li><a href="../index.html#media" class="hover:text-purple-soft transition-colors">Media & Dokumentasi</a></li>
-                                </ul>
-                            </div>
+                    <!-- Right Side Columns (Organisasi, Informasi, Kontak, Sosmed) -->
+                    <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                        
+                        <!-- Column 1: Organisasi (3 cols) -->
+                        <div class="md:col-span-3 space-y-4">
+                            <h4 class="text-sm font-bold tracking-wider text-white uppercase">ORGANISASI</h4>
+                            <div class="w-8 h-[3px] bg-[#9B72CF] rounded-full -mt-2"></div>
+                            <ul class="space-y-3 text-sm text-white/80 font-medium pt-2">
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="../profil.html" class="hover:text-purple-soft transition-colors">Tentang Kami</a>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="../sejarah.html" class="hover:text-purple-soft transition-colors">Profil Kabinet</a>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="../struktur.html" class="hover:text-purple-soft transition-colors">Struktur Kabinet</a>
+                                </li>
+                            </ul>
+                        </div>
 
-                            <!-- Column 2: Sosial Media -->
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold tracking-widest uppercase text-white border-b border-white/20 pb-2">SOSIAL MEDIA</h4>
-                                <div class="flex items-center gap-3 pt-1">
-                                    <!-- Instagram -->
-                                    <a href="https://www.instagram.com/bemfaiunsika" target="_blank" aria-label="Instagram" class="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-115 transition-all duration-300">
-                                        <i data-lucide="instagram" class="w-5 h-5"></i>
-                                    </a>
-                                    <!-- YouTube -->
-                                    <a href="https://www.youtube.com/@officialbemfaiunsika2570" target="_blank" aria-label="YouTube" class="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-115 transition-all duration-300">
-                                        <i data-lucide="youtube" class="w-5 h-5"></i>
-                                    </a>
-                                    <!-- TikTok -->
-                                    <a href="https://www.tiktok.com/@bemfaiunsika" target="_blank" aria-label="TikTok" class="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-115 transition-all duration-300">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/></svg>
-                                    </a>
-                                </div>
+                        <!-- Column 2: Informasi (3 cols) -->
+                        <div class="md:col-span-3 space-y-4">
+                            <h4 class="text-sm font-bold tracking-wider text-white uppercase">INFORMASI</h4>
+                            <div class="w-8 h-[3px] bg-[#9B72CF] rounded-full -mt-2"></div>
+                            <ul class="space-y-3 text-sm text-white/80 font-medium pt-2">
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="../index.html#proker" class="hover:text-purple-soft transition-colors">Program Kerja</a>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="home-berita.html" class="hover:text-purple-soft transition-colors">Berita & Kegiatan</a>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="text-[#D4BEF0] text-lg leading-none">•</span>
+                                    <a href="../index.html#media" class="hover:text-purple-soft transition-colors">Media & Dokumentasi</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 3: Kontak (4 cols) -->
+                        <div class="md:col-span-4 space-y-4">
+                            <h4 class="text-sm font-bold tracking-wider text-white uppercase">KONTAK</h4>
+                            <div class="w-8 h-[3px] bg-[#9B72CF] rounded-full -mt-2"></div>
+                            <ul class="space-y-3 text-sm text-white/80 font-medium pt-2">
+                                <li class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="mail" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <a href="mailto:bemfaiunsika@gmail.com" class="hover:text-purple-soft transition-colors break-all">bemfaiunsika@gmail.com</a>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="mail" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <a href="mailto:fai@unsika.ac.id" class="hover:text-purple-soft transition-colors break-all">fai@unsika.ac.id</a>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="phone" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <a href="https://wa.me/6281234567890" target="_blank" class="hover:text-purple-soft transition-colors">+62 812-3456-7890</a>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                                        <i data-lucide="map-pin" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <span class="leading-snug">Gedung FAI,<br>Kampus UNSIKA, Karawang</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Column 4: Sosial Media (2 cols) -->
+                        <div class="md:col-span-2 space-y-4 md:pl-4 md:border-l md:border-white/10">
+                            <h4 class="text-sm font-bold tracking-wider text-white uppercase whitespace-nowrap">SOSIAL MEDIA</h4>
+                            <div class="w-8 h-[3px] bg-[#9B72CF] rounded-full -mt-2"></div>
+                            
+                            <div class="grid grid-cols-2 gap-3 w-fit pt-2">
+                                <!-- Instagram -->
+                                <a href="https://www.instagram.com/bemfaiunsika" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-110 transition-all duration-300">
+                                    <i data-lucide="instagram" class="w-4.5 h-4.5"></i>
+                                </a>
+                                <!-- YouTube -->
+                                <a href="https://www.youtube.com/@officialbemfaiunsika2570" target="_blank" aria-label="YouTube" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-110 transition-all duration-300">
+                                    <i data-lucide="youtube" class="w-4.5 h-4.5"></i>
+                                </a>
+                                <!-- TikTok -->
+                                <a href="https://www.tiktok.com/@bemfaiunsika" target="_blank" aria-label="TikTok" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-110 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.75 2a5.75 5.75 0 0 0 5.7 5.06v2.18a7.9 7.9 0 0 1-3.47-.77v6.79a6.21 6.21 0 1 1-6.21-6.21c.36 0 .72.04 1.06.1v2.3a3.86 3.86 0 1 0 2.1 3.45V2h.82Z"/></svg>
+                                </a>
+                                <!-- WhatsApp -->
+                                <a href="https://wa.me/6281234567890" target="_blank" aria-label="WhatsApp" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-[#5B3A8C] text-white border border-white/10 shadow-lg hover:scale-110 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.324 5.328 0 11.859 0c3.166.001 6.141 1.233 8.375 3.469 2.235 2.235 3.465 5.212 3.465 8.381-.003 6.535-5.328 11.859-11.859 11.859-2.002-.001-3.972-.51-5.713-1.478L0 24zm6.535-14.774c-.116-.257-.238-.261-.349-.266l-.299-.004c-.104 0-.273.039-.415.195-.143.156-.546.533-.546 1.302 0 .768.559 1.509.637 1.613.078.104 1.1 1.68 2.666 2.356.373.161.663.257.889.33.375.12.716.103 1.01.059.328-.049 1.01-.413 1.151-.811.143-.398.143-.739.101-.811-.043-.072-.156-.116-.328-.203-.173-.087-1.01-.498-1.167-.555-.156-.057-.271-.087-.384.083-.114.171-.441.555-.54.667-.1.112-.2.126-.373.039-.173-.087-.731-.269-1.393-.859-.515-.46-8.63-1.782-.676-2.015-.091-.122-.091-.256-.004-.373.087-.117.299-.349.447-.523.148-.174.198-.297.299-.496.101-.2.051-.375-.025-.462-.077-.087-.667-1.611-.914-2.203z"/></svg>
+                                </a>
                             </div>
                         </div>
 
-                        <!-- Row 2: Kontak -->
-                        <div class="space-y-4">
-                            <h4 class="text-sm font-bold tracking-widest uppercase text-white border-b border-white/20 pb-2">KONTAK</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-white/80">
-                                <!-- Emails -->
-                                <div class="space-y-2">
-                                    <a href="mailto:bemfaiunsika@gmail.com" class="block hover:text-purple-soft transition-colors underline break-all">bemfaiunsika@gmail.com</a>
-                                    <a href="mailto:fai@unsika.ac.id" class="block hover:text-purple-soft transition-colors underline break-all">fai@unsika.ac.id</a>
-                                </div>
-                                <!-- Phone & Address -->
-                                <div class="space-y-2">
-                                    <a href="https://wa.me/6281234567890" target="_blank" class="block hover:text-purple-soft transition-colors underline">+62 812-3456-7890</a>
-                                    <p class="leading-relaxed underline">Gedung FAI, Kampus UNSIKA, Karawang</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-
                 </div>
 
                 <!-- Copyright Row -->
-                <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/60 font-medium">
+                <div class="pt-8 text-center text-sm text-white/60 font-medium">
                     <p>© 2026 BEM FAI UNSIKA | Kabinet Poros Katalist</p>
-                    <p class="flex items-center gap-1.5">
-                        Made with <span class="text-red-400">💜</span> by Kementerian Media Komunikasi dan Informasi
-                    </p>
                 </div>
             </div>
         </footer>
