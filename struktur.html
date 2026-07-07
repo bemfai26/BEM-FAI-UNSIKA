@@ -629,8 +629,8 @@
         // DATA
         const DATA = {
             core: [
-                { name: "Muhammad Rafly Mukhlisin", position: "Ketua Umum", quote: "Poros Katalis: Menjadi Pusat Perubahan.", gender: "L" },
-                { name: "Ariella Nurrizky Eka Putra", position: "Wakil Ketua", quote: "Berbagi Energi, Membangun Sinergi.", gender: "L" },
+                { quote: "Poros Katalis: Menjadi Pusat Perubahan.", gender: "L", photo: "assets/Foto Card/3.png" },
+                { name: "Harits Almuhasibi", position: "Ketua Departemen Kearsipan", quote: "Berbagi Energi, Membangun Sinergi.", gender: "L", photo: "assets/Foto Card/1.png" },
                 { name: "Ovi Safrika", position: "Sekretaris Umum", quote: "Kerapian adalah Kunci Efisiensi.", gender: "P" },
                 { name: "Irma Yuliyanti", position: "Sekretaris II", quote: "Detail yang Kecil Menentukan Hasil yang Besar.", gender: "P" },
                 { name: "Ratu Talitha Wadhcah Chamid", position: "Bendahara Umum", quote: "Integritas dalam Setiap Rupiah.", gender: "P" },
@@ -640,8 +640,8 @@
                 {
                     name: "Struktur Internal",
                     description: "Bidang Internal merupakan bidang yang berfokus pada penguatan organisasi dari dalam. Bidang ini bertanggung jawab dalam membangun kualitas sumber daya anggota BEM, menjaga koordinasi yang efektif, serta menciptakan lingkungan organisasi yang solid dan profesional. Melalui Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) dan Kearsipan, Bidang Internal berperan dalam pembinaan, pengembangan potensi, serta pengelolaan administrasi organisasi secara sistematis and berkelanjutan.",
-                    kabid: { name: "Widya Siti Nazwa Aulia Rahmah", position: "Kabid Internal", quote: "Harmoni dari Dalam.", gender: "P", photo: "assets/Foto Card/Internal/widya.jpg" },
-                    wakabid: { name: "Tia Imelda Febriani", position: "Wakabid Internal", quote: "Solidaritas Tanpa Batas.", gender: "P", photo: "assets/Foto Card/Internal/timel.jpg" },
+                    kabid: { quote: "Harmoni dari Dalam.", gender: "P", photo: "assets/Foto Card/Internal/widya.jpg" },
+                    wakabid: { quote: "Solidaritas Tanpa Batas.", gender: "P", photo: "assets/Foto Card/Internal/timel.jpg" },
                     departments: [
                         {
                             name: "Departemen Pengembangan Sumber Daya Mahasiswa",
@@ -657,7 +657,7 @@
                         {
                             name: "Departemen Kearsipan",
                             description: "Departemen Kearsipan bertugas dalam pengelolaan administrasi and dokumentasi organisasi secara tertib, sistematis, dan berkelanjutan. Departemen ini berperan penting dalam menjaga arsip, data, serta dokumen kegiatan BEM agar mudah diakses, terorganisir dengan baik, dan menjadi sumber informasi yang akurat bagi keberlangsungan organisasi.",
-                            kadep: { name: "Harits Almuhasibi", position: "Kadep Kearsipan", quote: "Data Terjaga, Sejarah Terukir.", gender: "L", photo: "assets/Foto Card/Internal/harits.jpg" },
+                            kadep: { quote: "Data Terjaga, Sejarah Terukir.", gender: "L", photo: "assets/Foto Card/Internal/harits.jpg" },
                             staff: [
                                 { name: "Tiara Nuraisyah", position: "Staff Kearsipan", quote: "Rapi itu Nyaman.", gender: "P", photo: "assets/Foto Card/Internal/tiara.jpg" },
                                 { name: "Siti Nuraidah", position: "Staff Kearsipan", quote: "Dokumentasi adalah Bukti Nyata.", gender: "P", photo: "assets/Foto Card/Internal/aida.png" },
@@ -774,9 +774,9 @@
             let photoUrl = member.photo;
             if (!photoUrl) {
                 if (member.gender === 'P') {
-                    photoUrl = "assets/Foto Card/megawati.jpg";
+                    photoUrl = "assets/Foto Card/3.png";
                 } else {
-                    photoUrl = "assets/Foto Card/jokowi.jpeg";
+                    photoUrl = "assets/Foto Card/3png";
                 }
             }
             
@@ -789,16 +789,17 @@
                         <div class="card-inner absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-400 to-gray-700 backdrop-blur-md bg-white/10 rounded-3xl overflow-hidden shadow-2xl">
                             <div class="absolute inset-1.5 overflow-hidden rounded-2xl bg-purple-deep/100">
                                 <img src="${photoUrl}" class="w-full h-full object-cover grayscale-[20%] transition-all duration-700">
-                                <div class="card-badge absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
-                                    <h4 class="text-white font-black ${nameSize} truncate text-center">${member.name}</h4>
-                                    <p class="text-purple-light font-black text-[7px] text-center tracking-[0.2em] opacity-80">${member.position}</p>
+                                <div class="card-badge absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8 bg-gradient-to-t from-black via-black/250 to-transparent"> ${member.name ? `
+                                        <h4 class="text-white font-black ${nameSize} truncate text-center"> ${member.name} </h4> ` : ""}
+                                        ${member.position ? `
+                                        <p class="text-purple-light font-black text-[7px] text-center tracking-[0.2em] opacity-80"> ${member.position} </p> ` : ""}
                                 </div>
                             </div>
                             <!-- Overlay Quote -->
                             <div class="card-overlay absolute inset-0 bg-black/95 z-40 flex flex-col items-center justify-center p-4 text-center">
                                 <p class="text-white italic text-[10px] leading-relaxed font-medium">"${member.quote}"</p>
                                 <div class="mt-3 w-8 h-[1px] bg-purple-light/30"></div>
-                                <p class="mt-3 text-[7px] text-purple-light/40 font-black tracking-widest">Klik untuk tutup</p>
+                                <p class="mt-3 text-[7px] text-purple-light/40 font-black tracking-widest"></p>
                             </div>
                         </div>
                     </div>
