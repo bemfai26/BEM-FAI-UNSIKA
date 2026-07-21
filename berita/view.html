@@ -95,6 +95,20 @@
             filter: contrast(1.1) saturate(1.2);
         }
 
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }        
+        
         /* Lightbox Styles */
         #lightbox {
             display: none;
@@ -853,6 +867,32 @@ function displayArticle(data) {
     });
 }
 
+/* =========================================
+   LOAD BERITA TERKAIT
+========================================= */
+function getExcerpt(item) {
+
+    // Prioritas mengambil isi berita
+    let text =
+        item.content1 ||
+        item.content2 ||
+        item.contentBody ||
+        "";
+
+    // Hilangkan seluruh tag HTML
+    text = text.replace(/<[^>]*>/g, " ");
+
+    // Rapikan spasi
+    text = text.replace(/\s+/g, " ").trim();
+
+    // Maksimal sekitar 150 karakter
+    if (text.length > 150) {
+        text = text.substring(0, 150) + "...";
+    }
+
+    return text;
+}
+
 
 /* =========================================
    LOAD BERITA TERKAIT
@@ -901,6 +941,10 @@ async function loadRelated(category, currentId) {
                         <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
                             ${item.title}
                         </h5>
+
+                        <p class="mt-1 text-xs text-gray-500 leading-relaxed line-clamp-3">
+                            ${getExcerpt(item)}
+                        </p>
 
                     </div>
 
