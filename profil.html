@@ -87,6 +87,22 @@
         }
         .card-3d > * { transform: translateZ(20px); }
 
+        .gradient-text{
+            background: linear-gradient(
+                90deg,
+                #2F1B5C 0%,
+                #3E286F 30%,
+                #6F4CB8 50%,
+                #B8A7DD 70%,
+                rgba(206,198,243,.3) 100%
+                );
+                
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent;
+        }
+
         /* Back to top button */
         #backToTop {
             position: fixed;
@@ -208,7 +224,7 @@
         <!-- HERO SECTION -->
         <header class="relative pt-48 pb-24 overflow-hidden bg-mesh">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center section-fade">
-                <span class="inline-block px-5 py-2 bg-white text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-8 shadow-sm border border-purple-pale/50">Profil Kabinet</span>
+                
                 <h1 class="font-display text-4xl sm:text-5xl md:text-7xl font-black text-purple-deep mb-6 leading-tight">
                     POROS <span class="text-purple-med/70 font-light italic">KATALIST</span>
                 </h1>
@@ -259,7 +275,11 @@
         <section class="section-fade py-24 bg-purple-pale/40">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-20 section-fade">
-                    <span class="inline-block px-5 py-2 bg-white text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-4 shadow-sm border border-purple-pale/50">Visi & Misi</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-black tracking-tighter">
+                        <span class="text-purple-deep">Visi</span>
+                        <span class="gradient-text">&</span>
+                        <span class="text-purple-med/30 font-light italic">Misi</span>
+                    </h2>
                 </div>
                 
                 <div class="grid lg:grid-cols-2 gap-16">
@@ -303,9 +323,10 @@
         <!-- FILOSOFI LOGO -->
         <section class="section-fade py-24 bg-mesh relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-20 section-fade">
-                    <span class="inline-block px-5 py-2 bg-white text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-4 shadow-sm border border-purple-pale/50">Simbol & Makna</span>
-                    <h2 class="font-display text-4xl sm:text-5xl font-black text-purple-deep tracking-tight">Filosofi Visual</h2>
+                <div class="text-center mb-20 section-fade">                    
+                    <h2 class="font-display text-4xl sm:text-5xl font-black text-purple-deep tracking-tight">
+                    Filosofi <span class="text-purple-med/30 font-light italic">Visual</span>
+                    </h2>
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-16 items-start">
