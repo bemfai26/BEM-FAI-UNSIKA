@@ -945,8 +945,8 @@ async function loadRelated(category, currentId) {
                             ${item.title}
                             </h5>
                             
-                        <p class="mt-1 text-[12px] text-gray-500 leading-6 line-clamp-2">
-                            ${getExcerpt(item)}                            
+                        <p class="mt-2 text-sm text-gray-500 leading-6 line-clamp-2">
+                            ${item.excerpt || getExcerpt(item)}
                         </p>
 
                     </div>
