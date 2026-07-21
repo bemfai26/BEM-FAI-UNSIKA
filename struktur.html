@@ -345,12 +345,7 @@
 
             <!-- Header -->
             <div class="text-center mb-10 section-fade">
-
-                <span class="inline-block px-5 py-2 bg-white/80 backdrop-blur-sm text-purple-med text-[10px] font-black rounded-full tracking-[0.3em] uppercase mb-8 shadow-sm border border-white/40">
-
-                    Struktur Kabinet
-
-                </span>
+                
 
                 <h1 class="font-display text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
 
@@ -404,11 +399,11 @@
         <main class="max-w-7xl mx-auto px-4 mt-10 pb-32">
             
             <!-- SECTION BPH -->
-            <section id="BPH" class="mb-48 text-center section-fade fade-up">
+            <section id="BPH" class="mb-32 text-center section-fade fade-up">
                 <h2 class="font-display text-4xl md:text-5xl font-black text-purple-deep text-center mb-8 tracking-tighter">
                     BPH <br/> <span class="text-purple-med/30 font-light italic">Badan Pengurus Harian.</span>
                 </h2>
-                <p class="text-purple-med/70 max-w-xl mx-auto italic mb-20 font-sans">"Bergerak dari Nilai, Bertumbuh untuk Perubahan. Menjadi pusat energi yang mengkatalisasi setiap potensi mahasiswa FAI."</p>
+                <p class="text-purple-med/70 max-w-[980px] mx-auto mb-20 font-sans leading-7">Badan Pengurus Harian (BPH) merupakan inti kepengurusan yang bertanggung jawab dalam mengarahkan, mengoordinasikan, dan mengawasi pelaksanaan seluruh program kerja organisasi secara efektif dan berkelanjutan. Dengan menjunjung tinggi nilai kolaborasi, integritas, dan tanggung jawab, BPH berkomitmen mewujudkan organisasi yang solid, adaptif, serta berorientasi pada kemajuan mahasiswa Fakultas Agama Islam UNSIKA.</p>
                 
                 <!-- KETUA & WAKIL -->
                 <div id="core-upper" class="flex flex-wrap justify-center gap-6 mb-24">
@@ -424,7 +419,7 @@
             <!-- SECTION BIDANG -->
             <section id="bidang" class="section-fade">
                 <h2 class="font-display text-4xl md:text-5xl font-black text-purple-deep text-center mb-32 tracking-tighter">
-                    Struktur <br/> <span class="text-purple-med/30 font-light italic lowercase">Bidang.</span>
+                    Struktur <span class="text-purple-med/30 font-light italic">Bidang</span>
                 </h2>
                 <div id="divisions-container" class="space-y-24">
                     <!-- Rendered JS -->
@@ -629,37 +624,37 @@
         // DATA
         const DATA = {
             core: [
-                { quote: "Poros Katalis: Menjadi Pusat Perubahan.", gender: "L", photo: "assets/Foto Card/harits.png" },
-                { quote: "Berbagi Energi, Membangun Sinergi.", gender: "L", photo: "assets/Foto Card/3.png" },
-                { quote: "Kerapian adalah Kunci Efisiensi.", gender: "P", photo: "assets/Foto Card/jernih.png" },
-                { quote: "Detail yang Kecil Menentukan Hasil yang Besar.", gender: "P", photo: "assets/Foto Card/wa.png" },
-                { quote: "Integritas dalam Setiap Rupiah.", gender: "P", photo: "assets/Foto Card/ovi.png" },
-                { quote: "Keuangan Sehat, Organisasi Kuat.", gender: "P", photo: "assets/Foto Card/wa2.png" },
+                { name: "M. Rafly Mukhlisin", position: "Ketua Umum", quote: "Poros Katalis: Menjadi Pusat Perubahan.", gender: "L", photo: "assets/Foto Card/bph/Rafly.png" },
+                { name: "Ariella Nurrizky Eka Putra", position: "Wakil Ketua Umum", quote: "Berbagi Energi, Membangun Sinergi.", gender: "L", photo: "assets/Foto Card/bph/aril.png" },
+                { name: "Ovi Safrika", position: "Sekretaris Umum", quote: "Kerapian adalah Kunci Efisiensi.", gender: "P", photo: "assets/Foto Card/bph/ovi.png"},
+                { name: "Irma Yuliyanti", position: "Sekretaris II", quote: "Detail yang Kecil Menentukan Hasil yang Besar.", gender: "P", photo: "assets/Foto Card/bph/irma.png" },
+                { name: "Ratu Talitha Wadhcah", position: "Bendahara Umum", quote: "Integritas dalam Setiap Rupiah.", gender: "P", photo: "assets/Foto Card/bph/ratu.png" },
+                { name: "Zahwa Nadya Bella", position: "Bendahara II", quote: "Keuangan Sehat, Organisasi Kuat.", gender: "P", photo: "assets/Foto Card/bph/zahwa.png"},
             ],
             divisions: [
                 {
                     name: "Struktur Internal",
-                    description: "Bidang Internal merupakan bidang yang berfokus pada penguatan organisasi dari dalam. Bidang ini bertanggung jawab dalam membangun kualitas sumber daya anggota BEM, menjaga koordinasi yang efektif, serta menciptakan lingkungan organisasi yang solid dan profesional. Melalui Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) dan Kearsipan, Bidang Internal berperan dalam pembinaan, pengembangan potensi, serta pengelolaan administrasi organisasi secara sistematis and berkelanjutan.",
-                    kabid: { quote: "Harmoni dari Dalam.", gender: "P", photo: "assets/Foto Card/Internal/widya.jpg" },
-                    wakabid: { quote: "Solidaritas Tanpa Batas.", gender: "P", photo: "assets/Foto Card/Internal/timel.jpg" },
+                    description: "Bidang Internal merupakan bidang yang berfokus pada penguatan organisasi dari dalam. Bidang ini bertanggung jawab dalam membangun kualitas sumber daya anggota BEM FAI, menjaga koordinasi yang efektif, serta menciptakan lingkungan organisasi yang solid dan profesional. Melalui Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) dan Kearsipan, Bidang Internal berperan dalam pembinaan, pengembangan potensi, serta pengelolaan administrasi organisasi secara sistematis dan berkelanjutan.",
+                    kabid: { name: "Widya Siti Nazwa Aulia", position: "Ketua Bidang Internal", quote: "Harmoni dari Dalam.", gender: "P", photo: "assets/Foto Card/Internal/widya.png" },
+                    wakabid: { name: "Tia Amelda Febriani", position: "Wakil Ketua Bidang Internal", quote: "Solidaritas Tanpa Batas.", gender: "P", photo: "assets/Foto Card/Internal/timel.png" },
                     departments: [
                         {
                             name: "Departemen Pengembangan Sumber Daya Mahasiswa",
-                            description: "Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) berperan dalam meningkatkan kualitas dan kapasitas anggota BEM melalui berbagai program pembinaan, pelatihan, dan pengembangan potensi. Departemen ini bertanggung jawab dalam menciptakan sumber daya manusia yang unggul, berintegritas, serta mampu bekerja secara profesional dalam menjalankan roda organisasi.",
-                            kadep: { name: "Iftikhar Royan Maulana", position: "Kadep PSDM", quote: "Manusia adalah Aset Terbesar.", gender: "L" },
+                            description: "Departemen Pengembangan Sumber Daya Mahasiswa (PSDM) berperan dalam meningkatkan kualitas dan kapasitas anggota BEM FAI melalui berbagai program pembinaan, pelatihan, dan pengembangan potensi. Departemen ini bertanggung jawab dalam menciptakan sumber daya manusia yang unggul, berintegritas, serta mampu bekerja secara profesional dalam menjalankan roda organisasi.",
+                            kadep: { name: "Iftikhar Royan Maulana", position: "Ketua Departemen PSDM", quote: "Manusia adalah Aset Terbesar.", gender: "L", photo: "assets/Foto Card/Internal/ihar.png" },
                             staff: [
-                                { name: "Muhammad Zacky Mubarok", position: "Staff PSDM", quote: "Bertumbuh Bersama.", gender: "L" },
-                                { name: "Haikal Abdul Aziz", position: "Staff PSDM", quote: "Semangat Tanpa Tapi.", gender: "L" },
-                                { name: "Hanifah Nur Inayah", position: "Staff PSDM", quote: "Belajar adalah Proses Abadi.", gender: "P" },
-                                { name: "Nabila Zahra Alqonita", position: "Staff PSDM", quote: "Potensi Harus Digali.", gender: "P" },
+                                { name: "M. Zacky Mubarok", position: "Staff PSDM", quote: "Bertumbuh Bersama.", gender: "L", photo: "assets/Foto Card/Internal/zaki.png" },
+                                { name: "Haikal Abdul Aziz", position: "Staff PSDM", quote: "Semangat Tanpa Tapi.", gender: "L", photo: "assets/Foto Card/Internal/haikal.png" },
+                                { name: "Hanifah Nur Inayah", position: "Staff PSDM", quote: "Belajar adalah Proses Abadi.", gender: "P", photo: "assets/Foto Card/Internal/hanifah.png" },
+                                { name: "Nabila Zahra Alqonita", position: "Staff PSDM", quote: "Potensi Harus Digali.", gender: "P", photo: "assets/Foto Card/Internal/nabila.png" },
                             ]
                         },
                         {
                             name: "Departemen Kearsipan",
-                            description: "Departemen Kearsipan bertugas dalam pengelolaan administrasi and dokumentasi organisasi secara tertib, sistematis, dan berkelanjutan. Departemen ini berperan penting dalam menjaga arsip, data, serta dokumen kegiatan BEM agar mudah diakses, terorganisir dengan baik, dan menjadi sumber informasi yang akurat bagi keberlangsungan organisasi.",
-                            kadep: { quote: "Data Terjaga, Sejarah Terukir.", gender: "L", photo: "assets/Foto Card/Internal/harits.png" },
+                            description: "Departemen Kearsipan bertugas dalam pengelolaan administrasi and dokumentasi organisasi secara tertib, sistematis, dan berkelanjutan. Departemen ini berperan penting dalam menjaga arsip, data, serta dokumen kegiatan BEM FAI agar mudah diakses, terorganisir dengan baik, dan menjadi sumber informasi yang akurat bagi keberlangsungan organisasi.",
+                            kadep: { name: "Harits Almuhasibi", position: "Ketua Departemen Kearsipan", quote: "Sumanto adalah Lord dari segala Lord.", gender: "L", photo: "assets/Foto Card/internal/harits.png" },
                             staff: [
-                                { name: "Tiara Nuraisyah", position: "Staff Kearsipan", quote: "Rapi itu Nyaman.", gender: "P", photo: "assets/Foto Card/Internal/tiara.jpg" },
+                                { name: "Tiara Nuraisyah", position: "Staff Kearsipan", quote: "Rapi itu Nyaman.", gender: "P", photo: "assets/Foto Card/Internal/tiara.png" },
                                 { name: "Siti Nuraidah", position: "Staff Kearsipan", quote: "Dokumentasi adalah Bukti Nyata.", gender: "P", photo: "assets/Foto Card/Internal/aida.png" },
                             ]
                         }
@@ -668,99 +663,99 @@
                 {
                     name: "Struktur Kemahasiswaan",
                     description: "Bidang Kemahasiswaan berfokus pada pengembangan potensi mahasiswa baik dalam aspek akademik maupun non-akademik. Bidang ini berperan dalam memfasilitasi minat dan bakat, meningkatkan kesejahteraan mahasiswa, serta mendorong kegiatan yang produktif dan kreatif. Selain itu, Bidang Kemahasiswaan juga aktif dalam membangun komunikasi, menyediakan informasi, serta mendorong keterlibatan mahasiswa dalam kegiatan sosial dan pengabdian kepada masyarakat.",
-                    kabid: { name: "Fuad Shofwan", position: "Kabid Kemahasiswaan", quote: "Mahasiswa adalah Agen Perubahan.", gender: "L" },
-                    wakabid: { name: "Irfan Maulana", position: "Wakabid Kemahasiswaan", quote: "Tumbuh Bersama Mahasiswa.", gender: "L" },
+                    kabid: { name: "Fuad Shofwan", position: "Ketua Bidang Kemahasiswaan", quote: "Mahasiswa adalah Agen Perubahan.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/fuad.png" },
+                    wakabid: { name: "Irfan Maulana", position: "Wakil Ketua Bidang Kemahasiswaan", quote: "Tumbuh Bersama Mahasiswa.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/irfan.png" },
                     departments: [
                         {
                             name: "Departemen Minat & Bakat",
                             description: "Departemen Minat dan Bakat bertugas dalam memfasilitasi serta mengembangkan potensi mahasiswa di bidang non-akademik. Departemen ini berperan dalam menyelenggarakan kegiatan yang mendukung kreativitas, olahraga, seni, dan keterampilan mahasiswa agar dapat berkembang secara optimal dan berprestasi.",
-                            kadep: { name: "Satria Najmul Muluk", position: "Kadep Minba", quote: "Bakat yang Terasah, Prestasi pun Tiba.", gender: "L" },
+                            kadep: { name: "Satria Najmul Muluk", position: "Ketua Departemen Minat & Bakat", quote: "Bakat yang Terasah, Prestasi pun Tiba.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/satria.png" },
                             staff: [
-                                { name: "Muhammad Wildan Ihsan Nurefki", position: "Staff Minba", quote: "Kreativitas Tanpa Henti.", gender: "L" },
-                                { name: "Amelia Khoirunisa", position: "Staff Minba", quote: "Ekspresikan Dirimu.", gender: "P" },
-                                { name: "Sarah Nur Azizah", position: "Staff Minba", quote: "Seni adalah Bahasa Kalbu.", gender: "P" },
+                                { name: "M. Wildan Ihsan Nurefki", position: "Staff Minat & Bakat", quote: "Kreativitas Tanpa Henti.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/wildan.png" },
+                                { name: "Amelia Khoirunisa", position: "Staff Minat & Bakat", quote: "Ekspresikan Dirimu.", gender: "P", photo: "assets/Foto Card/Kemahasiswaan/lia.png" },
+                                { name: "Sarah Nur Azizah", position: "Staff Minat & Bakat", quote: "Seni adalah Bahasa Kalbu.", gender: "P", photo: "assets/Foto Card/Kemahasiswaan/sarah.png" },
                             ]
                         },
                         {
                             name: "Departemen Pendidikan & Keagamaan",
                             description: "Departemen Pendidikan dan Keagamaan berfokus pada pengembangan intelektual dan spiritual mahasiswa melalui kegiatan edukatif dan keagamaan. Departemen ini bertugas menyelenggarakan program yang mendukung peningkatan wawasan akademik, nilai-nilai moral, serta pembinaan karakter mahasiswa yang berlandaskan keimanan dan ketakwaan.",
-                            kadep: { name: "Ikhsan Abdul Azis", position: "Kadep Pendag", quote: "Upgrade Diri, Upgrade Organisasi.", gender: "L" },
+                            kadep: { name: "Ikhsan Abdul Azis", position: "Ketua Departemen Pendag", quote: "Upgrade Diri, Upgrade Organisasi.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/isan.png" },
                             staff: [
-                                { name: "Muhamad Syarifudin", position: "Staff Pendag", quote: "Terus Melangkah.", gender: "L" },
-                                { name: "Salma Siti Adawiyah", position: "Staff Pendag", quote: "Peluang Ada Bagi yang Mencari.", gender: "P" },
+                                { name: "Muhamad Syarifudin", position: "Staff Pendag", quote: "Terus Melangkah.", gender: "L", photo: "assets/Foto Card/Kemahasiswaan/mumuy.png" },
+                                { name: "Salma Siti Adawiyah", position: "Staff Pendag", quote: "Peluang Ada Bagi yang Mencari.", gender: "P", photo: "assets/Foto Card/Kemahasiswaan/salma.png" },
                             ]
                         }
                     ]
                 },
                 {
                     name: "Struktur Sosial & Politik",
-                    description: "Bidang Sosial & Politik adalah bidang yang berperan sebagai garda terdepan dalam merespons isu-isu sosial, politik, dan kebijakan yang berkaitan dengan mahasiswa maupun masyarakat luas. Bidang ini menjalankan fungsi kajian, advokasi, serta aksi strategis dalam menyikapi berbagai permasalahan. Selain itu, bidang ini juga bertanggung jawab dalam meningkatkan kesadaran politik mahasiswa, mengawal kebijakan, serta mengoordinasikan gerakan mahasiswa secara terarah and berdampak.",
-                    kabid: { name: "Melandri", position: "Kabid Sospol", quote: "Suara Rakyat, Suara Tuhan.", gender: "L" },
-                    wakabid: { name: "Reza Maulana", position: "Wakabid Sospol", quote: "Keadilan untuk Semua.", gender: "L" },
+                    description: "Bidang Sosial & Politik adalah bidang yang berperan sebagai garda terdepan dalam merespons isu-isu sosial, politik, dan kebijakan yang berkaitan dengan mahasiswa maupun masyarakat luas. Bidang ini menjalankan fungsi kajian, advokasi, serta aksi strategis dalam menyikapi berbagai permasalahan. Selain itu, bidang ini juga bertanggung jawab dalam meningkatkan kesadaran politik mahasiswa, mengawal kebijakan, serta mengoordinasikan gerakan mahasiswa secara terarah dan berdampak.",
+                    kabid: { name: "Melandri", position: "Ketua Bidang Sosial & Politik", quote: "Suara Rakyat, Suara Tuhan.", gender: "L", photo: "assets/Foto Card/sospol/ambon.png" },
+                    wakabid: { name: "Reza Maulana", position: "Wakil Ketua Bidang Sosial & Politik", quote: "Keadilan untuk Semua.", gender: "L", photo: "assets/Foto Card/sospol/reza1.png" },
                     departments: [
                         {
-                            name: "Departemen Kajian & Aksi Strategis",
-                            description: "Departemen Kajian dan Aksi Strategis bertugas dalam melakukan analisis terhadap isu-isu strategis yang berkembang di lingkungan kampus maupun masyarakat. Departemen ini berperan dalam merancang langkah aksi, melakukan edukasi dan publikasi, serta mengawal kebijakan melalui pendekatan yang kritis, solutif, dan berbasis data.",
-                            kadep: { name: "Aditiya Sulistiawan", position: "Kadep Kastrat", quote: "Analisis Tajam, Aksi Nyata.", gender: "L" },
+                            name: "Departemen Kajian Aksi Strategis",
+                            description: "Departemen Kajian Aksi Strategis bertugas dalam melakukan analisis terhadap isu-isu strategis yang berkembang di lingkungan kampus maupun masyarakat. Departemen ini berperan dalam merancang langkah aksi, melakukan edukasi dan publikasi, serta mengawal kebijakan melalui pendekatan yang kritis, solutif, dan berbasis data.",
+                            kadep: { name: "Aditiya Sulistiawan", position: "Ketua Departemen Kastrat", quote: "Analisis Tajam, Aksi Nyata.", gender: "L", photo: "assets/Foto Card/sospol/adit.png" },
                             staff: [
-                                { name: "Avatar Juno", position: "Staff Kastrat", quote: "Berfikir Kritis.", gender: "L" },
-                                { name: "Dhafa Wildani Purwanto", position: "Staff Kastrat", quote: "Kawal Kebijakan.", gender: "L" },
+                                { name: "Avatar Juno", position: "Staff Kastrat", quote: "Berfikir Kritis.", gender: "L", photo: "assets/Foto Card/sospol/juno.png" },
+                                { name: "Dhafa Wildani Purwanto", position: "Staff Kastrat", quote: "Kawal Kebijakan.", gender: "L", photo: "assets/Foto Card/sospol/dhafa.png" },
                             ]
                         },
                         {
                             name: "Departemen Advokasi Kesejahteraan Mahasiswa",
                             description: "Departemen Advokasi Kesejahteraan Mahasiswa (Adkesma) berfokus pada upaya pendampingan, perlindungan, dan peningkatan kesejahteraan mahasiswa. Departemen ini bertugas menerima pengaduan, melakukan mediasi, serta memberikan advokasi terkait permasalahan mahasiswa, sekaligus menyelenggarakan program yang mendukung kesehatan, kesejahteraan, dan keberlanjutan kehidupan mahasiswa.",
-                            kadep: { name: "Kevin Mawla Akbar", position: "Kadep Adkesma", quote: "Sejahtera Mahasiswa, Bahagia Kita.", gender: "L" },
+                            kadep: { name: "Kevin Mawla Akbar", position: "Ketua Departemen Adkesma", quote: "Sejahtera Mahasiswa, Bahagia Kita.", gender: "L", photo: "assets/Foto Card/sospol/kevin.png" },
                             staff: [
-                                { name: "M. Al-Fikri Faturohman", position: "Staff Adkesma", quote: "Siap Melayani.", gender: "L" },
-                                { name: "Tiara Nur Wijayanti", position: "Staff Adkesma", quote: "Advokasi dengan Hati.", gender: "P" },
-                                { name: "Salwa Syahira Maulida", position: "Staff Adkesma", quote: "Solusi di Setiap Keluhan.", gender: "P" },
+                                { name: "M. Al-Fikri Faturohman", position: "Staff Adkesma", quote: "Siap Melayani.", gender: "L", photo: "assets/Foto Card/sospol/fikri.png" },
+                                { name: "Tiara Nur Wijayanti", position: "Staff Adkesma", quote: "Advokasi dengan Hati.", gender: "P", photo: "assets/Foto Card/sospol/tiara.png" },
+                                { name: "Salwa Syahira Maulida", position: "Staff Adkesma", quote: "Solusi di Setiap Keluhan.", gender: "P", photo: "assets/Foto Card/sospol/salwa.png" },
                             ]
                         },
                         {
                             name: "Departemen Pengabdian Masyarakat",
                             description: "Departemen Pengabdian Masyarakat berperan dalam merancang dan melaksanakan program yang berorientasi pada kontribusi nyata kepada masyarakat. Departemen ini bertanggung jawab dalam mengembangkan kegiatan sosial, membangun hubungan dengan masyarakat, serta menciptakan dampak positif melalui program pemberdayaan dan kerja sama yang berkelanjutan.",
-                            kadep: { name: "Siti Auliya Zahra", position: "Kadep Pengmas", quote: "Bermanfaat bagi Sesama.", gender: "P" },
+                            kadep: { name: "Siti Auliya Zahra", position: "Ketua Departemen Pengmas", quote: "Mengabdi dengan keikhlasan, bergerak dengan kepedulian, dan bermanfaat untuk perubahan.", gender: "P", photo: "assets/Foto Card/sospol/siti.png" },
                             staff: [
-                                { name: "Muchsin Al-Athas", position: "Staff Pengmas", quote: "Senyum Mereka, Kebahagiaan Kami.", gender: "L" },
-                                { name: "Dwi Anik Rahmani", position: "Staff Pengmas", quote: "Mengabdi dengan Ikhlas.", gender: "P" },
-                                { name: "Rifani Nurul Azkia", position: "Staff Pengmas", quote: "Aksi Nyata di Masyarakat.", gender: "P" },
+                                { name: "Muchsin Al-Athas", position: "Staff Pengmas", quote: "Senyum Mereka, Kebahagiaan Kami.", gender: "L", photo: "assets/Foto Card/sospol/muchsin.png" },
+                                { name: "Dwi Anik Rahmani", position: "Staff Pengmas", quote: "Mengabdi dengan Ikhlas.", gender: "P", photo: "assets/Foto Card/sospol/dwi.png" },
+                                { name: "Rifani Nurul Azkia", position: "Staff Pengmas", quote: "Aksi Nyata di Masyarakat.", gender: "P", photo: "assets/Foto Card/sospol/rifani.png" },
                             ]
                         }
                     ]
                 },
                 {
                     name: "Struktur Hubungan Antar Lembaga",
-                    description: "Bidang Hubungan Antar Lembaga merupakan bidang yang berperan dalam menjalin dan mengelola hubungan antara BEM dengan berbagai lembaga, baik internal maupun eksternal kampus, melalui komunikasi yang efektif dan kerja sama yang strategis. Bidang ini bertugas membangun sinergi dengan organisasi mahasiswa, instansi, serta mitra lainnya guna memperluas jaringan dan mendukung pelaksanaan program kerja BEM, sekaligus menjaga citra organisasi serta menjadi representasi BEM dalam kegiatan kemitraan dan diplomasi kelembagaan.",
-                    kabid: { name: "Rika Mulyani", position: "Kabid Humbag", quote: "Membangun Jembatan, Bukan Tembok.", gender: "P" },
-                    wakabid: { name: "Rafiff Fendiansyah", position: "Wakabid Humbag", quote: "Relasi yang Kuat adalah Pondasi.", gender: "L" },
+                    description: "Bidang Hubungan Antar Lembaga merupakan bidang yang berperan dalam menjalin dan mengelola hubungan antara BEM FAI dengan berbagai lembaga, baik internal maupun eksternal kampus, melalui komunikasi yang efektif dan kerja sama yang strategis. Bidang ini bertugas membangun sinergi dengan organisasi mahasiswa, instansi, serta mitra lainnya guna memperluas jaringan dan mendukung pelaksanaan program kerja BEM FAI, sekaligus menjaga citra organisasi serta menjadi representasi BEM FAI dalam kegiatan kemitraan dan diplomasi kelembagaan.",
+                    kabid: { name: "Rika Mulyani", position: "Ketua Bidang Hubungan Antar Lembaga", quote: "Membangun Jembatan, Bukan Tembok.", gender: "P", photo: "assets/Foto Card/humbag/rika.png" },
+                    wakabid: { name: "Rafiff Fendiansyah", position: "Wakil Ketua Bidang Hubungan Antar Lembaga", quote: "Relasi yang Kuat adalah Pondasi.", gender: "L", photo: "assets/Foto Card/humbag/rafiff.png" },
                     departments: [
                         {
                             name: "Departemen Kemitraan",
-                            description: "Departemen Kemitraan bertugas dalam menjalin dan mengembangkan kerja sama dengan berbagai pihak, baik internal maupun eksternal kampus. Departemen ini berperan dalam membangun relasi strategis yang saling menguntungkan guna mendukung keberlangsungan program kerja BEM.",
-                            kadep: { name: "Ahmad Zacky Nasution", position: "Kadep Kemitraan", quote: "Sinergi Strategis.", gender: "L" },
+                            description: "Departemen Kemitraan bertugas dalam menjalin dan mengembangkan kerja sama dengan berbagai pihak, baik internal maupun eksternal kampus. Departemen ini berperan dalam membangun relasi strategis yang saling menguntungkan guna mendukung keberlangsungan program kerja BEM FAI.",
+                            kadep: { name: "Ahmad Zacky Nasution", position: "Ketua Departemen Kemitraan", quote: "Sinergi Strategis.", gender: "L", photo: "assets/Foto Card/humbag/nasution.png" },
                             staff: [
-                                { name: "Noviani Amalia Putri", position: "Staff Kemitraan", quote: "Partner dalam Kebaikan.", gender: "P" },
-                                { name: "Neng Kholisoh Aini", position: "Staff Kemitraan", quote: "Kolaborasi adalah Kunci.", gender: "P" },
+                                { name: "Noviani Amalia Putri", position: "Staff Kemitraan", quote: "Partner dalam Kebaikan.", gender: "P", photo: "assets/Foto Card/humbag/novi.png" },
+                                { name: "Neng Kholisoh Aini", position: "Staff Kemitraan", quote: "Kolaborasi adalah Kunci.", gender: "P", photo: "assets/Foto Card/humbag/lisoh.png" },
                             ]
                         },
                         {
                             name: "Departemen Media IT",
-                            description: "Departemen Media IT berperan dalam pengelolaan informasi, publikasi, dan teknologi digital BEM. Departemen ini bertanggung jawab dalam mengelola media sosial, dokumentasi, serta pengembangan platform digital guna menyampaikan informasi secara cepat, kreatif, and informatif kepada mahasiswa dan masyarakat luas.",
-                            kadep: { name: "Adhilia Puspita Rhama Dhani", position: "Kadep Media IT", quote: "Visual yang Bermakna.", gender: "P" },
+                            description: "Departemen Media IT berperan dalam pengelolaan informasi, publikasi, dan teknologi digital BEM FAI. Departemen ini bertanggung jawab dalam mengelola media sosial, dokumentasi, serta pengembangan platform digital guna menyampaikan informasi secara cepat, kreatif, dan informatif kepada mahasiswa dan masyarakat luas.",
+                            kadep: { name: "Adhilia Puspita RhamaDhani", position: "Ketua Departemen Media IT", quote: "Visual yang Bermakna.", gender: "P", photo: "assets/Foto Card/humbag/adil.png" },
                             staff: [
-                                { name: "Maritza Ramadhani", position: "Staff Media IT", quote: "Kreativitas Digital.", gender: "P" },
-                                { name: "Amelia Nur Azizah", position: "Staff Media IT", quote: "Update dan Inovatif.", gender: "P" },
-                                { name: "Siti Agisna Alfiana", position: "Staff Media IT", quote: "Teknologi Memudahkan.", gender: "P" },
+                                { name: "Maritza Ramadhani", position: "Staff Media IT", quote: "Kreativitas Digital.", gender: "P", photo: "assets/Foto Card/humbag/maritza.png" },
+                                { name: "Amelia Nur Azizah", position: "Staff Media IT", quote: "Update dan Inovatif.", gender: "P", photo: "assets/Foto Card/humbag/amel.png" },
+                                { name: "Siti Agisna Alfiana", position: "Staff Media IT", quote: "Teknologi Memudahkan.", gender: "P", photo: "assets/Foto Card/humbag/agis.png" },
                             ]
                         },
                         {
                             name: "Departemen Ekonomi Kreatif",
-                            description: "Departemen Ekonomi Kreatif berfokus pada pengembangan kewirausahaan dan inovasi ekonomi di lingkungan BEM. Departemen ini bertugas menciptakan peluang usaha, mengelola kegiatan ekonomi kreatif, serta mendorong kemandirian finansial organisasi melalui ide-ide yang inovatif and berkelanjutan.",
-                            kadep: { name: "Khaniya Safitri", position: "Kadep EKRAF", quote: "Mandiri Secara Ekonomi.", gender: "P" },
+                            description: "Departemen Ekonomi Kreatif berfokus pada pengembangan kewirausahaan dan inovasi ekonomi di lingkungan BEM FAI. Departemen ini bertugas menciptakan peluang usaha, mengelola kegiatan ekonomi kreatif, serta mendorong kemandirian finansial organisasi melalui ide-ide yang inovatif dan berkelanjutan.",
+                            kadep: { name: "Khaniya Safitri", position: "Ketua Departemen Ekonomi Kreatif", quote: "Mandiri Secara Ekonomi.", gender: "P", photo: "assets/Foto Card/humbag/khaniya.png" },
                             staff: [
-                                { name: "Abdul Goni", position: "Staff EKRAF", quote: "Jiwa Wirausaha Muda.", gender: "L" },
-                                { name: "Laila Maftuhah Hasyim", position: "Staff EKRAF", quote: "Inovasi Produk.", gender: "P" },
+                                { name: "Abdul Goni", position: "Staff Ekonomi Kreatif", quote: "Jiwa Wirausaha Muda.", gender: "L", photo: "assets/Foto Card/humbag/goni.png" },
+                                { name: "Laila Maftuhah Hasyim", position: "Staff Ekonomi Kreatif", quote: "Inovasi Produk.", gender: "P", photo: "assets/Foto Card/humbag/lala.png" },
                             ]
                         }
                     ]
@@ -792,7 +787,7 @@
                                 <div class="card-badge absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8 bg-gradient-to-t from-black via-black/250 to-transparent"> ${member.name ? `
                                         <h4 class="text-white font-black ${nameSize} truncate text-center"> ${member.name} </h4> ` : ""}
                                         ${member.position ? `
-                                        <p class="text-purple-light font-black text-[7px] text-center tracking-[0.2em] opacity-80"> ${member.position} </p> ` : ""}
+                                        <p class="text-purple-light font-black text-[12px] text-center opacity-80"> ${member.position} </p> ` : ""}
                                 </div>
                             </div>
                             <!-- Overlay Quote -->
