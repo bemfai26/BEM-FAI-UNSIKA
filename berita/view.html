@@ -868,26 +868,29 @@ function displayArticle(data) {
 }
 
 /* =========================================
-   LOAD BERITA TERKAIT
+   LOAD TEKS BERITA TERKAIT
 ========================================= */
 function getExcerpt(item) {
 
-    // Prioritas mengambil isi berita
     let text =
         item.content1 ||
         item.content2 ||
         item.contentBody ||
         "";
 
-    // Hilangkan seluruh tag HTML
-    text = text.replace(/<[^>]*>/g, " ");
+    text = text
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 
-    // Rapikan spasi
-    text = text.replace(/\s+/g, " ").trim();
+    // sekitar 80 karakter
+    if (text.length > 80) {
+        text = text.substring(0, 80);
 
-    // Maksimal sekitar 150 karakter
-    if (text.length > 150) {
-        text = text.substring(0, 150) + "...";
+        // jangan memotong kata
+        text = text.substring(0, text.lastIndexOf(" "));
+
+        text += "...";
     }
 
     return text;
@@ -938,12 +941,12 @@ async function loadRelated(category, currentId) {
                             ${item.category}
                         </span>
 
-                        <h5 class="text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2">
+                        <h5 class="mt-1 text-sm font-bold text-purple-deep group-hover:text-purple-med transition-colors line-clamp-2 leading-snug">
                             ${item.title}
-                        </h5>
-
-                        <p class="mt-1 text-xs text-gray-500 leading-relaxed line-clamp-3">
-                            ${getExcerpt(item)}
+                            </h5>
+                            
+                        <p class="mt-1 text-[12px] text-gray-500 leading-6 line-clamp-2">
+                            ${getExcerpt(item)}                            
                         </p>
 
                     </div>
